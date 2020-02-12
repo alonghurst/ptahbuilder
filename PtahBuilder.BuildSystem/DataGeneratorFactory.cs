@@ -14,6 +14,12 @@ namespace PtahBuilder.BuildSystem
         public PathResolver PathResolver { get; }
         private Type[] _typesToGenerate;
 
+        public DataGeneratorFactory(Logger logger, IFiles files, params Type[] typesToGenerate):
+            this(logger, new PathResolver(files), typesToGenerate)
+
+        {
+        }
+
         public DataGeneratorFactory(Logger logger, PathResolver pathResolver, params Type[] typesToGenerate)
         {
             Logger = logger;
