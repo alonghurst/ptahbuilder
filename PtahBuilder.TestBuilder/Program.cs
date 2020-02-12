@@ -10,6 +10,11 @@ namespace PtahBuilder.TestBuilder
         // ReSharper disable once UnusedParameter.Local
         static void Main(string[] args)
         {
+            if (args.Length > 0)
+            {
+                MinimalConfig.Files.ForcedRoot = args[0];
+            }
+
             var logger = new Logger();
             var files = new MinimalConfig.Files();
 
