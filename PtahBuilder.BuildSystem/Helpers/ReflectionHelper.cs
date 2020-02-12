@@ -90,7 +90,7 @@ namespace PtahBuilder.BuildSystem.Helpers
         {
             var generatorBaseType = typeof(DataGenerator<>).MakeGenericType(forType);
 
-            var concreteType = GetLoadedTypesThatAreAssignableTo(generatorBaseType).FirstOrDefault();
+            var concreteType = GetLoadedTypesThatAreAssignableTo(generatorBaseType, possibleGenericArgument: forType).FirstOrDefault();
 
             return concreteType ?? generatorBaseType;
         }
@@ -99,7 +99,7 @@ namespace PtahBuilder.BuildSystem.Helpers
         {
             var generatorBaseType = typeof(BaseDataMetadataResolver<>).MakeGenericType(forType);
 
-            var concreteType = GetLoadedTypesThatAreAssignableTo(generatorBaseType).FirstOrDefault();
+            var concreteType = GetLoadedTypesThatAreAssignableTo(generatorBaseType, possibleGenericArgument: forType).FirstOrDefault();
 
             return concreteType ?? generatorBaseType;
         }
@@ -108,7 +108,7 @@ namespace PtahBuilder.BuildSystem.Helpers
         {
             var generatorBaseType = typeof(SecondaryGenerator<>).MakeGenericType(forType);
 
-            return GetLoadedTypesThatAreAssignableTo(generatorBaseType).ToArray();
+            return GetLoadedTypesThatAreAssignableTo(generatorBaseType, possibleGenericArgument: forType).ToArray();
         }
 
         public static IEnumerable<Assembly> GetLoadedAssemblies()
@@ -126,9 +126,37 @@ namespace PtahBuilder.BuildSystem.Helpers
             return GetAllLoadedTypes().FirstOrDefault(t => t.FullName == fullTypeName);
         }
 
-        public static IEnumerable<Type> GetLoadedTypesThatAreAssignableTo(Type type, bool instantiableOnly = true)
+        public static IEnumerable<Type> GetLoadedTypesThatAreAssignableTo(Type type, bool instantiableOnly = true, Type possibleGenericArgument = null)
         {
-            return GetAllLoadedTypes().Where(t => type.IsAssignableFrom(t) && (!instantiableOnly || !t.IsAbstract && !t.IsInterface));
+            return GetAllLoadedTypes().Select(t =>
+            {
+                var name = t.Name;
+                if (type.IsAssignableFrom(t) && (!instantiableOnly || !t.IsAbstract && !t.IsInterface))
+                {
+                    return (true, t);
+                }
+
+                if (t.IsGenericType && possibleGenericArgument != null)
+                {
+                    var genericArguments = t.GetGenericArguments();
+                    if (genericArguments.Length == 1)
+                    {
+                        var genericConstraints = genericArguments[0].GetGenericParameterConstraints();
+
+                        if (genericConstraints.Length == 0 || genericConstraints[0].IsAssignableFrom(possibleGenericArgument))
+                        {
+                            var generic = t.MakeGenericType(possibleGenericArgument);
+                            if (type.IsAssignableFrom(generic) && (!instantiableOnly || !generic.IsAbstract && !generic.IsInterface))
+                            {
+                                return (true, generic);
+                            }
+                        }
+                    }
+                }
+                return (false, t);
+            })
+                .Where(t => t.Item1)
+                .Select(t => t.Item2);
         }
 
         public static IEnumerable<Type> GetLoadedTypesThatImplementInterfaceWithGenericArgumentsOfType(Type interfaceType, params Type[] genericTypes)
