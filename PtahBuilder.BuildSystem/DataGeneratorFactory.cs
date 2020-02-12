@@ -27,18 +27,24 @@ namespace PtahBuilder.BuildSystem
             _typesToGenerate = typesToGenerate;
         }
 
+        private class ProcessedType
+        {
+            public object MetadataResolver { get; set; }
+            public object Output { get; set; }
+        }
+
         public void Process()
         {
-            var generatorTypes = _typesToGenerate.Select(t => new { BaseData = t, generatorType = Helpers.ReflectionHelper.FindBaseDataGeneratorType(t) })
+            var generatorTypes = _typesToGenerate.Select(t => new { BaseData = t, generatorType = ReflectionHelper.FindBaseDataGeneratorType(t) })
                 .ToDictionary(t => t.BaseData, t => t.generatorType);
 
-            var metadataResolverTypes = _typesToGenerate.Select(t => new { BaseData = t, metadataResolverType = Helpers.ReflectionHelper.FindBaseDataMetadataResolverType(t) })
+            var metadataResolverTypes = _typesToGenerate.Select(t => new { BaseData = t, metadataResolverType = ReflectionHelper.FindBaseDataMetadataResolverType(t) })
                 .ToDictionary(t => t.BaseData, t => t.metadataResolverType);
 
             var typesToProcess = _typesToGenerate.ToList();
-            var processedTypes = new Dictionary<Type, object>();
+            var processedTypes = new Dictionary<Type, ProcessedType>();
 
-            var baseTypeConstructorArguments = typeof(DataGenerator<>).GetConstructors().First().GetParameters().Length;
+            var baseTypeConstructorArgumentsLength = typeof(DataGenerator<>).GetConstructors().First().GetParameters().Length;
 
             bool doneAny;
             do
@@ -52,9 +58,11 @@ namespace PtahBuilder.BuildSystem
 
                     var constructorToUse = generatorType.GetConstructors().First();
                     var parameters = constructorToUse.GetParameters();
-                    var additionalArguments = new List<object?>();
+                    var additionalArguments = new List<object>();
 
-                    for (int j = baseTypeConstructorArguments; j < parameters.Length; j++)
+                    // Iterate over any arguments in the constructor that are after the required base type arguments
+                    // Find any arguments that can be set from other type values
+                    for (int j = baseTypeConstructorArgumentsLength; j < parameters.Length; j++)
                     {
                         if (GetProcessedTypeForParameter(parameters[j], processedTypes, out var argument))
                         {
@@ -66,10 +74,11 @@ namespace PtahBuilder.BuildSystem
                         }
                     }
 
-                    if (baseTypeConstructorArguments + additionalArguments.Count == parameters.Length)
+                    // If there are enough arguments to satisfy the parameters then a generator can be instantiated
+                    if (baseTypeConstructorArgumentsLength + additionalArguments.Count == parameters.Length)
                     {
                         var metadataResolver = metadataResolverTypes[type].GetConstructors().First().Invoke(null);
-
+                        
                         var arguments = new[]
                         {
                             Logger,
@@ -77,11 +86,17 @@ namespace PtahBuilder.BuildSystem
                             metadataResolver
                         }.Union(additionalArguments).ToArray();
 
-                        dynamic baseDataMetadataResolver = constructorToUse.Invoke(arguments);
+                        dynamic dataGenerator = constructorToUse.Invoke(arguments);
 
-                        var result = baseDataMetadataResolver.Generate();
+                        var result = dataGenerator.Generate();
 
-                        processedTypes.Add(type, result);
+                        var processedType = new ProcessedType
+                        {
+                            MetadataResolver = metadataResolver,
+                            Output = result
+                        };
+
+                        processedTypes.Add(type, processedType);
 
                         doneAny = true;
                         typesToProcess.RemoveAt(i);
@@ -97,7 +112,7 @@ namespace PtahBuilder.BuildSystem
             ProcessSecondaryGenerators(processedTypes);
         }
 
-        private bool GetProcessedTypeForParameter(ParameterInfo parameter, Dictionary<Type, object> processedTypes, out object[]? argument)
+        private bool GetProcessedTypeForParameter(ParameterInfo parameter, Dictionary<Type, ProcessedType> processedTypes, out object[] argument)
         {
             var parameterType = parameter.ParameterType.GetTypeOrElementType();
             if (!processedTypes.ContainsKey(parameterType))
@@ -106,7 +121,7 @@ namespace PtahBuilder.BuildSystem
                 return false;
             }
 
-            argument = GetArgumentFromAdditionalData(processedTypes[parameterType]);
+            argument = GetArgumentFromAdditionalData(processedTypes[parameterType].Output);
             return true;
         }
 
@@ -115,15 +130,15 @@ namespace PtahBuilder.BuildSystem
             return Enumerable.ToArray(dictionary.Keys);
         }
 
-        private void ProcessSecondaryGenerators(Dictionary<Type, object> processedTypes)
+        private void ProcessSecondaryGenerators(Dictionary<Type, ProcessedType> processedTypes)
         {
             foreach (var processedType in processedTypes)
             {
-                var secondaryGeneratorTypes = Helpers.ReflectionHelper.FindSecondaryGeneratorTypes(processedType.Key);
-
+                var secondaryGeneratorTypes = ReflectionHelper.FindSecondaryGeneratorTypes(processedType.Key);
+                
                 foreach (var secondaryGeneratorType in secondaryGeneratorTypes)
                 {
-                    var secondaryGenerator = secondaryGeneratorType.GetConstructors().First().Invoke(new[] { Logger, PathResolver, processedType.Value });
+                    var secondaryGenerator = secondaryGeneratorType.GetConstructors().First().Invoke(new[] { Logger, processedType.Value.MetadataResolver, PathResolver, processedType.Value.Output });
 
                     var methods = secondaryGeneratorType.GetMethodsWithAttribute<GenerateAttribute>();
 
