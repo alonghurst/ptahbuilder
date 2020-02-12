@@ -9,7 +9,7 @@ using PtahBuilder.BuildSystem.Metadata;
 
 namespace PtahBuilder.BuildSystem.Syntax
 {
-    public abstract class InstanceToTypeFactoryBase<T> where T : TypeData
+    public abstract class InstanceToTypeFactoryBase<T>
     {
         public InstanceToTypeFactoryBase(Logger logger, BaseDataMetadataResolver<T> metadataResolver)
         {

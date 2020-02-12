@@ -5,7 +5,7 @@ using PtahBuilder.BuildSystem.Metadata;
 
 namespace PtahBuilder.BuildSystem.Operations
 {
-    public class FixPunctuationOperation<T> : IOperation<T> where T : TypeData
+    public class FixPunctuationOperation<T> : IOperation<T> 
     {
         private readonly string _propertyName;
 

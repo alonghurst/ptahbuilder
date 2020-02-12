@@ -20,7 +20,11 @@ namespace PtahBuilder.TestBuilder
         {
             public override string AbsoluteNamespaceForOutput => "PtahBuilder.TestBuilder.Output";
 
-            public override string GetEntityTypeName(T entity) => entity.TypeName;
+            public override string GetEntityId(T entity) => entity.TypeName;
+            public override void SetEntityId(T entity, string entityId)
+            {
+                entity.TypeName = entityId;
+            }
         }
     }
 }

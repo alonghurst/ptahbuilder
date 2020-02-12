@@ -9,7 +9,7 @@ using PtahBuilder.BuildSystem.Syntax;
 
 namespace PtahBuilder.BuildSystem.Generators
 {
-    public class DataGenerator<T> where T : TypeData, new()
+    public class DataGenerator<T> where T :  new()
     {
         public PathResolver PathResolver { get; }
         public Logger Logger { get; }
@@ -34,9 +34,9 @@ namespace PtahBuilder.BuildSystem.Generators
             var tidier = new FileTidier();
             tidier.ParseDirectory(dataDirectory);
 
-            Logger.Info($"Parsing {MetadataResolver.EntityName} data");
+            Logger.Info($"Parsing {MetadataResolver.EntityTypeName} data");
 
-            var yaml = new YamlToBaseDataMapper<T>(Logger);
+            var yaml = new YamlToBaseDataMapper<T>(Logger, MetadataResolver);
             yaml.ParseDirectory(dataDirectory);
 
             var baseData = yaml.ParsedEntitiesMetadata;
@@ -60,7 +60,6 @@ namespace PtahBuilder.BuildSystem.Generators
         protected virtual IEnumerable<IOperation<T>> GetOperations()
         {
             yield return new FileMover<T>(Logger, PathResolver, MetadataResolver);
-            yield return new FixPunctuationOperation<T>(nameof(TypeData.Description));
         }
     }
 }

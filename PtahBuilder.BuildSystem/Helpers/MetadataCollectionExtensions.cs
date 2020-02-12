@@ -16,7 +16,7 @@ namespace PtahBuilder.BuildSystem.Helpers
             return false;
         }
 
-        public static IEnumerable<T> WhereIsNotBuildOnly<T>(this Dictionary<T, MetadataCollection> entities) where T : TypeData
+        public static IEnumerable<T> WhereIsNotBuildOnly<T>(this Dictionary<T, MetadataCollection> entities) 
         {
             return entities.Where(e => !e.Value.IsBuildOnly())
                 .Select(e => e.Key);

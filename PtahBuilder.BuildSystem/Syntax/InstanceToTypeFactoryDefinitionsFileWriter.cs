@@ -6,7 +6,7 @@ using PtahBuilder.BuildSystem.Metadata;
 
 namespace PtahBuilder.BuildSystem.Syntax
 {
-    public class InstanceToTypeFactoryDefinitionsFileWriter<T> : InstanceToTypeFactoryBase<T> where T : TypeData
+    public class InstanceToTypeFactoryDefinitionsFileWriter<T> : InstanceToTypeFactoryBase<T> 
     {
         protected override string SubClassName=>"Types";
 

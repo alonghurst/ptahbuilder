@@ -6,7 +6,7 @@ using PtahBuilder.BuildSystem.Operations;
 
 namespace PtahBuilder.BuildSystem.FileManagement
 {
-    public class FileMover<T> : IOperation<T> where T : TypeData
+    public class FileMover<T> : IOperation<T>
     {
         public PathResolver PathResolver { get; }
         public Logger Logger { get; }
@@ -28,11 +28,11 @@ namespace PtahBuilder.BuildSystem.FileManagement
             {
                 var fileInfo = new FileInfo(file);
                 var name = Path.GetFileNameWithoutExtension(fileInfo.Name);
-                var typeEntity = entities.Keys.FirstOrDefault(i => i.TypeName?.ToLower() == name.ToLower());
+                var typeEntity = entities.Keys.FirstOrDefault(i => MetadataResolver.GetEntityId(i).ToLower() == name.ToLower());
 
                 if (typeEntity == null)
                 {
-                    Logger.Warning($"Unable to find corresponding {MetadataResolver.EntityName} yaml file for {name}");
+                    Logger.Warning($"Unable to find corresponding {MetadataResolver.EntityTypeName} yaml file for {name}");
                 }
                 else
                 {
