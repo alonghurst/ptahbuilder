@@ -15,7 +15,8 @@ variables:
  projects: '**/*.BuildSystem.csproj'
  testBuilder: '**/*.TestBuilder.csproj'
  buildConfiguration: 'Release'
- stagingDirectory: 'staging'
+ packageVersionRelease: '$(Build.BuildNumber)'
+ packageVersionPreRelease: '$(Build.BuildNumber)-alpha'
 
 steps:
 - task: UseDotNet@2
@@ -70,10 +71,31 @@ steps:
       $(projects)
     arguments: '--configuration $(buildConfiguration) --no-restore --output $(stagingDirectory)'
 
-- task: PublishBuildArtifacts@1
-  displayName: 'Publish Artifacts'
+- task: DotNetCoreCLI@2
+  displayName: 'Pack pre-release'
+  condition: ne(variables['Build.SourceBranch'], 'refs/heads/master')
+  inputs:
+    command: 'pack'
+    packagesToPack: '$(projects)'
+    packDirectory: '$(Build.ArtifactStagingDirectory)'
+    nobuild: true
+    versioningScheme: 'byEnvVar'
+    versionEnvVar: 'packageVersionPreRelease'
+
+- task: DotNetCoreCLI@2
+  displayName: 'Pack release'
   condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
   inputs:
-    PathtoPublish: '$(stagingDirectory)'
-    ArtifactName: 'release'
-    publishLocation: 'Container'    
+    command: 'pack'
+    packagesToPack: '$(projects)'
+    packDirectory: '$(Build.ArtifactStagingDirectory)'
+    nobuild: true
+    versioningScheme: 'byEnvVar'
+    versionEnvVar: 'packageVersionRelease'
+
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish artifacts'
+  inputs:
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+    ArtifactName: 'FusionShiftOnline.Util-drop'
+    publishLocation: 'Container'
