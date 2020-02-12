@@ -6,7 +6,7 @@ using PtahBuilder.BuildSystem.Syntax;
 
 namespace PtahBuilder.BuildSystem.Operations
 {
-    public class FactoryNamesOperation<T> : IOperation<T> where T : TypeData
+    public class FactoryNamesOperation<T> : IOperation<T>
     {
         public Logger Logger { get; }
         public PathResolver PathResolver { get; }

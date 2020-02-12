@@ -7,7 +7,7 @@ using PtahBuilder.BuildSystem.Metadata;
 
 namespace PtahBuilder.BuildSystem.Syntax
 {
-    public class InstanceToTypeFactoryNamesFileWriter<T> : InstanceToTypeFactoryBase<T> where T : TypeData
+    public class InstanceToTypeFactoryNamesFileWriter<T> : InstanceToTypeFactoryBase<T> 
     {
         protected override string SubClassName => "Names";
 
@@ -27,8 +27,9 @@ namespace PtahBuilder.BuildSystem.Syntax
 
         private MemberDeclarationSyntax CreateConstant(T entity)
         {
-            var name = entity.TypeName.Substring(0, 1).ToUpper() + entity.TypeName.Substring(1, entity.TypeName.Length - 1);
-            var value = Literals.String(entity.TypeName);
+            var entityId = MetadataResolver.GetEntityId(entity);
+            var name = entityId.Substring(0, 1).ToUpper() + entityId.Substring(1, entityId.Length - 1);
+            var value = Literals.String(entityId);
 
             return Fields.PublicConstField(name, typeof(string), value);
         }

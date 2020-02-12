@@ -41,7 +41,7 @@ namespace PtahBuilder.BuildSystem.FileManagement
             return Path.Combine(directoryPath, fileName + ".Generated.cs");
         }
 
-        public string FactoryOutputFile<T>(BaseDataMetadataResolver<T> metadataResolver, string fileType) where T : TypeData
+        public string FactoryOutputFile<T>(BaseDataMetadataResolver<T> metadataResolver, string fileType)
         {
             return OutputFile("Factories", $"Factory.{metadataResolver.DataDirectoryToOperateIn}.{fileType}");
         }

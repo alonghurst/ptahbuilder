@@ -10,22 +10,27 @@ using ReflectionHelper = PtahBuilder.BuildSystem.Helpers.ReflectionHelper;
 
 namespace PtahBuilder.BuildSystem.FileManagement
 {
-    public class YamlToBaseDataMapper<T> : YamlToTypeMapper<T> where T : TypeData, new()
+    public class YamlToBaseDataMapper<T> : YamlToTypeMapper<T> where T : new()
     {
-        public YamlToBaseDataMapper(Logger logger) : base(t => t.TypeName, logger)
+        private BaseDataMetadataResolver<T> _metadataResolver;
+
+        public YamlToBaseDataMapper(Logger logger, BaseDataMetadataResolver<T> metadataResolver) : base(logger)
         {
+            _metadataResolver = metadataResolver;
         }
 
-        protected override void EntityParsedFromFile(string filename, T entity)
+        protected override string GetEntityId(T entity) => _metadataResolver.GetEntityId(entity);
+
+        protected override void OnEntityParsedFromFile(string filename, T entity)
         {
-            if (string.IsNullOrWhiteSpace(entity.TypeName))
+            if (string.IsNullOrWhiteSpace(GetEntityId(entity)))
             {
-                entity.TypeName = Path.GetFileNameWithoutExtension(filename);
+               _metadataResolver.SetEntityId(entity, Path.GetFileNameWithoutExtension(filename));
             }
         }
     }
 
-    public class YamlToTypeMapper<T> : DirectoryParser where T : new()
+    public abstract class YamlToTypeMapper<T> : DirectoryParser where T : new()
     {
         public Dictionary<T, MetadataCollection> ParsedEntitiesMetadata { get; } = new Dictionary<T, MetadataCollection>();
         private readonly Dictionary<T, HashSet<string>> _explicitlySetPropertiesPerEntity = new Dictionary<T, HashSet<string>>();
@@ -33,11 +38,11 @@ namespace PtahBuilder.BuildSystem.FileManagement
         public Logger Logger { get; }
 
         private readonly Dictionary<Type, Dictionary<string, PropertyInfo>> _properties = new Dictionary<Type, Dictionary<string, PropertyInfo>>();
-        private readonly Func<T, string> _getId;
 
-        public YamlToTypeMapper(Func<T, string> getId, Logger logger)
+        protected abstract string GetEntityId(T entity);
+
+        public YamlToTypeMapper(Logger logger)
         {
-            _getId = getId;
             Logger = logger;
 
             _properties.Add(typeof(T), typeof(T).GetProperties().Where(p => p.CanWrite).ToDictionary(p => p.Name, p => p));
@@ -72,7 +77,7 @@ namespace PtahBuilder.BuildSystem.FileManagement
                     SetValuesFromYamlMapping(mapping, typeof(T), entity);
                 }
 
-                EntityParsedFromFile(filePath, entity);
+                OnEntityParsedFromFile(filePath, entity);
             }
         }
 
@@ -378,11 +383,11 @@ namespace PtahBuilder.BuildSystem.FileManagement
             {
                 var entityWithMetadata = setToProcess[i];
 
-                var basedOn = ParsedEntitiesMetadata.Keys.FirstOrDefault(t => _getId(t) == entityWithMetadata.Value.BasedOn);
+                var basedOn = ParsedEntitiesMetadata.Keys.FirstOrDefault(t => GetEntityId(t) == entityWithMetadata.Value.BasedOn);
 
                 if (basedOn == null)
                 {
-                    Logger.Warning($"{typeof(T).Name}: Unable to find based on \"{entityWithMetadata.Value.BasedOn}\" when processing entity \"{_getId(entityWithMetadata.Key)}\"");
+                    Logger.Warning($"{typeof(T).Name}: Unable to find based on \"{entityWithMetadata.Value.BasedOn}\" when processing entity \"{GetEntityId(entityWithMetadata.Key)}\"");
                     setToProcess.RemoveAt(i);
                     i--;
                     continue;
@@ -429,7 +434,7 @@ namespace PtahBuilder.BuildSystem.FileManagement
             }
         }
 
-        protected virtual void EntityParsedFromFile(string filePath, T entity)
+        protected virtual void OnEntityParsedFromFile(string filePath, T entity)
         {
         }
     }
