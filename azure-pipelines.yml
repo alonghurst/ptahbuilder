@@ -15,6 +15,8 @@ variables:
  projects: '**/*.BuildSystem.csproj'
  testBuilder: '**/*.TestBuilder.csproj'
  buildConfiguration: 'Release'
+ packageVersionRelease: '$(Build.BuildNumber)'
+ packageVersionPreRelease: '$(Build.BuildNumber)-alpha'
 
 steps:
 - task: UseDotNet@2
@@ -38,7 +40,7 @@ steps:
     arguments: '--configuration $(buildConfiguration) --no-restore'
 
 - task: CmdLine@2
-  displayName: 'Builld test builder'
+  displayName: 'Build test builder'
   inputs:
     command: 'build'
     projects: '$(testBuilder)'
@@ -47,7 +49,7 @@ steps:
 - task: CmdLine@2
   displayName: 'Run builder'
   inputs:
-    script: 'dotnet run -c ''$(buildConfiguration)'' -- ../../../'
+    script: 'dotnet run -c ''$(buildConfiguration)'' -- .'
     workingDirectory: '$(System.DefaultWorkingDirectory)/PtahBuilder.TestBuilder/'
     failOnStderr: true    
 
@@ -57,3 +59,43 @@ steps:
     command: 'build'
     projects: '$(testBuilder)'
     arguments: '--configuration $(buildConfiguration) --no-restore'
+
+- task: DotNetCoreCLI@2
+  displayName: 'Publish Dotnet'
+  condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
+  inputs:
+    command: 'publish'
+    publishWebProjects: false
+    zipAfterPublish: false
+    projects:  |
+      $(projects)
+    arguments: '--configuration $(buildConfiguration) --no-restore --output $(stagingDirectory)'
+
+- task: DotNetCoreCLI@2
+  displayName: 'Pack pre-release'
+  condition: ne(variables['Build.SourceBranch'], 'refs/heads/master')
+  inputs:
+    command: 'pack'
+    packagesToPack: '$(projects)'
+    packDirectory: '$(Build.ArtifactStagingDirectory)'
+    nobuild: true
+    versioningScheme: 'byEnvVar'
+    versionEnvVar: 'packageVersionPreRelease'
+
+- task: DotNetCoreCLI@2
+  displayName: 'Pack release'
+  condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
+  inputs:
+    command: 'pack'
+    packagesToPack: '$(projects)'
+    packDirectory: '$(Build.ArtifactStagingDirectory)'
+    nobuild: true
+    versioningScheme: 'byEnvVar'
+    versionEnvVar: 'packageVersionRelease'
+
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish artifacts'
+  inputs:
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+    ArtifactName: 'PtahBuilder-drop'
+    publishLocation: 'Container'
