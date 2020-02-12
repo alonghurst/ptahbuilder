@@ -18,6 +18,8 @@ namespace PtahBuilder.TestBuilder
                 .ToArray());
 
             dataGeneratorFactory.Process();
+
+            logger.ToReportHtml();
         }
     }
 }
