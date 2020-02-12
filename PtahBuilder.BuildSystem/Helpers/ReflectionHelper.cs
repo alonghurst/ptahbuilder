@@ -90,7 +90,7 @@ namespace PtahBuilder.BuildSystem.Helpers
         {
             var generatorBaseType = typeof(DataGenerator<>).MakeGenericType(forType);
 
-            var concreteType = ReflectionHelper.GetLoadedTypesThatAreAssignableTo(generatorBaseType).FirstOrDefault();
+            var concreteType = GetLoadedTypesThatAreAssignableTo(generatorBaseType).FirstOrDefault();
 
             return concreteType ?? generatorBaseType;
         }
@@ -99,7 +99,7 @@ namespace PtahBuilder.BuildSystem.Helpers
         {
             var generatorBaseType = typeof(BaseDataMetadataResolver<>).MakeGenericType(forType);
 
-            var concreteType = ReflectionHelper.GetLoadedTypesThatAreAssignableTo(generatorBaseType).FirstOrDefault();
+            var concreteType = GetLoadedTypesThatAreAssignableTo(generatorBaseType).FirstOrDefault();
 
             return concreteType ?? generatorBaseType;
         }
@@ -108,7 +108,7 @@ namespace PtahBuilder.BuildSystem.Helpers
         {
             var generatorBaseType = typeof(SecondaryGenerator<>).MakeGenericType(forType);
 
-            return ReflectionHelper.GetLoadedTypesThatAreAssignableTo(generatorBaseType).ToArray();
+            return GetLoadedTypesThatAreAssignableTo(generatorBaseType).ToArray();
         }
 
         public static IEnumerable<Assembly> GetLoadedAssemblies()
