@@ -14,7 +14,7 @@ namespace PtahBuilder.BuildSystem
         public PathResolver PathResolver { get; }
         private Type[] _typesToGenerate;
 
-        public DataGeneratorFactory(Logger logger, IFiles files, params Type[] typesToGenerate):
+        public DataGeneratorFactory(Logger logger, IFiles files, params Type[] typesToGenerate) :
             this(logger, new PathResolver(files), typesToGenerate)
 
         {
@@ -83,7 +83,7 @@ namespace PtahBuilder.BuildSystem
                         }
 
                         dynamic metadataResolver = Activator.CreateInstance(metadataResolverTypes[type]);
-                        
+
                         var arguments = new[]
                         {
                             Logger,
@@ -140,10 +140,10 @@ namespace PtahBuilder.BuildSystem
             foreach (var processedType in processedTypes)
             {
                 var secondaryGeneratorTypes = ReflectionHelper.FindSecondaryGeneratorTypes(processedType.Key);
-                
+
                 foreach (var secondaryGeneratorType in secondaryGeneratorTypes)
                 {
-                    var secondaryGenerator = secondaryGeneratorType.GetConstructors().First().Invoke(new[] { Logger, processedType.Value.MetadataResolver, PathResolver, processedType.Value.Output });
+                    var secondaryGenerator = secondaryGeneratorType.GetConstructors().First().Invoke(new[] { Logger, PathResolver, processedType.Value.MetadataResolver, processedType.Value.Output });
 
                     var methods = secondaryGeneratorType.GetMethodsWithAttribute<GenerateAttribute>();
 
