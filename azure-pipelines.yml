@@ -15,6 +15,7 @@ variables:
  projects: '**/*.BuildSystem.csproj'
  testBuilder: '**/*.TestBuilder.csproj'
  buildConfiguration: 'Release'
+ stagingDirectory: 'staging'
 
 steps:
 - task: UseDotNet@2
@@ -57,3 +58,22 @@ steps:
     command: 'build'
     projects: '$(testBuilder)'
     arguments: '--configuration $(buildConfiguration) --no-restore'
+
+- task: DotNetCoreCLI@2
+  displayName: 'Publish Dotnet'
+  condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
+  inputs:
+    command: 'publish'
+    publishWebProjects: false
+    zipAfterPublish: false
+    projects:  |
+      $(projects)
+    arguments: '--configuration $(buildConfiguration) --no-restore --output $(stagingDirectory)'
+
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish Artifacts'
+  condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
+  inputs:
+    PathtoPublish: '$(stagingDirectory)'
+    ArtifactName: 'release'
+    publishLocation: 'Container'    
