@@ -38,7 +38,7 @@ steps:
     arguments: '--configuration $(buildConfiguration) --no-restore'
 
 - task: CmdLine@2
-  displayName: 'Builld test builder'
+  displayName: 'Build test builder'
   inputs:
     command: 'build'
     projects: '$(testBuilder)'
