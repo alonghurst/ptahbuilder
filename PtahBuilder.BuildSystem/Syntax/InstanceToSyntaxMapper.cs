@@ -35,12 +35,12 @@ namespace PtahBuilder.BuildSystem.Syntax
             }
         }
 
-        private AssignmentExpressionSyntax Assign(PropertyInfo property, object? value)
+        private AssignmentExpressionSyntax Assign(PropertyInfo property, object value)
         {
             return Expressions.AssignExpression(property.Name, ValueToSyntax(value));
         }
 
-        private ExpressionSyntax ValueToSyntax(object? value)
+        private ExpressionSyntax ValueToSyntax(object value)
         {
             if (value != null)
             {

@@ -145,7 +145,7 @@ namespace PtahBuilder.BuildSystem
                     foreach (var method in methods)
                     {
                         var parameters = method.GetParameters();
-                        var arguments = new List<object?>();
+                        var arguments = new List<object>();
 
                         for (int i = 0; i < parameters.Length; i++)
                         {

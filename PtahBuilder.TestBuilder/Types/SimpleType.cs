@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using PtahBuilder.BuildSystem;
-
-namespace PtahBuilder.TestBuilder.Types
+﻿namespace PtahBuilder.TestBuilder.Types
 {
     public class SimpleType : BaseTypeData
     {

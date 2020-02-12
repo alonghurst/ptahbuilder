@@ -13,7 +13,7 @@ namespace PtahBuilder.BuildSystem.Helpers
     {
         private static readonly Dictionary<Type, object> BlankInstances = new Dictionary<Type, object>();
 
-        public static IEnumerable<KeyValuePair<PropertyInfo, object?>> GetNonDefaultPropertyAndTheNewValue(object instance)
+        public static IEnumerable<KeyValuePair<PropertyInfo, object>> GetNonDefaultPropertyAndTheNewValue(object instance)
         {
             var type = instance.GetType();
             if (!BlankInstances.ContainsKey(type))
@@ -42,7 +42,7 @@ namespace PtahBuilder.BuildSystem.Helpers
 
                 if (a != null && b == null)
                 {
-                    yield return new KeyValuePair<PropertyInfo, object?>(property, a);
+                    yield return new KeyValuePair<PropertyInfo, object>(property, a);
                     continue;
                 }
 
@@ -81,7 +81,7 @@ namespace PtahBuilder.BuildSystem.Helpers
 
                 if (a == null || !a.Equals(b))
                 {
-                    yield return new KeyValuePair<PropertyInfo, object?>(property, a);
+                    yield return new KeyValuePair<PropertyInfo, object>(property, a);
                 }
             }
         }
@@ -171,7 +171,7 @@ namespace PtahBuilder.BuildSystem.Helpers
             return type.GetTypeOrElementType();
         }
 
-        public static Type? GetFirstGenericTypeOfNonGenericInterface(Type type, Type baseInterfaceType)
+        public static Type GetFirstGenericTypeOfNonGenericInterface(Type type, Type baseInterfaceType)
         {
             var firstInterface = type.GetInterfaces().FirstOrDefault(f => baseInterfaceType.IsAssignableFrom(f) && f.IsGenericType);
 

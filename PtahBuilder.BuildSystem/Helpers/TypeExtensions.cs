@@ -9,7 +9,7 @@ namespace PtahBuilder.BuildSystem.Helpers
         /// Converts the value using the convert function if the output type matches the property.
         /// Otherwise returns the value
         /// </summary>
-        public static object? LazyConvertForType<T>(this Type type, object value, Func<object, T> convert)
+        public static object LazyConvertForType<T>(this Type type, object value, Func<object, T> convert)
         {
             if (type == typeof(T))
             {
@@ -18,7 +18,7 @@ namespace PtahBuilder.BuildSystem.Helpers
             return value;
         }
 
-        public static object? LazyConvertEnumForProperty(this Type type, object value)
+        public static object LazyConvertEnumForProperty(this Type type, object value)
         {
             if (type.IsEnum)
             {
