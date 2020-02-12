@@ -25,7 +25,7 @@ namespace PtahBuilder.BuildSystem.FileManagement
         {
             if (string.IsNullOrWhiteSpace(GetEntityId(entity)))
             {
-               _metadataResolver.SetEntityId(entity, Path.GetFileNameWithoutExtension(filename));
+                _metadataResolver.SetEntityId(entity, Path.GetFileNameWithoutExtension(filename));
             }
         }
     }
@@ -139,8 +139,8 @@ namespace PtahBuilder.BuildSystem.FileManagement
                 {
                     foreach (var n in mappingNode.Children)
                     {
-                        var mKey = ((YamlScalarNode) n.Key).Value;
-                        var mValue = ((YamlScalarNode) n.Value).Value;
+                        var mKey = ((YamlScalarNode)n.Key).Value;
+                        var mValue = ((YamlScalarNode)n.Value).Value;
 
                         if (mKey != null && mValue != null)
                         {
@@ -252,10 +252,13 @@ namespace PtahBuilder.BuildSystem.FileManagement
 
             foreach (var parser in ValueParsers.UserDefinedValueParsers)
             {
-                var result = parser.Invoke(value);
-                if (result != null)
+                if (type.IsAssignableFrom(parser.Key))
                 {
-                    return result;
+                    var result = parser.Value.Invoke(value);
+                    if (result != null)
+                    {
+                        return result;
+                    }
                 }
             }
 
