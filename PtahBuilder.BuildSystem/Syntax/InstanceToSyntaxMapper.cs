@@ -100,11 +100,8 @@ namespace PtahBuilder.BuildSystem.Syntax
                     var kvpExpressions = new List<ExpressionSyntax>();
 
                     dynamic values = value;
-#pragma warning disable CS8606 // Possible null reference assignment to iteration variable
                     foreach (dynamic kvp in values)
-#pragma warning restore CS8606 // Possible null reference assignment to iteration variable
                     {
-                        if (kvp == null) continue;
                         kvpExpressions.Add(Collections.KeyValuePairInitializer(ValueToSyntax(kvp.Key), ValueToSyntax(kvp.Value)));
                     }
 
