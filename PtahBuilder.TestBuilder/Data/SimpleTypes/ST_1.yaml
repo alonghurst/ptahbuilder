@@ -1,0 +1,7 @@
+Name: Second
+AnInt: 3
+AnEnum: Bravo
+Description:
+    - Possible to set
+    - An array
+    - Of Strings

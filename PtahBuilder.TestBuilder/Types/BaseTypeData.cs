@@ -4,8 +4,7 @@ using System.Text;
 
 namespace PtahBuilder.BuildSystem
 {
-    // TODO: replace this
-    public class TypeData
+    public class BaseTypeData
     {
         public string TypeName { get; set; } = string.Empty;
         public string Name { get; set; } = string.Empty;
