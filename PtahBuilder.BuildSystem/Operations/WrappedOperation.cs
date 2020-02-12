@@ -6,7 +6,12 @@ namespace PtahBuilder.BuildSystem.Operations
 {
     public class WrappedOperation<T> : IOperation<T> where T : new()
     {
-        public Action<Dictionary<T, MetadataCollection>> Operate { get; set; }
+        public WrappedOperation(Action<Dictionary<T, MetadataCollection>> operate)
+        {
+            Operate = operate;
+        }
+
+        public Action<Dictionary<T, MetadataCollection>> Operate { get;}
 
         Dictionary<T, MetadataCollection> IOperation<T>.Operate(Dictionary<T, MetadataCollection> entities)
         {

@@ -4,7 +4,9 @@ using System.Text;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using PtahBuilder.BuildSystem;
 using PtahBuilder.BuildSystem.FileManagement;
+using PtahBuilder.BuildSystem.Generators;
 using PtahBuilder.BuildSystem.Metadata;
+using PtahBuilder.TestBuilder.Types;
 
 namespace PtahBuilder.TestBuilder
 {
