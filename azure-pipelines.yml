@@ -97,5 +97,5 @@ steps:
   displayName: 'Publish artifacts'
   inputs:
     PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-    ArtifactName: 'FusionShiftOnline.Util-drop'
+    ArtifactName: 'PtahBuilder-drop'
     publishLocation: 'Container'
