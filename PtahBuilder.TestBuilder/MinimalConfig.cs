@@ -1,4 +1,5 @@
-﻿using PtahBuilder.BuildSystem.FileManagement;
+﻿using System.IO;
+using PtahBuilder.BuildSystem.FileManagement;
 using PtahBuilder.BuildSystem.Metadata;
 using PtahBuilder.TestBuilder.Types;
 
@@ -8,8 +9,8 @@ namespace PtahBuilder.TestBuilder
     {
         public class Files : IFiles
         {
-            public string Root => ".";
-            public string OutputForCode => "./Output";
+            public string Root => "../../..";
+            public string OutputForCode => Path.Combine(Root, "Output");
         }
 
         public class MetadataResolver<T> : BaseDataMetadataResolver<T> where T : BaseTypeData

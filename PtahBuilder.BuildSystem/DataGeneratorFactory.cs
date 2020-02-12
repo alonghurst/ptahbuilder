@@ -5,7 +5,6 @@ using System.Reflection;
 using PtahBuilder.BuildSystem.FileManagement;
 using PtahBuilder.BuildSystem.Generators;
 using PtahBuilder.BuildSystem.Helpers;
-using PtahBuilder.BuildSystem.Metadata;
 
 namespace PtahBuilder.BuildSystem
 {
