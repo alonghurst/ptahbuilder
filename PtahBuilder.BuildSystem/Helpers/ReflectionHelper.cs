@@ -90,7 +90,9 @@ namespace PtahBuilder.BuildSystem.Helpers
         {
             var generatorBaseType = typeof(DataGenerator<>).MakeGenericType(forType);
 
-            var concreteType = GetLoadedTypesThatAreAssignableTo(generatorBaseType, possibleGenericArgument: forType).FirstOrDefault();
+            var concreteType = GetLoadedTypesThatAreAssignableTo(generatorBaseType, possibleGenericArgument: forType)
+                .OrderBy(t => t.IsGenericType ? 1 : 0)
+                .FirstOrDefault();
 
             return concreteType ?? generatorBaseType;
         }
@@ -99,7 +101,9 @@ namespace PtahBuilder.BuildSystem.Helpers
         {
             var generatorBaseType = typeof(BaseDataMetadataResolver<>).MakeGenericType(forType);
 
-            var concreteType = GetLoadedTypesThatAreAssignableTo(generatorBaseType, possibleGenericArgument: forType).FirstOrDefault();
+            var concreteType = GetLoadedTypesThatAreAssignableTo(generatorBaseType, possibleGenericArgument: forType)
+                .OrderBy(t => t.IsGenericType ? 1 : 0)
+                .FirstOrDefault();
 
             return concreteType ?? generatorBaseType;
         }
