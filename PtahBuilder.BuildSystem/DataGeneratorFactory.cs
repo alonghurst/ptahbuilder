@@ -19,14 +19,6 @@ namespace PtahBuilder.BuildSystem
             Logger = logger;
             PathResolver = pathResolver;
             _typesToGenerate = typesToGenerate;
-
-            foreach (var type in _typesToGenerate)
-            {
-                if (!typeof(TypeData).IsAssignableFrom(type))
-                {
-                    throw new InvalidOperationException($"\"{type.FullName}\" does not inherit from {nameof(TypeData)}");
-                }
-            }
         }
 
         public void Process()
