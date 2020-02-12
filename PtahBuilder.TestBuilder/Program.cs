@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Linq;
+using PtahBuilder.BuildSystem;
+using PtahBuilder.BuildSystem.Helpers;
 
 namespace PtahBuilder.TestBuilder
 {
@@ -6,7 +9,12 @@ namespace PtahBuilder.TestBuilder
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            var logger = new Logger();
+            var files = new MinimalConfig.Files();
+
+            var dataGeneratorFactory = new DataGeneratorFactory(logger, files, ReflectionHelper.GetLoadedTypesThatAreAssignableTo(typeof(BaseTypeData)).ToArray());
+
+            dataGeneratorFactory.Process();
         }
     }
 }
