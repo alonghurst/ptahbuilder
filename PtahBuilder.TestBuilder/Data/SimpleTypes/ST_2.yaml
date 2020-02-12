@@ -1,3 +1,5 @@
-Name: Third
+Name: Third object for testing
 AnInt: 2
 AnEnum: Charlie
+Meta:
+    ReverseName: true
