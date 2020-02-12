@@ -5,6 +5,7 @@ using System.Reflection;
 using PtahBuilder.BuildSystem.FileManagement;
 using PtahBuilder.BuildSystem.Generators;
 using PtahBuilder.BuildSystem.Helpers;
+using PtahBuilder.BuildSystem.Metadata;
 
 namespace PtahBuilder.BuildSystem
 {
@@ -77,7 +78,12 @@ namespace PtahBuilder.BuildSystem
                     // If there are enough arguments to satisfy the parameters then a generator can be instantiated
                     if (baseTypeConstructorArgumentsLength + additionalArguments.Count == parameters.Length)
                     {
-                        var metadataResolver = metadataResolverTypes[type].GetConstructors().First().Invoke(null);
+                        if (!metadataResolverTypes.ContainsKey(type))
+                        {
+                            throw new InvalidOperationException($"Unable to find a MetadataResolver type for {type.Name}");
+                        }
+
+                        dynamic metadataResolver = Activator.CreateInstance(metadataResolverTypes[type]);
                         
                         var arguments = new[]
                         {
@@ -107,7 +113,7 @@ namespace PtahBuilder.BuildSystem
 
             Logger.LogSection("Types where a BaseDataGenerator could not be instantiated", typesToProcess.Select(t => t.FullName ?? t.Name));
 
-            Logger.LogSection("Type Summary", processedTypes.Select(t => $"{t.Key.Name} {((dynamic)t.Value).Count}"));
+            Logger.LogSection("Type Summary", processedTypes.Select(t => $"{t.Key.Name} {((dynamic)t.Value.Output).Count}"));
 
             ProcessSecondaryGenerators(processedTypes);
         }
