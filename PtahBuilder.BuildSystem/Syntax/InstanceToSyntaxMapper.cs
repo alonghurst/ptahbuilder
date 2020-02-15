@@ -27,7 +27,7 @@ namespace PtahBuilder.BuildSystem.Syntax
 
         private IEnumerable<AssignmentExpressionSyntax> CreateAssignments(object instance)
         {
-            var nonDefaultProperties = ReflectionHelper.GetNonDefaultPropertyAndTheNewValue(instance);
+            var nonDefaultProperties = ReflectionHelper.GetNonDefaultPropertyAndTheNewValue(instance).OrderBy(p => p.Key.Name);
 
             foreach (var property in nonDefaultProperties)
             {
