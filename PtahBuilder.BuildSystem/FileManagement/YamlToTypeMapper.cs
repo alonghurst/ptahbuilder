@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using PtahBuilder.BuildSystem.Exceptions;
 using PtahBuilder.BuildSystem.Helpers;
 using PtahBuilder.BuildSystem.Metadata;
 using YamlDotNet.RepresentationModel;
@@ -65,19 +66,26 @@ namespace PtahBuilder.BuildSystem.FileManagement
 
             ParsedEntitiesMetadata.Add(entity, new MetadataCollection());
 
-            using (TextReader reader = File.OpenText(filePath))
+            try
             {
-                var yaml = new YamlStream();
-                yaml.Load(reader);
-
-                if (yaml.Documents.Count > 0)
+                using (TextReader reader = File.OpenText(filePath))
                 {
-                    var mapping = (YamlMappingNode)yaml.Documents[0].RootNode;
+                    var yaml = new YamlStream();
+                    yaml.Load(reader);
 
-                    SetValuesFromYamlMapping(mapping, typeof(T), entity);
+                    if (yaml.Documents.Count > 0)
+                    {
+                        var mapping = (YamlMappingNode)yaml.Documents[0].RootNode;
+
+                        SetValuesFromYamlMapping(mapping, typeof(T), entity);
+                    }
+
+                    OnEntityParsedFromFile(filePath, entity);
                 }
-
-                OnEntityParsedFromFile(filePath, entity);
+            }
+            catch (YamlDotNet.Core.YamlException ex)
+            {
+                throw new BuilderException($"Error parsing yaml for file {filePath}", ex);
             }
         }
 
