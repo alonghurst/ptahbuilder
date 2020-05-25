@@ -64,7 +64,12 @@ namespace PtahBuilder.BuildSystem.FileManagement
 
             var entity = Activator.CreateInstance<T>();
 
-            ParsedEntitiesMetadata.Add(entity, new MetadataCollection());
+            var metadata = new MetadataCollection
+            {
+                {MetadataKeys.SourceFile, filePath}
+            };
+
+            ParsedEntitiesMetadata.Add(entity, metadata);
 
             try
             {
