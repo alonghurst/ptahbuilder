@@ -151,7 +151,7 @@ namespace PtahBuilder.BuildSystem
                             instance
                         };
                     })
-                    .OrderBy(g => g.instance.Order)
+                    .OrderBy(g => g.instance.Priority)
                     .ToArray();
 
                 foreach (var secondaryGenerator in secondaryGenerators)
