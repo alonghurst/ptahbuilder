@@ -8,6 +8,8 @@ namespace PtahBuilder.BuildSystem.Generators.Operations
 {
     public class FactoryNamesOperation<T> : Operation<T>
     {
+        public override int Priority => int.MaxValue;
+
         public FactoryNamesOperation(IOperationContext<T> context) : base(context)
         {
         }
