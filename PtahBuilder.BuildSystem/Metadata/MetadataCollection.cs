@@ -4,13 +4,11 @@ namespace PtahBuilder.BuildSystem.Metadata
 {
     public class MetadataCollection : Dictionary<string, string>
     {
-        public const string BuildOnlyKey = "IsBuildOnly";
-
         public void TakeUnsetValuesFrom(MetadataCollection parent)
         {
             foreach (var kvp in parent)
             {
-                if (!ContainsKey(kvp.Key) && kvp.Key != BuildOnlyKey)
+                if (!ContainsKey(kvp.Key) && kvp.Key != MetadataKeys.BuildOnly)
                 {
                     Add(kvp.Key, kvp.Value);
                 }
@@ -21,9 +19,9 @@ namespace PtahBuilder.BuildSystem.Metadata
         {
             get
             {
-                if (ContainsKey("BasedOn"))
+                if (ContainsKey(MetadataKeys.BasedOn))
                 {
-                    return this["BasedOn"];
+                    return this[MetadataKeys.BasedOn];
                 }
                 return null;
             }

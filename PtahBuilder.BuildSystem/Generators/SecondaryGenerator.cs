@@ -11,6 +11,8 @@ namespace PtahBuilder.BuildSystem.Generators
         public Dictionary<T, MetadataCollection> Entities { get; }
         public BaseDataMetadataResolver<T> MetadataResolver { get; }
 
+        public virtual int? Priority { get; }
+
         public SecondaryGenerator(Logger logger, PathResolver pathResolver, BaseDataMetadataResolver<T> metadataResolver, Dictionary<T, MetadataCollection> entities)
         {
             Logger = logger;
