@@ -156,7 +156,7 @@ namespace PtahBuilder.BuildSystem
 
                 foreach (var secondaryGenerator in secondaryGenerators)
                 {
-                    var methods = secondaryGenerator.type.GetMethodsWithAttribute<GenerateAttribute>();
+                    var methods = secondaryGenerator.type.GetMethodsWithAttribute<OperateAttribute>();
 
                     foreach (var method in methods)
                     {
