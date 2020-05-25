@@ -161,7 +161,7 @@ namespace PtahBuilder.BuildSystem
 
             foreach (var operation in allOperations.OrderBy(o => o.Priority == null ? int.MaxValue : (int)o.Priority))
             {
-                var operationType = operation.GetType();
+                var operationType = (Type)operation.GetType();
                 var methods = operationType.GetMethodsWithAttribute<OperateAttribute>();
 
                 foreach (var method in methods)
