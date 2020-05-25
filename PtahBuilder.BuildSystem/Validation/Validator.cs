@@ -7,13 +7,13 @@ using PtahBuilder.BuildSystem.Metadata;
 
 namespace PtahBuilder.BuildSystem.Validation
 {
-    public abstract class Validator<T> : SecondaryGenerator<T>
+    public abstract class Validator<T> : Operation<T>
     {
         protected Validator(Logger logger, BaseDataMetadataResolver<T> metadataResolver, PathResolver pathResolver, Dictionary<T, MetadataCollection> entities) : base(logger, pathResolver, metadataResolver, entities)
         {
         }
 
-        [Generate]
+        [Operate]
         public void StringValidation()
         {
             var propertiesToValidate = StringPropertiesToValidate().ToArray();

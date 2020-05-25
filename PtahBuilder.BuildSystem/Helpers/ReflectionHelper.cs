@@ -110,7 +110,7 @@ namespace PtahBuilder.BuildSystem.Helpers
 
         public static Type[] FindSecondaryGeneratorTypes(Type forType)
         {
-            var generatorBaseType = typeof(SecondaryGenerator<>).MakeGenericType(forType);
+            var generatorBaseType = typeof(Operation<>).MakeGenericType(forType);
 
             return GetLoadedTypesThatAreAssignableTo(generatorBaseType, possibleGenericArgument: forType).ToArray();
         }
