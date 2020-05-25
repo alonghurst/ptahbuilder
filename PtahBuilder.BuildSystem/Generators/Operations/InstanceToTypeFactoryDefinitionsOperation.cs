@@ -6,6 +6,8 @@ namespace PtahBuilder.BuildSystem.Generators.Operations
 {
     public class InstanceToTypeFactoryDefinitionsOperation<T> :Operation<T>
     {
+        public override int Priority => int.MaxValue;
+
         public InstanceToTypeFactoryDefinitionsOperation(IOperationContext<T> context) : base(context)
         {
         }

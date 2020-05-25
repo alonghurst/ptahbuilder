@@ -14,7 +14,7 @@ namespace PtahBuilder.BuildSystem.Generators
         public Dictionary<T, MetadataCollection> Entities => _context.Entities;
         public BaseDataMetadataResolver<T> MetadataResolver => _context.MetadataResolver;
 
-        public virtual int? Priority { get; }
+        public virtual int Priority { get; }
 
         public Operation(IOperationContext<T> context)
         {
