@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using PtahBuilder.BuildSystem.FileManagement;
 using PtahBuilder.BuildSystem.Generators;
-using PtahBuilder.BuildSystem.Metadata;
 
 namespace PtahBuilder.BuildSystem.Operations
 {

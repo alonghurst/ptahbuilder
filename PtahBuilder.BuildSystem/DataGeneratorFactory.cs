@@ -5,6 +5,7 @@ using System.Reflection;
 using PtahBuilder.BuildSystem.FileManagement;
 using PtahBuilder.BuildSystem.Generators;
 using PtahBuilder.BuildSystem.Helpers;
+using PtahBuilder.BuildSystem.Operations;
 
 namespace PtahBuilder.BuildSystem
 {
@@ -114,7 +115,7 @@ namespace PtahBuilder.BuildSystem
 
             Logger.LogSection("Type Summary", processedTypes.Select(t => $"{t.Key.Name} {((dynamic)t.Value.Output).Count}"));
 
-            ProcessSecondaryGenerators(processedTypes);
+            ProcessOperations(processedTypes);
         }
 
         private bool GetProcessedTypeForParameter(ParameterInfo parameter, Dictionary<Type, ProcessedType> processedTypes, out object[] argument)
@@ -135,53 +136,57 @@ namespace PtahBuilder.BuildSystem
             return Enumerable.ToArray(dictionary.Keys);
         }
 
-        private void ProcessSecondaryGenerators(Dictionary<Type, ProcessedType> processedTypes)
+        private void ProcessOperations(Dictionary<Type, ProcessedType> processedTypes)
         {
-            foreach (var processedType in processedTypes)
+            var allContexts = processedTypes.ToDictionary(t => t.Key,
+                t => ReflectionHelper.InstantiateConcreteInstanceFromGenericType(typeof(OperationContext<>), t.Key, Logger, PathResolver, t.Value.MetadataResolver, t.Value.Output));
+
+            List<dynamic> allOperations = new List<dynamic>();
+
+            foreach (var context in allContexts)
             {
-                var secondaryGeneratorTypes = ReflectionHelper.FindSecondaryGeneratorTypes(processedType.Key);
+                var operationProviderType = ReflectionHelper.FindOperationProviderType(context.Key);
+                var operationTypes = ReflectionHelper.FindOperationTypes(context.Key);
 
-                var secondaryGenerators = secondaryGeneratorTypes.Select(type =>
-                    {
-                        var constructor = type.GetConstructors().First();
-                        dynamic instance = constructor.Invoke(new[] { Logger, PathResolver, processedType.Value.MetadataResolver, processedType.Value.Output });
-                        return new
-                        {
-                            type,
-                            instance
-                        };
-                    })
-                    .OrderBy(g => g.instance.Priority == null ? int.MaxValue : (int)g.instance.Priority)
-                    .ToArray();
+                dynamic operationProvider = operationProviderType.InstantiateFromFirstConstructor(context.Value);
 
-                foreach (var secondaryGenerator in secondaryGenerators)
+                allOperations.AddRange(operationProvider.BuildOperations());
+
+                foreach (var operationType in operationTypes)
                 {
-                    var methods = secondaryGenerator.type.GetMethodsWithAttribute<OperateAttribute>();
+                    allOperations.Add(operationType.InstantiateFromFirstConstructor(context.Value));
+                }
+            }
 
-                    foreach (var method in methods)
+            foreach (var operation in allOperations.OrderBy(o => o.Priority == null ? int.MaxValue : (int)o.Priority))
+            {
+                var operationType = operation.GetType();
+                var methods = operationType.GetMethodsWithAttribute<OperateAttribute>();
+
+                foreach (var method in methods)
+                {
+                    var parameters = method.GetParameters();
+                    var arguments = new List<object>();
+
+                    for (int i = 0; i < parameters.Length; i++)
                     {
-                        var parameters = method.GetParameters();
-                        var arguments = new List<object>();
-
-                        for (int i = 0; i < parameters.Length; i++)
+                        if (GetProcessedTypeForParameter(parameters[i], processedTypes, out object[] argument))
                         {
-                            if (GetProcessedTypeForParameter(parameters[i], processedTypes, out var argument))
-                            {
-                                arguments.Add(argument);
-                            }
-                            else
-                            {
-                                break;
-                            }
+                            arguments.Add(argument);
                         }
-
-                        if (arguments.Count == parameters.Length)
+                        else
                         {
-                            method.Invoke(secondaryGenerator.instance, arguments.ToArray());
-
-                            Logger.LogSection("Additional Generators", -1, $"{secondaryGenerator.type.Name}.{method.Name}");
+                            break;
                         }
                     }
+
+                    if (arguments.Count == parameters.Length)
+                    {
+                        method.Invoke(operation, arguments.ToArray());
+
+                        Logger.LogSection("Additional Generators", -1, $"{operation.MetadataResolver.EntityTypeName}{operationType.Name}.{method.Name}");
+                    }
+
                 }
             }
         }

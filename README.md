@@ -28,3 +28,9 @@ MetaDataResolver<T> have working base classes provided but they can be inherited
 
 You can inherit from Validator<T> and override the StringPropertiesToValidate method to specify which string properties should be validated as not empty.
 
+When you wish to implement an Operation you have 2 options:
+
+Derive from OperationProvider<T> for your desired type and then yield additional Operations
+
+Derive from Operation<T> for your desired type and implement the Operation.
+

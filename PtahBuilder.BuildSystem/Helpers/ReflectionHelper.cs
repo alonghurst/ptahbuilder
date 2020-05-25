@@ -86,20 +86,38 @@ namespace PtahBuilder.BuildSystem.Helpers
             }
         }
 
+        public static object InstantiateFromFirstConstructor(this Type type, params object?[] constructorArguments)
+        {
+            var constructor = type.GetConstructors().First();
+
+            return constructor.Invoke(constructorArguments);
+        }
+
+        public static object InstantiateConcreteInstanceFromGenericType(Type genericType, Type genericArgument, params object?[] constructorArguments)
+        {
+            var concreteType = genericType.MakeGenericType(genericArgument);
+
+            return concreteType.InstantiateFromFirstConstructor(constructorArguments);
+        }
+
         public static Type FindBaseDataGeneratorType(Type forType)
         {
-            var generatorBaseType = typeof(DataGenerator<>).MakeGenericType(forType);
-
-            var concreteType = GetLoadedTypesThatAreAssignableTo(generatorBaseType, possibleGenericArgument: forType)
-                .OrderBy(t => t.IsGenericType ? 1 : 0)
-                .FirstOrDefault();
-
-            return concreteType ?? generatorBaseType;
+            return FindDerivedTypeOrUseBaseType(forType, typeof(DataGenerator<>));
         }
 
         public static Type FindBaseDataMetadataResolverType(Type forType)
         {
-            var generatorBaseType = typeof(BaseDataMetadataResolver<>).MakeGenericType(forType);
+            return FindDerivedTypeOrUseBaseType(forType, typeof(BaseDataMetadataResolver<>));
+        }
+
+        public static Type FindOperationProviderType(Type forType)
+        {
+            return FindDerivedTypeOrUseBaseType(forType, typeof(OperationProvider<>));
+        }
+
+        private static Type FindDerivedTypeOrUseBaseType(Type forType, Type baseType)
+        {
+            var generatorBaseType = baseType.MakeGenericType(forType);
 
             var concreteType = GetLoadedTypesThatAreAssignableTo(generatorBaseType, possibleGenericArgument: forType)
                 .OrderBy(t => t.IsGenericType ? 1 : 0)
@@ -108,7 +126,7 @@ namespace PtahBuilder.BuildSystem.Helpers
             return concreteType ?? generatorBaseType;
         }
 
-        public static Type[] FindSecondaryGeneratorTypes(Type forType)
+        public static Type[] FindOperationTypes(Type forType)
         {
             var generatorBaseType = typeof(Operation<>).MakeGenericType(forType);
 
