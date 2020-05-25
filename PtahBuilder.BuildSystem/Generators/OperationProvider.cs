@@ -21,6 +21,8 @@ namespace PtahBuilder.BuildSystem.Generators
             {
                 yield return operation;
             }
+
+            yield return new InstanceToTypeFactoryDefinitionsOperation<T>(Context);
         }
 
         protected virtual IEnumerable<Operation<T>> GetOperations()

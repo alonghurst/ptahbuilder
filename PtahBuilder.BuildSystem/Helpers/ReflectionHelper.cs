@@ -273,7 +273,7 @@ namespace PtahBuilder.BuildSystem.Helpers
 
         public static string NameWithGenericArguments(this Type type)
         {
-            var generics = type.IsGenericType ? $"<{string.Join(", ", type.GenericTypeArguments.Select(s => s.Name))}>" : "";
+            var generics = type.IsGenericType ? $"<{string.Join(", ", type.GenericTypeArguments.Select(s => s.Name).ToArray())}>" : "";
 
             return $"{type.Name}{generics}";
         }

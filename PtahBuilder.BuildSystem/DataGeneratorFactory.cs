@@ -147,11 +147,16 @@ namespace PtahBuilder.BuildSystem
             foreach (var context in allContexts)
             {
                 var operationProviderType = ReflectionHelper.FindOperationProviderType(context.Key);
-                var operationTypes = ReflectionHelper.FindOperationTypes(context.Key);
 
                 dynamic operationProvider = operationProviderType.InstantiateFromFirstConstructor(context.Value);
 
-                allOperations.AddRange(operationProvider.BuildOperations());
+                var operations = ((IEnumerable<dynamic>)operationProvider.BuildOperations()).ToArray();
+
+                allOperations.AddRange(operations);
+
+                Logger.Info($"OperationProvider for {context.Key.Name}: {operationProviderType.NameWithGenericArguments()} yielded {operations.Length} operations");
+
+                var operationTypes = ReflectionHelper.FindOperationTypes(context.Key);
 
                 foreach (var operationType in operationTypes)
                 {
@@ -183,9 +188,13 @@ namespace PtahBuilder.BuildSystem
 
                     if (arguments.Count == parameters.Length)
                     {
+                        var description = $"{operation.MetadataResolver.EntityTypeName}:{operationType.NameWithGenericArguments()}.{method.Name}";
+
+                        Logger.Info($"Executing: {description}");
+
                         method.Invoke(operation, arguments.ToArray());
 
-                        Logger.LogSection("Additional Generators", -1, $"{operation.MetadataResolver.EntityTypeName}:{operationType.NameWithGenericArguments()}.{method.Name}");
+                        Logger.LogSection("Additional Generators", -1, description);
                     }
 
                 }
