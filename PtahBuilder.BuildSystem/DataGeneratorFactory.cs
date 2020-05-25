@@ -4,8 +4,9 @@ using System.Linq;
 using System.Reflection;
 using PtahBuilder.BuildSystem.FileManagement;
 using PtahBuilder.BuildSystem.Generators;
+using PtahBuilder.BuildSystem.Generators.Context;
+using PtahBuilder.BuildSystem.Generators.Operations;
 using PtahBuilder.BuildSystem.Helpers;
-using PtahBuilder.BuildSystem.Operations;
 
 namespace PtahBuilder.BuildSystem
 {

@@ -1,15 +1,15 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Humanizer;
-using PtahBuilder.BuildSystem.FileManagement;
 using PtahBuilder.BuildSystem.Generators;
-using PtahBuilder.BuildSystem.Metadata;
+using PtahBuilder.BuildSystem.Generators.Context;
+using PtahBuilder.BuildSystem.Generators.Operations;
 
 namespace PtahBuilder.BuildSystem.Validation
 {
     public abstract class Validator<T> : Operation<T>
     {
-        protected Validator(Logger logger, BaseDataMetadataResolver<T> metadataResolver, PathResolver pathResolver, Dictionary<T, MetadataCollection> entities) : base(logger, pathResolver, metadataResolver, entities)
+        protected Validator(IOperationContext<T> context) : base(context)
         {
         }
 

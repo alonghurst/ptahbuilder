@@ -1,15 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using PtahBuilder.BuildSystem;
-using PtahBuilder.BuildSystem.FileManagement;
 using PtahBuilder.BuildSystem.Generators;
-using PtahBuilder.BuildSystem.Metadata;
-using PtahBuilder.BuildSystem.Operations;
+using PtahBuilder.BuildSystem.Generators.Context;
+using PtahBuilder.BuildSystem.Generators.Operations;
 using PtahBuilder.TestBuilder.Types;
 
-namespace PtahBuilder.TestBuilder
+namespace PtahBuilder.TestBuilder.AdditionalOperations
 {
-    public static class ExtendedConfig
+    public static class ReverseNameOperation
     {
         public class SimpleTypeOperationProvider : Operation<SimpleType>
         {

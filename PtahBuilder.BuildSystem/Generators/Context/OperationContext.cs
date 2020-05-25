@@ -2,7 +2,7 @@
 using PtahBuilder.BuildSystem.FileManagement;
 using PtahBuilder.BuildSystem.Metadata;
 
-namespace PtahBuilder.BuildSystem.Operations
+namespace PtahBuilder.BuildSystem.Generators.Context
 {
     public class OperationContext<T> : IOperationContext<T>
     {

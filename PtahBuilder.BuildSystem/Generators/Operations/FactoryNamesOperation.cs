@@ -1,11 +1,10 @@
 ﻿using System.Collections.Generic;
-using PtahBuilder.BuildSystem.FileManagement;
-using PtahBuilder.BuildSystem.Generators;
+using PtahBuilder.BuildSystem.Generators.Context;
 using PtahBuilder.BuildSystem.Helpers;
 using PtahBuilder.BuildSystem.Metadata;
 using PtahBuilder.BuildSystem.Syntax;
 
-namespace PtahBuilder.BuildSystem.Operations
+namespace PtahBuilder.BuildSystem.Generators.Operations
 {
     public class FactoryNamesOperation<T> : Operation<T>
     {
