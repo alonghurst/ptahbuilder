@@ -5,6 +5,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Web;
 
 // ReSharper disable UnusedVariable
 
@@ -84,10 +85,10 @@ namespace PtahBuilder.BuildSystem
 
                     foreach (var content in _contents)
                     {
-                        Content(sb,content);
+                        Content(sb, content);
                     }
 
-                    foreach (var section in _sections.Where(s => s.Value.Messages.Any()).OrderByDescending(s=>s.Value.Priority))
+                    foreach (var section in _sections.Where(s => s.Value.Messages.Any()).OrderByDescending(s => s.Value.Priority))
                     {
                         LiWithHeader(sb, section.Key, section.Value.Messages);
                     }
@@ -176,7 +177,7 @@ namespace PtahBuilder.BuildSystem
 
             public void Write(string text)
             {
-                _sb.Append(text);
+                _sb.Append(HttpUtility.HtmlEncode(text));
             }
         }
 

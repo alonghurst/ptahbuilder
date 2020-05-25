@@ -2,18 +2,16 @@
 using PtahBuilder.BuildSystem.FileManagement;
 using PtahBuilder.BuildSystem.Metadata;
 
-namespace PtahBuilder.BuildSystem.Generators
+namespace PtahBuilder.BuildSystem.Generators.Context
 {
-    public abstract class SecondaryGenerator<T>
+    public class OperationContext<T> : IOperationContext<T>
     {
         public Logger Logger { get; }
         public PathResolver PathResolver { get; }
         public Dictionary<T, MetadataCollection> Entities { get; }
         public BaseDataMetadataResolver<T> MetadataResolver { get; }
 
-        public virtual int? Priority { get; }
-
-        public SecondaryGenerator(Logger logger, PathResolver pathResolver, BaseDataMetadataResolver<T> metadataResolver, Dictionary<T, MetadataCollection> entities)
+        public OperationContext(Logger logger, PathResolver pathResolver, BaseDataMetadataResolver<T> metadataResolver, Dictionary<T, MetadataCollection> entities)
         {
             Logger = logger;
 

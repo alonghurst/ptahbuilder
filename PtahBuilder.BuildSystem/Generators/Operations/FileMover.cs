@@ -1,26 +1,17 @@
-﻿using System.Collections.Generic;
-using System.IO;
+﻿using System.IO;
 using System.Linq;
-using PtahBuilder.BuildSystem.Metadata;
-using PtahBuilder.BuildSystem.Operations;
+using PtahBuilder.BuildSystem.Generators.Context;
 
-namespace PtahBuilder.BuildSystem.FileManagement
+namespace PtahBuilder.BuildSystem.Generators.Operations
 {
-    public class FileMover<T> : IOperation<T>
+    public class FileMover<T> : Operation<T>
     {
-        public PathResolver PathResolver { get; }
-        public Logger Logger { get; }
-        public BaseDataMetadataResolver<T> MetadataResolver { get; }
-
-        public FileMover(Logger logger, PathResolver pathResolver, BaseDataMetadataResolver<T> metadataResolver)
+        public FileMover(IOperationContext<T> context) : base(context)
         {
-            MetadataResolver = metadataResolver;
-            Logger = logger;
-            PathResolver = pathResolver;
         }
 
-
-        public Dictionary<T, MetadataCollection> Operate(Dictionary<T, MetadataCollection> entities)
+        [Operate]
+        public void Operate()
         {
             var files = Directory.GetFiles(PathResolver.DataDirectory(MetadataResolver.DataDirectoryToOperateIn), "*.yaml");
 
@@ -28,7 +19,7 @@ namespace PtahBuilder.BuildSystem.FileManagement
             {
                 var fileInfo = new FileInfo(file);
                 var name = Path.GetFileNameWithoutExtension(fileInfo.Name);
-                var typeEntity = entities.Keys.FirstOrDefault(i => MetadataResolver.GetEntityId(i).ToLower() == name.ToLower());
+                var typeEntity = Entities.Keys.FirstOrDefault(i => MetadataResolver.GetEntityId(i).ToLower() == name.ToLower());
 
                 if (typeEntity == null)
                 {
@@ -57,8 +48,6 @@ namespace PtahBuilder.BuildSystem.FileManagement
                     Logger.LogSection("Moved yaml Files", $"{old} -> {newF}");
                 }
             }
-
-            return entities;
         }
     }
 }

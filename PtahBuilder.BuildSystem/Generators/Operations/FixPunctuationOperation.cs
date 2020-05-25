@@ -1,20 +1,20 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using PtahBuilder.BuildSystem.Metadata;
+using PtahBuilder.BuildSystem.Generators.Context;
 
-namespace PtahBuilder.BuildSystem.Operations
+namespace PtahBuilder.BuildSystem.Generators.Operations
 {
-    public class FixPunctuationOperation<T> : IOperation<T> 
+    public class FixPunctuationOperation<T> : Operation<T> 
     {
         private readonly string _propertyName;
 
-        public FixPunctuationOperation(string propertyName)
+        public FixPunctuationOperation(string propertyName, IOperationContext<T> context) : base(context)
         {
             _propertyName = propertyName;
         }
 
-        public Dictionary<T, MetadataCollection> Operate(Dictionary<T, MetadataCollection> entities)
+        [Operate]
+        public void Operate()
         {
             var property = typeof(T).GetProperty(_propertyName);
 
@@ -23,7 +23,7 @@ namespace PtahBuilder.BuildSystem.Operations
                 throw new ArgumentNullException(_propertyName);
             }
 
-            foreach (var entity in entities)
+            foreach (var entity in Entities)
             {
                 if (property.GetValue(entity.Key) is string[] text)
                 {
@@ -49,8 +49,6 @@ namespace PtahBuilder.BuildSystem.Operations
                     property.SetValue(entity.Key, text);
                 }
             }
-
-            return entities;
         }
     }
 }
