@@ -39,27 +39,7 @@ namespace PtahBuilder.BuildSystem.Generators
             var yaml = new YamlToBaseDataMapper<T>(Logger, MetadataResolver);
             yaml.ParseDirectory(dataDirectory);
 
-            var baseData = yaml.ParsedEntitiesMetadata;
-
-            var operations = GetOperations().ToArray();
-
-            foreach (var operation in operations)
-            {
-                baseData = operation.Operate(baseData);
-            }
-
-            var toSyntax = new InstanceToTypeFactoryDefinitionsFileWriter<T>(Logger, MetadataResolver);
-
-            toSyntax.Generate(MetadataResolver.AbsoluteNamespaceForOutput,
-                baseData.WhereIsNotBuildOnly(),
-                PathResolver.FactoryOutputFile(MetadataResolver, "Types"));
-
-            return baseData;
-        }
-
-        protected virtual IEnumerable<IOperation<T>> GetOperations()
-        {
-            yield return new FileMover<T>(Logger, PathResolver, MetadataResolver);
+            return yaml.ParsedEntitiesMetadata;
         }
     }
 }
