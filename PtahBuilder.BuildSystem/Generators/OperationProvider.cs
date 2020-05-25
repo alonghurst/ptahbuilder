@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using PtahBuilder.BuildSystem.FileManagement;
 using PtahBuilder.BuildSystem.Operations;
-using PtahBuilder.BuildSystem.Syntax;
 
 namespace PtahBuilder.BuildSystem.Generators
 {
@@ -16,7 +13,7 @@ namespace PtahBuilder.BuildSystem.Generators
 
         public IEnumerable<Operation<T>> BuildOperations()
         {
-            yield return new FileMover<T>(Logger, PathResolver, MetadataResolver);
+            yield return new FileMover<T>(Context);
 
             var operations = GetOperations().ToArray();
 

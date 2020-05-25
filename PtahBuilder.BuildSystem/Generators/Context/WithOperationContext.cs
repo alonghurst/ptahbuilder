@@ -7,16 +7,16 @@ namespace PtahBuilder.BuildSystem.Generators
 {
     public abstract class WithOperationContext<T>
     {
-        private readonly IOperationContext<T> _context;
+        protected IOperationContext<T> Context { get; }
 
-        public Logger Logger => _context.Logger;
-        public PathResolver PathResolver => _context.PathResolver;
-        public Dictionary<T, MetadataCollection> Entities => _context.Entities;
-        public BaseDataMetadataResolver<T> MetadataResolver => _context.MetadataResolver;
+        public Logger Logger => Context.Logger;
+        public PathResolver PathResolver => Context.PathResolver;
+        public Dictionary<T, MetadataCollection> Entities => Context.Entities;
+        public BaseDataMetadataResolver<T> MetadataResolver => Context.MetadataResolver;
         
         public WithOperationContext(IOperationContext<T> context)
         {
-            _context = context;
+            Context = context;
         }
     }
 }

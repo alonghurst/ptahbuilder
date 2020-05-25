@@ -11,25 +11,16 @@ namespace PtahBuilder.TestBuilder
 {
     public static class ExtendedConfig
     {
-        public class SimpleTypeDataGenerator : DataGenerator<SimpleType>
+        public class SimpleTypeOperationProvider : Operation<SimpleType>
         {
-            public SimpleTypeDataGenerator(Logger logger, PathResolver pathResolver, BaseDataMetadataResolver<SimpleType> metadataResolver) : base(logger, pathResolver, metadataResolver)
+            public SimpleTypeOperationProvider(IOperationContext<SimpleType> context) : base(context)
             {
             }
 
-            protected override IEnumerable<IOperation<SimpleType>> GetOperations()
+            [Operate]
+            public void ReverseName()
             {
-                foreach (var operation in base.GetOperations())
-                {
-                    yield return operation;
-                }
-
-                yield return new WrappedOperation<SimpleType>(ReverseName);
-            }
-
-            private void ReverseName(Dictionary<SimpleType, MetadataCollection> entities)
-            {
-                foreach (var entity in entities)
+                foreach (var entity in Entities)
                 {
                     if (entity.Value.ContainsKey("ReverseName"))
                     {
@@ -39,6 +30,8 @@ namespace PtahBuilder.TestBuilder
                     }
                 }
             }
+
+
         }
     }
 }
