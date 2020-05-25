@@ -119,7 +119,7 @@ namespace PtahBuilder.BuildSystem.Helpers
         {
             var generatorBaseType = baseType.MakeGenericType(forType);
 
-            var concreteType = GetLoadedTypesThatAreAssignableTo(generatorBaseType, possibleGenericArgument: forType)
+            var concreteType = GetLoadedTypesThatAreAssignableTo(generatorBaseType, allowedPossibleGenericArgument: forType)
                 .OrderBy(t => t.IsGenericType ? 1 : 0)
                 .FirstOrDefault();
 
@@ -130,7 +130,7 @@ namespace PtahBuilder.BuildSystem.Helpers
         {
             var generatorBaseType = typeof(Operation<>).MakeGenericType(forType);
 
-            return GetLoadedTypesThatAreAssignableTo(generatorBaseType, possibleGenericArgument: forType).ToArray();
+            return GetLoadedTypesThatAreAssignableTo(generatorBaseType).ToArray();
         }
 
         public static IEnumerable<Assembly> GetLoadedAssemblies()
@@ -148,7 +148,7 @@ namespace PtahBuilder.BuildSystem.Helpers
             return GetAllLoadedTypes().FirstOrDefault(t => t.FullName == fullTypeName);
         }
 
-        public static IEnumerable<Type> GetLoadedTypesThatAreAssignableTo(Type type, bool instantiableOnly = true, Type possibleGenericArgument = null)
+        public static IEnumerable<Type> GetLoadedTypesThatAreAssignableTo(Type type, bool instantiableOnly = true, Type allowedPossibleGenericArgument = null)
         {
             return GetAllLoadedTypes().Select(t =>
             {
@@ -158,16 +158,16 @@ namespace PtahBuilder.BuildSystem.Helpers
                     return (true, t);
                 }
 
-                if (t.IsGenericType && possibleGenericArgument != null)
+                if (t.IsGenericType && allowedPossibleGenericArgument != null)
                 {
                     var genericArguments = t.GetGenericArguments();
                     if (genericArguments.Length == 1)
                     {
                         var genericConstraints = genericArguments[0].GetGenericParameterConstraints();
 
-                        if (genericConstraints.Length == 0 || genericConstraints[0].IsAssignableFrom(possibleGenericArgument))
+                        if (genericConstraints.Length == 0 || genericConstraints[0].IsAssignableFrom(allowedPossibleGenericArgument))
                         {
-                            var generic = t.MakeGenericType(possibleGenericArgument);
+                            var generic = t.MakeGenericType(allowedPossibleGenericArgument);
                             if (type.IsAssignableFrom(generic) && (!instantiableOnly || !generic.IsAbstract && !generic.IsInterface))
                             {
                                 return (true, generic);
