@@ -8,7 +8,7 @@ namespace PtahBuilder.BuildSystem.Helpers
     {
         public static bool IsBuildOnly(this MetadataCollection metadata)
         {
-            if (metadata.TryGetValue(MetadataCollection.BuildOnlyKey, out var val) && val.ToLower() == true.ToString().ToLower())
+            if (metadata.TryGetValue(MetadataKeys.BuildOnly, out var val) && val.ToLower() == true.ToString().ToLower())
             {
                 return true;
             }

@@ -141,11 +141,22 @@ namespace PtahBuilder.BuildSystem
             {
                 var secondaryGeneratorTypes = ReflectionHelper.FindSecondaryGeneratorTypes(processedType.Key);
 
-                foreach (var secondaryGeneratorType in secondaryGeneratorTypes)
-                {
-                    var secondaryGenerator = secondaryGeneratorType.GetConstructors().First().Invoke(new[] { Logger, PathResolver, processedType.Value.MetadataResolver, processedType.Value.Output });
+                var secondaryGenerators = secondaryGeneratorTypes.Select(type =>
+                    {
+                        var constructor = type.GetConstructors().First();
+                        dynamic instance = constructor.Invoke(new[] { Logger, PathResolver, processedType.Value.MetadataResolver, processedType.Value.Output });
+                        return new
+                        {
+                            type,
+                            instance
+                        };
+                    })
+                    .OrderBy(g => g.instance.Order)
+                    .ToArray();
 
-                    var methods = secondaryGeneratorType.GetMethodsWithAttribute<GenerateAttribute>();
+                foreach (var secondaryGenerator in secondaryGenerators)
+                {
+                    var methods = secondaryGenerator.type.GetMethodsWithAttribute<GenerateAttribute>();
 
                     foreach (var method in methods)
                     {
@@ -166,9 +177,9 @@ namespace PtahBuilder.BuildSystem
 
                         if (arguments.Count == parameters.Length)
                         {
-                            method.Invoke(secondaryGenerator, arguments.ToArray());
+                            method.Invoke(secondaryGenerator.instance, arguments.ToArray());
 
-                            Logger.LogSection("Additional Generators", -1, $"{secondaryGeneratorType.Name}.{method.Name}");
+                            Logger.LogSection("Additional Generators", -1, $"{secondaryGenerator.type.Name}.{method.Name}");
                         }
                     }
                 }
