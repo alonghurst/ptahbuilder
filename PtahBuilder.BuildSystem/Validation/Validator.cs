@@ -9,6 +9,8 @@ namespace PtahBuilder.BuildSystem.Validation
 {
     public abstract class Validator<T> : Operation<T>
     {
+        public override int Priority => int.MaxValue / 2;
+
         protected Validator(IOperationContext<T> context) : base(context)
         {
         }

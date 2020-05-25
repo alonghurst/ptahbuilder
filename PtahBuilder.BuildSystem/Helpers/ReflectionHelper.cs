@@ -151,32 +151,33 @@ namespace PtahBuilder.BuildSystem.Helpers
         public static IEnumerable<Type> GetLoadedTypesThatAreAssignableTo(Type type, bool instantiableOnly = true, Type allowedPossibleGenericArgument = null)
         {
             return GetAllLoadedTypes().Select(t =>
-            {
-                var name = t.Name;
-                if (type.IsAssignableFrom(t) && (!instantiableOnly || !t.IsAbstract && !t.IsInterface))
                 {
-                    return (true, t);
-                }
-
-                if (t.IsGenericType && allowedPossibleGenericArgument != null)
-                {
-                    var genericArguments = t.GetGenericArguments();
-                    if (genericArguments.Length == 1)
+                    var name = t.Name;
+                    if (type.IsAssignableFrom(t) && (!instantiableOnly || !t.IsAbstract && !t.IsInterface))
                     {
-                        var genericConstraints = genericArguments[0].GetGenericParameterConstraints();
+                        return (true, t);
+                    }
 
-                        if (genericConstraints.Length == 0 || genericConstraints[0].IsAssignableFrom(allowedPossibleGenericArgument))
+                    if (t.IsGenericType && allowedPossibleGenericArgument != null)
+                    {
+                        var genericArguments = t.GetGenericArguments();
+                        if (genericArguments.Length == 1)
                         {
-                            var generic = t.MakeGenericType(allowedPossibleGenericArgument);
-                            if (type.IsAssignableFrom(generic) && (!instantiableOnly || !generic.IsAbstract && !generic.IsInterface))
+                            var genericConstraints = genericArguments[0].GetGenericParameterConstraints();
+
+                            if (genericConstraints.Length == 0 || genericConstraints[0].IsAssignableFrom(allowedPossibleGenericArgument))
                             {
-                                return (true, generic);
+                                var generic = t.MakeGenericType(allowedPossibleGenericArgument);
+                                if (type.IsAssignableFrom(generic) && (!instantiableOnly || !generic.IsAbstract && !generic.IsInterface))
+                                {
+                                    return (true, generic);
+                                }
                             }
                         }
                     }
-                }
-                return (false, t);
-            })
+
+                    return (false, t);
+                })
                 .Where(t => t.Item1)
                 .Select(t => t.Item2);
         }
@@ -196,7 +197,7 @@ namespace PtahBuilder.BuildSystem.Helpers
         public static bool IsEnumerable(this Type type)
         {
             return type.IsGenericType && type.GetGenericTypeDefinition() == typeof(IEnumerable<>)
-            || type.GetInterfaces().Any(t => t.IsGenericType && t.GetGenericTypeDefinition() == typeof(IEnumerable<>));
+                   || type.GetInterfaces().Any(t => t.IsGenericType && t.GetGenericTypeDefinition() == typeof(IEnumerable<>));
         }
 
         public static Type GetTypeOrElementType(this Type type)
@@ -237,6 +238,7 @@ namespace PtahBuilder.BuildSystem.Helpers
         {
             return property.GetCustomAttribute<T>(true);
         }
+
         public static bool HasAttributeOfType<T>(this PropertyInfo property) where T : Attribute
         {
             return property.GetCustomAttribute<T>(true) != null;
@@ -267,6 +269,13 @@ namespace PtahBuilder.BuildSystem.Helpers
             return type.GetMethods()
                 .Where(p => p.GetCustomAttributes(true).Any(a => a is T))
                 .ToArray();
+        }
+
+        public static string NameWithGenericArguments(this Type type)
+        {
+            var generics = type.IsGenericType ? $"<{string.Join(", ", type.GenericTypeArguments.Select(s => s.Name))}>" : "";
+
+            return $"{type.Name}{generics}";
         }
     }
 }
