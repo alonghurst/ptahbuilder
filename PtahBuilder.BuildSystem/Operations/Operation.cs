@@ -1,25 +1,24 @@
 ﻿using System.Collections.Generic;
 using PtahBuilder.BuildSystem.FileManagement;
 using PtahBuilder.BuildSystem.Metadata;
+using PtahBuilder.BuildSystem.Operations;
 
 namespace PtahBuilder.BuildSystem.Generators
 {
     public abstract class Operation<T>
     {
-        public Logger Logger { get; }
-        public PathResolver PathResolver { get; }
-        public Dictionary<T, MetadataCollection> Entities { get; }
-        public BaseDataMetadataResolver<T> MetadataResolver { get; }
+        private readonly IOperationContext<T> _context;
+
+        public Logger Logger => _context.Logger;
+        public PathResolver PathResolver => _context.PathResolver;
+        public Dictionary<T, MetadataCollection> Entities => _context.Entities;
+        public BaseDataMetadataResolver<T> MetadataResolver => _context.MetadataResolver;
 
         public virtual int? Priority { get; }
 
-        public Operation(Logger logger, PathResolver pathResolver, BaseDataMetadataResolver<T> metadataResolver, Dictionary<T, MetadataCollection> entities)
+        public Operation(IOperationContext<T> context)
         {
-            Logger = logger;
-
-            PathResolver = pathResolver;
-            Entities = entities;
-            MetadataResolver = metadataResolver;
+            _context = context;
         }
     }
 }
