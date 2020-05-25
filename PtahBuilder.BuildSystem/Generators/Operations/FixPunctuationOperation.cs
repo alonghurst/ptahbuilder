@@ -11,7 +11,7 @@ namespace PtahBuilder.BuildSystem.Operations
     {
         private readonly string _propertyName;
 
-        public FixPunctuationOperation(string propertyName, Logger logger, PathResolver pathResolver, BaseDataMetadataResolver<T> metadataResolver, Dictionary<T, MetadataCollection> entities) : base(logger, pathResolver, metadataResolver, entities)
+        public FixPunctuationOperation(string propertyName, IOperationContext<T> context) : base(context)
         {
             _propertyName = propertyName;
         }

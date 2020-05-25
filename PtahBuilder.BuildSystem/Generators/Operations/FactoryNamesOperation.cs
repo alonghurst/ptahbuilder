@@ -1,24 +1,19 @@
 ﻿using System.Collections.Generic;
 using PtahBuilder.BuildSystem.FileManagement;
+using PtahBuilder.BuildSystem.Generators;
 using PtahBuilder.BuildSystem.Helpers;
 using PtahBuilder.BuildSystem.Metadata;
 using PtahBuilder.BuildSystem.Syntax;
 
 namespace PtahBuilder.BuildSystem.Operations
 {
-    public class FactoryNamesOperation<T> : IOperation<T>
+    public class FactoryNamesOperation<T> : Operation<T>
     {
-        public Logger Logger { get; }
-        public PathResolver PathResolver { get; }
-        public BaseDataMetadataResolver<T> MetadataResolver { get; }
-
-        public FactoryNamesOperation(Logger logger, PathResolver pathResolver, BaseDataMetadataResolver<T> metadataResolver)
+        public FactoryNamesOperation(IOperationContext<T> context) : base(context)
         {
-            Logger = logger;
-            PathResolver = pathResolver;
-            MetadataResolver = metadataResolver;
         }
 
+        [Operate]
         public Dictionary<T, MetadataCollection> Operate(Dictionary<T, MetadataCollection> entities)
         {
             var toConstants = new InstanceToTypeFactoryNamesFileWriter<T>(Logger, MetadataResolver);
