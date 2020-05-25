@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
 using PtahBuilder.BuildSystem.FileManagement;
 using PtahBuilder.BuildSystem.Metadata;
-using PtahBuilder.BuildSystem.Operations;
 
-namespace PtahBuilder.BuildSystem.Generators
+namespace PtahBuilder.BuildSystem.Generators.Context
 {
     public abstract class WithOperationContext<T>
     {

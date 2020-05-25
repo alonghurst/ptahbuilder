@@ -1,9 +1,8 @@
 ﻿using System.IO;
 using System.Linq;
-using PtahBuilder.BuildSystem.Generators;
-using PtahBuilder.BuildSystem.Operations;
+using PtahBuilder.BuildSystem.Generators.Context;
 
-namespace PtahBuilder.BuildSystem.FileManagement
+namespace PtahBuilder.BuildSystem.Generators.Operations
 {
     public class FileMover<T> : Operation<T>
     {

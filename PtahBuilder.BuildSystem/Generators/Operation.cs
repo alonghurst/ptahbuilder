@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using PtahBuilder.BuildSystem.FileManagement;
+using PtahBuilder.BuildSystem.Generators.Context;
 using PtahBuilder.BuildSystem.Metadata;
-using PtahBuilder.BuildSystem.Operations;
 
 namespace PtahBuilder.BuildSystem.Generators
 {

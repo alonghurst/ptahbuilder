@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Linq;
-using PtahBuilder.BuildSystem.Generators;
+using PtahBuilder.BuildSystem.Generators.Context;
 
-namespace PtahBuilder.BuildSystem.Operations
+namespace PtahBuilder.BuildSystem.Generators.Operations
 {
     public class FixPunctuationOperation<T> : Operation<T> 
     {
