@@ -185,7 +185,7 @@ namespace PtahBuilder.BuildSystem
                     {
                         method.Invoke(operation, arguments.ToArray());
 
-                        Logger.LogSection("Additional Generators", -1, $"{operation.MetadataResolver.EntityTypeName}{operationType.Name}.{method.Name}");
+                        Logger.LogSection("Additional Generators", -1, $"{operation.MetadataResolver.EntityTypeName}:{operationType.NameWithGenericArguments()}.{method.Name}");
                     }
 
                 }

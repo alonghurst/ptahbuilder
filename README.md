@@ -26,7 +26,7 @@ Operations are instantiated with an ILogger, MetadataResolver<T> and a Dictionar
 
 MetaDataResolver<T> have working base classes provided but they can be inherited from per type T if desired. The builder will try to find non-default derrived types in any loaded assemblies and prefer to use them over the provided base classes.
 
-You can inherit from Validator<T> and override the StringPropertiesToValidate method to specify which string properties should be validated as not empty.
+You can inherit from Validator<T> and override the StringPropertiesToValidate method to specify which string properties should be validated as not empty. The Validators have a priority set so they run after most Operations but before the output Operations
 
 When you wish to implement an Operation you have 2 options:
 
