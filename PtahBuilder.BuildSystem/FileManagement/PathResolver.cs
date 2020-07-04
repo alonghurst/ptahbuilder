@@ -79,18 +79,18 @@ namespace PtahBuilder.BuildSystem.FileManagement
         {
             var directory = DataDirectory(directories);
 
-            var fileName= new FileInfo(Path.Combine(directory, fileNameWithoutExtension + ".yml"));
+            var fileName = new FileInfo(Path.Combine(directory, fileNameWithoutExtension + ".yml"));
 
             if (fileName.Exists)
             {
-                return fileName.Name;
+                return fileName.FullName;
             }
 
             fileName = new FileInfo(Path.Combine(directory, fileNameWithoutExtension + ".yaml"));
 
             if (fileName.Exists)
             {
-                return fileName.Name;
+                return fileName.FullName;
             }
 
             return null;
