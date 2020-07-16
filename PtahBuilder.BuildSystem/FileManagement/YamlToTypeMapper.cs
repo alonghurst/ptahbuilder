@@ -345,8 +345,10 @@ namespace PtahBuilder.BuildSystem.FileManagement
                     {
                         var stringyValues = valueNode.Value.Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries);
 
+                        var value = valueNode.Value.Substring(stringyValues[0].Length + 1);
+
                         var keyValue = ConvertScalarValue(type.GetGenericArguments()[0], stringyValues[0].Trim());
-                        var valueValue = ConvertScalarValue(type.GetGenericArguments()[1], stringyValues[1].Trim());
+                        var valueValue = ConvertScalarValue(type.GetGenericArguments()[1], value.Trim());
 
                         yield return Activator.CreateInstance(type, keyValue, valueValue);
                     }
