@@ -74,5 +74,26 @@ namespace PtahBuilder.BuildSystem.FileManagement
 
             return null;
         }
+
+        public string GetYamlFromDataFiles(string[] directories, string fileNameWithoutExtension)
+        {
+            var directory = DataDirectory(directories);
+
+            var fileName = new FileInfo(Path.Combine(directory, fileNameWithoutExtension + ".yml"));
+
+            if (fileName.Exists)
+            {
+                return fileName.FullName;
+            }
+
+            fileName = new FileInfo(Path.Combine(directory, fileNameWithoutExtension + ".yaml"));
+
+            if (fileName.Exists)
+            {
+                return fileName.FullName;
+            }
+
+            return null;
+        }
     }
 }
