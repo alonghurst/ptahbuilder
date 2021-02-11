@@ -13,6 +13,29 @@ namespace PtahBuilder.BuildSystem.FileManagement
             Files = files;
         }
 
+        public string MetaDirectory(params string[] directories)
+        {
+            if (directories == null || directories.Length == 0)
+            {
+                return DataDirectory("Meta");
+            }
+
+            var str = new[] { DataDirectory("Meta") }.Union(directories).ToArray();
+            return Path.Combine(str);
+        }
+
+        public string MetaFile(string fileName, string extension)
+        {
+            var meta = MetaDirectory();
+
+            if (!Directory.Exists(meta))
+            {
+                Directory.CreateDirectory(meta);
+            }
+
+            return Path.Combine(meta, $"{fileName}.{extension}");
+        }
+
         public string DataDirectory(params string[] directories)
         {
             if (directories == null || directories.Length == 0)
