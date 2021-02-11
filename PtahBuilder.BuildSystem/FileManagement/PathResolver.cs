@@ -24,9 +24,9 @@ namespace PtahBuilder.BuildSystem.FileManagement
             return Path.Combine(str);
         }
 
-        public string MetaFile(string directory, string fileName, string extension)
+        public string MetaFile(string fileName, string extension)
         {
-            var meta = MetaDirectory(directory);
+            var meta = MetaDirectory();
 
             if (!Directory.Exists(meta))
             {
