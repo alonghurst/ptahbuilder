@@ -38,7 +38,7 @@ namespace PtahBuilder.BuildSystem.Generators.Operations
                     {
                         for (int i = 0; i < text.Length; i++)
                         {
-                            var description = text[i];
+                            var description = text[i].Trim();
                             if (!description.EndsWith(".") && !description.EndsWith("?") && !description.EndsWith("!"))
                             {
                                 text[i] = $"{description}.";
