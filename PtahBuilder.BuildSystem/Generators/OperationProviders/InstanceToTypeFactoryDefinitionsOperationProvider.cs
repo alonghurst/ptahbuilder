@@ -1,16 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using PtahBuilder.BuildSystem.Generators.Context;
+using PtahBuilder.BuildSystem.Generators.Operations;
 
-namespace PtahBuilder.BuildSystem.Generators.Operations
+namespace PtahBuilder.BuildSystem.Generators.OperationProviders;
+
+public class InstanceToTypeFactoryDefinitionsOperationProvider<T> : OperationProvider<T>
 {
-    public class InstanceToTypeFactoryDefinitionsOperationProvider<T> : OperationProvider<T>
+    protected override Operation<T> FinalOperation()
     {
-        protected virtual Operation<T> FinalOperation()
-        {
-            return new InstanceToTypeFactoryDefinitionsOperation<T>(Context);
-        }
+        return new InstanceToTypeFactoryDefinitionsOperation<T>(Context);
+    }
+
+    public InstanceToTypeFactoryDefinitionsOperationProvider(IOperationContext<T> context) : base(context)
+    {
     }
 }
