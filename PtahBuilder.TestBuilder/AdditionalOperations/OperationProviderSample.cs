@@ -1,12 +1,13 @@
 ﻿using System.Collections.Generic;
 using PtahBuilder.BuildSystem.Generators;
 using PtahBuilder.BuildSystem.Generators.Context;
+using PtahBuilder.BuildSystem.Generators.OperationProviders;
 using PtahBuilder.BuildSystem.Generators.Operations;
 using PtahBuilder.TestBuilder.Types;
 
 namespace PtahBuilder.TestBuilder.AdditionalOperations;
 
-public class OperationProviderSample : OperationProvider<SimpleType>
+public class OperationProviderSample : InstanceToTypeFactoryDefinitionsOperationProvider<SimpleType>
 {
     public OperationProviderSample(IOperationContext<SimpleType> context) : base(context)
     {
