@@ -1,22 +1,21 @@
-﻿namespace PtahBuilder.BuildSystem.Helpers
+﻿namespace PtahBuilder.BuildSystem.Helpers;
+
+public static class StringHelper
 {
-    public static class StringHelper
+    public static string LongestCommonPrefix(string a, string b)
     {
-        public static string LongestCommonPrefix(string a, string b)
+        var result = string.Empty;
+
+        for (int i = 0; i < a.Length && i < b.Length; i++)
         {
-            var result = string.Empty;
-
-            for (int i = 0; i < a.Length && i < b.Length; i++)
+            var c = a[i];
+            if (c != b[i])
             {
-                var c = a[i];
-                if (c != b[i])
-                {
-                    break;
-                }
-                result += c;
+                break;
             }
-
-            return result;
+            result += c;
         }
+
+        return result;
     }
 }

@@ -2,24 +2,23 @@
 using PtahBuilder.BuildSystem.Helpers;
 using PtahBuilder.BuildSystem.Syntax;
 
-namespace PtahBuilder.BuildSystem.Generators.Operations
+namespace PtahBuilder.BuildSystem.Generators.Operations;
+
+public class InstanceToTypeFactoryDefinitionsOperation<T> :Operation<T>
 {
-    public class InstanceToTypeFactoryDefinitionsOperation<T> :Operation<T>
+    public override int Priority => int.MaxValue;
+
+    public InstanceToTypeFactoryDefinitionsOperation(IOperationContext<T> context) : base(context)
     {
-        public override int Priority => int.MaxValue;
+    }
 
-        public InstanceToTypeFactoryDefinitionsOperation(IOperationContext<T> context) : base(context)
-        {
-        }
+    [Operate]
+    public void Operate()
+    {
+        var toSyntax = new InstanceToTypeFactoryDefinitionsFileWriter<T>(Logger, MetadataResolver);
 
-        [Operate]
-        public void Operate()
-        {
-            var toSyntax = new InstanceToTypeFactoryDefinitionsFileWriter<T>(Logger, MetadataResolver);
-
-            toSyntax.Generate(MetadataResolver.AbsoluteNamespaceForOutput,
-                Entities.WhereIsNotBuildOnly(),
-                PathResolver.FactoryOutputFile(MetadataResolver, "Types"));
-        }
+        toSyntax.Generate(MetadataResolver.AbsoluteNamespaceForOutput,
+            Entities.WhereIsNotBuildOnly(),
+            PathResolver.FactoryOutputFile(MetadataResolver, "Types"));
     }
 }

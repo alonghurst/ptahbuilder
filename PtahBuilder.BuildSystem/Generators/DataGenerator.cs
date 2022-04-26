@@ -3,39 +3,38 @@ using System.IO;
 using PtahBuilder.BuildSystem.FileManagement;
 using PtahBuilder.BuildSystem.Metadata;
 
-namespace PtahBuilder.BuildSystem.Generators
+namespace PtahBuilder.BuildSystem.Generators;
+
+public class DataGenerator<T> where T :  new()
 {
-    public class DataGenerator<T> where T :  new()
+    public PathResolver PathResolver { get; }
+    public Logger Logger { get; }
+    public BaseDataMetadataResolver<T> MetadataResolver { get; }
+
+    public DataGenerator(Logger logger, PathResolver pathResolver, BaseDataMetadataResolver<T> metadataResolver)
     {
-        public PathResolver PathResolver { get; }
-        public Logger Logger { get; }
-        public BaseDataMetadataResolver<T> MetadataResolver { get; }
+        Logger = logger;
+        PathResolver = pathResolver;
+        MetadataResolver = metadataResolver;
+    }
 
-        public DataGenerator(Logger logger, PathResolver pathResolver, BaseDataMetadataResolver<T> metadataResolver)
+    public Dictionary<T, MetadataCollection> Generate()
+    {
+        var dataDirectory = Path.GetFullPath(PathResolver.DataDirectory(MetadataResolver.DataDirectoryToOperateIn));
+        if (!Directory.Exists(dataDirectory))
         {
-            Logger = logger;
-            PathResolver = pathResolver;
-            MetadataResolver = metadataResolver;
+            Logger.Warning($"Unable to find directory {dataDirectory}");
+            return new Dictionary<T, MetadataCollection>();
         }
 
-        public Dictionary<T, MetadataCollection> Generate()
-        {
-            var dataDirectory = Path.GetFullPath(PathResolver.DataDirectory(MetadataResolver.DataDirectoryToOperateIn));
-            if (!Directory.Exists(dataDirectory))
-            {
-                Logger.Warning($"Unable to find directory {dataDirectory}");
-                return new Dictionary<T, MetadataCollection>();
-            }
+        var tidier = new FileTidier();
+        tidier.ParseDirectory(dataDirectory);
 
-            var tidier = new FileTidier();
-            tidier.ParseDirectory(dataDirectory);
+        Logger.Info($"Parsing {MetadataResolver.EntityTypeName} data");
 
-            Logger.Info($"Parsing {MetadataResolver.EntityTypeName} data");
+        var yaml = new YamlToBaseDataMapper<T>(Logger, MetadataResolver);
+        yaml.ParseDirectory(dataDirectory);
 
-            var yaml = new YamlToBaseDataMapper<T>(Logger, MetadataResolver);
-            yaml.ParseDirectory(dataDirectory);
-
-            return yaml.ParsedEntitiesMetadata;
-        }
+        return yaml.ParsedEntitiesMetadata;
     }
 }
