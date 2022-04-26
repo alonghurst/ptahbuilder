@@ -2,105 +2,104 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using BlueprintTech.CodeGeneration;
+using PtahBuilder.CodeGeneration;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using PtahBuilder.BuildSystem.Metadata;
 
-namespace PtahBuilder.BuildSystem.Syntax
+namespace PtahBuilder.BuildSystem.Syntax;
+
+public abstract class InstanceToTypeFactoryBase<T>
 {
-    public abstract class InstanceToTypeFactoryBase<T>
+    public InstanceToTypeFactoryBase(Logger logger, BaseDataMetadataResolver<T> metadataResolver)
     {
-        public InstanceToTypeFactoryBase(Logger logger, BaseDataMetadataResolver<T> metadataResolver)
+        Logger = logger;
+        Mapper = new InstanceToSyntaxMapper(Logger);
+        MetadataResolver = metadataResolver;
+    }
+
+    public Logger Logger { get; }
+    public InstanceToSyntaxMapper Mapper { get; }
+    public BaseDataMetadataResolver<T> MetadataResolver { get; }
+
+    public void Generate(string definedInNamespace, IEnumerable<T> instances, string file)
+    {
+        var instancesAr = instances.ToArray();
+
+        var member = new[]
         {
-            Logger = logger;
-            Mapper = new InstanceToSyntaxMapper(Logger);
-            MetadataResolver = metadataResolver;
-        }
-
-        public Logger Logger { get; }
-        public InstanceToSyntaxMapper Mapper { get; }
-        public BaseDataMetadataResolver<T> MetadataResolver { get; }
-
-        public void Generate(string definedInNamespace, IEnumerable<T> instances, string file)
-        {
-            var instancesAr = instances.ToArray();
-
-            var member = new[]
-            {
-                   Constructs.Class(MetadataResolver.DataDirectoryToOperateIn, new[]
-                   {
-                       SyntaxKind.PublicKeyword,
-                       SyntaxKind.StaticKeyword,
-                       SyntaxKind.PartialKeyword
-                   },
-                   () => SyntaxFactory.List(SubClass(instancesAr))
-                   )
-            };
-
-            var namespaces = instancesAr.Select(i => i.GetType().Namespace)
-                .Union(Mapper.FoundTypes.SelectMany(ExtractNamespaces))
-                .Except(new[] { "System" })
-                .Distinct();
-
-            var codeFile = new CodeFile
-            {
-                DefinedInNamespace = definedInNamespace,
-                UsingNamespaces = namespaces,
-                ClassName = "Factory",
-                AccessModifiers = new[]
+            Constructs.Class(MetadataResolver.DataDirectoryToOperateIn, new[]
                 {
                     SyntaxKind.PublicKeyword,
                     SyntaxKind.StaticKeyword,
                     SyntaxKind.PartialKeyword
                 },
-                Members = () => member
-            };
+                () => SyntaxFactory.List(SubClass(instancesAr))
+            )
+        };
 
-            File.WriteAllText(file, codeFile.Definition());
-        }
+        var namespaces = instancesAr.Select(i => i.GetType().Namespace)
+            .Union(Mapper.FoundTypes.SelectMany(ExtractNamespaces))
+            .Except(new[] { "System" })
+            .Distinct();
 
-        private IEnumerable<string> ExtractNamespaces(Type type)
+        var codeFile = new CodeFile
         {
-            if (type.Namespace != null)
+            DefinedInNamespace = definedInNamespace,
+            UsingNamespaces = namespaces,
+            ClassName = "Factory",
+            AccessModifiers = new[]
             {
-                yield return type.Namespace;
-            }
-            if (type.IsGenericType)
+                SyntaxKind.PublicKeyword,
+                SyntaxKind.StaticKeyword,
+                SyntaxKind.PartialKeyword
+            },
+            Members = () => member
+        };
+
+        File.WriteAllText(file, codeFile.Definition());
+    }
+
+    private IEnumerable<string> ExtractNamespaces(Type type)
+    {
+        if (type.Namespace != null)
+        {
+            yield return type.Namespace;
+        }
+        if (type.IsGenericType)
+        {
+            foreach (var genericArgument in type.GetGenericArguments())
             {
-                foreach (var genericArgument in type.GetGenericArguments())
-                {
-                    var namespaces = ExtractNamespaces(genericArgument);
-                    foreach (var ns in namespaces)
-                    {
-                        yield return ns;
-                    }
-                }
-            }
-            foreach (var property in type.GetProperties())
-            {
-                var namespaces = ExtractNamespaces(property.PropertyType);
+                var namespaces = ExtractNamespaces(genericArgument);
                 foreach (var ns in namespaces)
                 {
                     yield return ns;
                 }
             }
         }
-
-        protected abstract string SubClassName { get; }
-
-        private IEnumerable<MemberDeclarationSyntax> SubClass(T[] instancesAr)
+        foreach (var property in type.GetProperties())
         {
-            yield return Constructs.Class(SubClassName, new[]
-                {
-                    SyntaxKind.PublicKeyword,
-                    SyntaxKind.StaticKeyword,
-                    SyntaxKind.PartialKeyword
-                },
-                () => SyntaxFactory.List(Members(instancesAr))
-            );
+            var namespaces = ExtractNamespaces(property.PropertyType);
+            foreach (var ns in namespaces)
+            {
+                yield return ns;
+            }
         }
-
-        protected abstract IEnumerable<MemberDeclarationSyntax> Members(T[] instancesAr);
     }
+
+    protected abstract string SubClassName { get; }
+
+    private IEnumerable<MemberDeclarationSyntax> SubClass(T[] instancesAr)
+    {
+        yield return Constructs.Class(SubClassName, new[]
+            {
+                SyntaxKind.PublicKeyword,
+                SyntaxKind.StaticKeyword,
+                SyntaxKind.PartialKeyword
+            },
+            () => SyntaxFactory.List(Members(instancesAr))
+        );
+    }
+
+    protected abstract IEnumerable<MemberDeclarationSyntax> Members(T[] instancesAr);
 }

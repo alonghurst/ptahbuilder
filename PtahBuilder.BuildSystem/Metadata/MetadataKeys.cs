@@ -1,11 +1,10 @@
-﻿namespace PtahBuilder.BuildSystem.Metadata
+﻿namespace PtahBuilder.BuildSystem.Metadata;
+
+public static  class MetadataKeys
 {
-    public static  class MetadataKeys
-    {
-        public const string BuildOnly = "IsBuildOnly";
+    public const string BuildOnly = "IsBuildOnly";
 
-        public const string SourceFile = "SourceFile";
+    public const string SourceFile = "SourceFile";
 
-        public const string BasedOn = "BasedOn";
-    }
+    public const string BasedOn = "BasedOn";
 }

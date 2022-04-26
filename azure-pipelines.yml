@@ -1,101 +1,94 @@
 trigger:
- paths:
-   exclude:
-     - README.md
-     - .gitignore
+  paths:
+    exclude:
+      - README.md
+      - .gitignore
 
 pr: none
 
 pool:
-  vmImage: 'ubuntu-latest'
+  vmImage: "ubuntu-latest"
 
 continueOnError: false
 
 variables:
- projects: '**/*.BuildSystem.csproj'
- testBuilder: '**/*.TestBuilder.csproj'
- buildConfiguration: 'Release'
- packageVersionRelease: '$(Build.BuildNumber)'
- packageVersionPreRelease: '$(Build.BuildNumber)-alpha'
+  projects: "**/*.csproj"
+  testBuilder: "**/*.TestBuilder.csproj"
+  buildConfiguration: "Release"
+  packageVersionRelease: "$(Build.BuildNumber)"
+  packageVersionPreRelease: "$(Build.BuildNumber)-alpha"
 
 steps:
-- task: UseDotNet@2
-  displayName: 'Install .NET Core sdk'
-  inputs:
-    packageType: sdk
-    version: 3.1.100
-    installationPath: $(Agent.ToolsDirectory)/dotnet
+  - task: DotNetCoreCLI@2
+    displayName: "Restore all projects"
+    inputs:
+      command: "restore"
+      projects: "$(projects)"
 
-- task: DotNetCoreCLI@2
-  displayName: 'Restore all projects'
-  inputs:
-    command: 'restore'
-    projects: '$(projects)'
+  - task: DotNetCoreCLI@2
+    displayName: "Build all projects"
+    inputs:
+      command: "build"
+      projects: "$(projects)"
+      arguments: "--configuration $(buildConfiguration) --no-restore"
 
-- task: DotNetCoreCLI@2
-  displayName: 'Build all projects'
-  inputs:
-    command: 'build'
-    projects: '$(projects)'
-    arguments: '--configuration $(buildConfiguration) --no-restore'
+  - task: CmdLine@2
+    displayName: "Build test builder"
+    inputs:
+      command: "build"
+      projects: "$(testBuilder)"
+      arguments: "--configuration $(buildConfiguration) --no-restore"
 
-- task: CmdLine@2
-  displayName: 'Build test builder'
-  inputs:
-    command: 'build'
-    projects: '$(testBuilder)'
-    arguments: '--configuration $(buildConfiguration) --no-restore'
+  - task: CmdLine@2
+    displayName: "Run builder"
+    inputs:
+      script: "dotnet run -c '$(buildConfiguration)' -- ."
+      workingDirectory: "$(System.DefaultWorkingDirectory)/PtahBuilder.TestBuilder/"
+      failOnStderr: true
 
-- task: CmdLine@2
-  displayName: 'Run builder'
-  inputs:
-    script: 'dotnet run -c ''$(buildConfiguration)'' -- .'
-    workingDirectory: '$(System.DefaultWorkingDirectory)/PtahBuilder.TestBuilder/'
-    failOnStderr: true    
+  - task: CmdLine@2
+    displayName: "Rebuild test builder to verify"
+    inputs:
+      command: "build"
+      projects: "$(testBuilder)"
+      arguments: "--configuration $(buildConfiguration) --no-restore"
 
-- task: CmdLine@2
-  displayName: 'Rebuild test builder to verify'
-  inputs:
-    command: 'build'
-    projects: '$(testBuilder)'
-    arguments: '--configuration $(buildConfiguration) --no-restore'
+  - task: DotNetCoreCLI@2
+    displayName: "Publish Dotnet"
+    condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
+    inputs:
+      command: "publish"
+      publishWebProjects: false
+      zipAfterPublish: false
+      projects: |
+        $(projects)
+      arguments: "--configuration $(buildConfiguration) --no-restore --output $(stagingDirectory)"
 
-- task: DotNetCoreCLI@2
-  displayName: 'Publish Dotnet'
-  condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
-  inputs:
-    command: 'publish'
-    publishWebProjects: false
-    zipAfterPublish: false
-    projects:  |
-      $(projects)
-    arguments: '--configuration $(buildConfiguration) --no-restore --output $(stagingDirectory)'
+  - task: DotNetCoreCLI@2
+    displayName: "Pack pre-release"
+    condition: ne(variables['Build.SourceBranch'], 'refs/heads/master')
+    inputs:
+      command: "pack"
+      packagesToPack: "$(projects)"
+      packDirectory: "$(Build.ArtifactStagingDirectory)"
+      nobuild: true
+      versioningScheme: "byEnvVar"
+      versionEnvVar: "packageVersionPreRelease"
 
-- task: DotNetCoreCLI@2
-  displayName: 'Pack pre-release'
-  condition: ne(variables['Build.SourceBranch'], 'refs/heads/master')
-  inputs:
-    command: 'pack'
-    packagesToPack: '$(projects)'
-    packDirectory: '$(Build.ArtifactStagingDirectory)'
-    nobuild: true
-    versioningScheme: 'byEnvVar'
-    versionEnvVar: 'packageVersionPreRelease'
+  - task: DotNetCoreCLI@2
+    displayName: "Pack release"
+    condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
+    inputs:
+      command: "pack"
+      packagesToPack: "$(projects)"
+      packDirectory: "$(Build.ArtifactStagingDirectory)"
+      nobuild: true
+      versioningScheme: "byEnvVar"
+      versionEnvVar: "packageVersionRelease"
 
-- task: DotNetCoreCLI@2
-  displayName: 'Pack release'
-  condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
-  inputs:
-    command: 'pack'
-    packagesToPack: '$(projects)'
-    packDirectory: '$(Build.ArtifactStagingDirectory)'
-    nobuild: true
-    versioningScheme: 'byEnvVar'
-    versionEnvVar: 'packageVersionRelease'
-
-- task: PublishBuildArtifacts@1
-  displayName: 'Publish artifacts'
-  inputs:
-    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-    ArtifactName: 'PtahBuilder-drop'
-    publishLocation: 'Container'
+  - task: PublishBuildArtifacts@1
+    displayName: "Publish artifacts"
+    inputs:
+      PathtoPublish: "$(Build.ArtifactStagingDirectory)"
+      ArtifactName: "PtahBuilder-drop"
+      publishLocation: "Container"

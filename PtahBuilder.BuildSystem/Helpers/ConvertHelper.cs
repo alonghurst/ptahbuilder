@@ -1,14 +1,13 @@
-﻿namespace PtahBuilder.BuildSystem.Helpers
+﻿namespace PtahBuilder.BuildSystem.Helpers;
+
+public static class ConvertHelper
 {
-    public static class ConvertHelper
+    public static double StringToDouble(object input)
     {
-        public static double StringToDouble(object input)
+        if (double.TryParse(input.ToString(), out double d))
         {
-            if (double.TryParse(input.ToString(), out double d))
-            {
-                return d;
-            }
-            return 0;
+            return d;
         }
+        return 0;
     }
 }
