@@ -61,7 +61,7 @@ public class PathResolver
             Directory.CreateDirectory(directoryPath);
         }
 
-        return Path.Combine(directoryPath, fileName + fileName);
+        return Path.Combine(directoryPath, fileName + extension);
     }
 
     public string OutputCodeFile(string directory, string fileName)
