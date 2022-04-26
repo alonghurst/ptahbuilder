@@ -11,7 +11,7 @@ public static class MinimalConfig
     {
         public static string ForcedRoot { get; set; }
         public string Root => ForcedRoot ?? "../../..";
-        public string OutputForCode => Path.Combine(Root, "Output");
+        public string Output => Path.Combine(Root, "Output");
     }
 
     public class MetadataResolver<T> : BaseDataMetadataResolver<T> where T : BaseTypeData
