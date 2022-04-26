@@ -5,7 +5,7 @@ using PtahBuilder.BuildSystem.Generators.Operations;
 
 namespace PtahBuilder.BuildSystem.Generators;
 
-public class OperationProvider<T> : WithOperationContext<T>
+public abstract class OperationProvider<T> : WithOperationContext<T>
 {
     public OperationProvider(IOperationContext<T> context) : base(context)
     {
@@ -22,9 +22,11 @@ public class OperationProvider<T> : WithOperationContext<T>
             yield return operation;
         }
 
-        yield return new InstanceToTypeFactoryDefinitionsOperation<T>(Context);
+        yield return FinalOperation();
     }
 
+    protected abstract Operation<T> FinalOperation();
+    
     protected virtual IEnumerable<Operation<T>> GetOperations()
     {
         yield break;

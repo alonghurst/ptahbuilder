@@ -3,5 +3,5 @@
 public interface IFiles
 {
     string Root { get; }
-    string OutputForCode { get; }
+    string Output { get; }
 }
