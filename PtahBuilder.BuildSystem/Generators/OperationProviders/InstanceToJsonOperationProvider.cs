@@ -1,16 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using PtahBuilder.BuildSystem.Generators.Context;
+using PtahBuilder.BuildSystem.Generators.Operations;
 
-namespace PtahBuilder.BuildSystem.Generators.Operations
+namespace PtahBuilder.BuildSystem.Generators.OperationProviders;
+
+public class InstanceToJsonOperationProvider<T> : OperationProvider<T>
 {
-    public class InstanceToJsonOperationProvider<T> : OperationProvider<T>
+    protected override Operation<T> FinalOperation()
     {
-        protected virtual Operation<T> FinalOperation()
-        {
-            return new InstanceToJsonOperation<T>(Context);
-        }
+        return new InstanceToJsonProvider<T>(Context);
+    }
+
+    public InstanceToJsonOperationProvider(IOperationContext<T> context) : base(context)
+    {
     }
 }
