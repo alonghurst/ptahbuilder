@@ -1,12 +1,11 @@
 ﻿using System;
 
-namespace PtahBuilder.BuildSystem.Exceptions
+namespace PtahBuilder.BuildSystem.Exceptions;
+
+public class BuilderException : Exception
 {
-    public class BuilderException : Exception
-    {
-        public BuilderException(string message, Exception innerException)
+    public BuilderException(string message, Exception innerException)
         : base(message, innerException)
-        {
-        }
+    {
     }
 }

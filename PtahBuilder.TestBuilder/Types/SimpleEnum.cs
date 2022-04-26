@@ -1,10 +1,9 @@
-﻿namespace PtahBuilder.TestBuilder.Types
+﻿namespace PtahBuilder.TestBuilder.Types;
+
+public enum SimpleEnum
 {
-    public enum SimpleEnum
-    {
-        Alpha,
-        Bravo,
-        Charlie,
-        Delta
-    }
+    Alpha,
+    Bravo,
+    Charlie,
+    Delta
 }
