@@ -52,9 +52,21 @@ public class PathResolver
         return Path.Combine(DataDirectory(directory), fileName + ".yaml");
     }
 
-    public string OutputFile(string directory, string fileName)
+    public string OutputFile(string fileName, string extension)
     {
-        var directoryPath = Path.Combine(Files.OutputForCode, directory);
+        var directoryPath = Files.Output;
+
+        if (!Directory.Exists(directoryPath))
+        {
+            Directory.CreateDirectory(directoryPath);
+        }
+
+        return Path.Combine(directoryPath, fileName + fileName);
+    }
+
+    public string OutputCodeFile(string directory, string fileName)
+    {
+        var directoryPath = Path.Combine(Files.Output, directory);
 
         if (!Directory.Exists(directoryPath))
         {
@@ -66,7 +78,7 @@ public class PathResolver
 
     public string FactoryOutputFile<T>(BaseDataMetadataResolver<T> metadataResolver, string fileType)
     {
-        return OutputFile("Factories", $"Factory.{metadataResolver.DataDirectoryToOperateIn}.{fileType}");
+        return OutputCodeFile("Factories", $"Factory.{metadataResolver.DataDirectoryToOperateIn}.{fileType}");
     }
 
     public string FindDataFile(string inFolder, string typeName)
