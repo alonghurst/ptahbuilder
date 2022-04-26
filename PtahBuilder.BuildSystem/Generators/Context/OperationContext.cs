@@ -2,22 +2,21 @@
 using PtahBuilder.BuildSystem.FileManagement;
 using PtahBuilder.BuildSystem.Metadata;
 
-namespace PtahBuilder.BuildSystem.Generators.Context
+namespace PtahBuilder.BuildSystem.Generators.Context;
+
+public class OperationContext<T> : IOperationContext<T>
 {
-    public class OperationContext<T> : IOperationContext<T>
+    public Logger Logger { get; }
+    public PathResolver PathResolver { get; }
+    public Dictionary<T, MetadataCollection> Entities { get; }
+    public BaseDataMetadataResolver<T> MetadataResolver { get; }
+
+    public OperationContext(Logger logger, PathResolver pathResolver, BaseDataMetadataResolver<T> metadataResolver, Dictionary<T, MetadataCollection> entities)
     {
-        public Logger Logger { get; }
-        public PathResolver PathResolver { get; }
-        public Dictionary<T, MetadataCollection> Entities { get; }
-        public BaseDataMetadataResolver<T> MetadataResolver { get; }
+        Logger = logger;
 
-        public OperationContext(Logger logger, PathResolver pathResolver, BaseDataMetadataResolver<T> metadataResolver, Dictionary<T, MetadataCollection> entities)
-        {
-            Logger = logger;
-
-            PathResolver = pathResolver;
-            Entities = entities;
-            MetadataResolver = metadataResolver;
-        }
+        PathResolver = pathResolver;
+        Entities = entities;
+        MetadataResolver = metadataResolver;
     }
 }

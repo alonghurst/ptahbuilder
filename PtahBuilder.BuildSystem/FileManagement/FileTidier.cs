@@ -1,31 +1,30 @@
 ﻿using System.IO;
 
-namespace PtahBuilder.BuildSystem.FileManagement
+namespace PtahBuilder.BuildSystem.FileManagement;
+
+public class FileTidier : DirectoryParser
 {
-    public class FileTidier : DirectoryParser
+    protected override string FileFilter => "*.yaml";
+
+    protected override void ParseFile(string file)
     {
-        protected override string FileFilter => "*.yaml";
+        var text = File.ReadAllLines(file);
 
-        protected override void ParseFile(string file)
+        var changed = false;
+
+        for (int i = 0; i < text.Length; i++)
         {
-            var text = File.ReadAllLines(file);
-
-            var changed = false;
-
-            for (int i = 0; i < text.Length; i++)
+            var newLine = text[i].TrimEnd();
+            if (newLine != text[i])
             {
-                var newLine = text[i].TrimEnd();
-                if (newLine != text[i])
-                {
-                    text[i] = newLine;
-                    changed = true;
-                }
+                text[i] = newLine;
+                changed = true;
             }
+        }
 
-            if (changed)
-            {
-                File.WriteAllLines(file, text);
-            }
+        if (changed)
+        {
+            File.WriteAllLines(file, text);
         }
     }
 }

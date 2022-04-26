@@ -1,8 +1,7 @@
-﻿namespace PtahBuilder.BuildSystem.FileManagement
+﻿namespace PtahBuilder.BuildSystem.FileManagement;
+
+public interface IFiles
 {
-    public interface IFiles
-    {
-        string Root { get; }
-        string OutputForCode { get; }
-    }
+    string Root { get; }
+    string OutputForCode { get; }
 }
