@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace PtahBuilder.BuildSystem.Exceptions;
+﻿namespace PtahBuilder.BuildSystem.Exceptions;
 
 public class BuilderException : Exception
 {

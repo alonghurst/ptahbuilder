@@ -1,7 +1,6 @@
 ﻿using System.Text.Json;
 using PtahBuilder.BuildSystem.Generators.Context;
 using PtahBuilder.BuildSystem.Helpers;
-using PtahBuilder.BuildSystem.Syntax;
 
 namespace PtahBuilder.BuildSystem.Generators.Operations;
 

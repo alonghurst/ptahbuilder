@@ -1,6 +1,4 @@
-﻿using System.IO;
-
-namespace PtahBuilder.BuildSystem.FileManagement;
+﻿namespace PtahBuilder.BuildSystem.FileManagement;
 
 public class FileTidier : DirectoryParser
 {
