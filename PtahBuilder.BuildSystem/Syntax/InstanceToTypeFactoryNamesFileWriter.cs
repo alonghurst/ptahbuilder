@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using PtahBuilder.CodeGeneration;
+﻿using PtahBuilder.CodeGeneration;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using PtahBuilder.BuildSystem.Metadata;

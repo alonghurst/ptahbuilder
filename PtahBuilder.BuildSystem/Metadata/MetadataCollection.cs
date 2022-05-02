@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace PtahBuilder.BuildSystem.Metadata;
+﻿namespace PtahBuilder.BuildSystem.Metadata;
 
 public class MetadataCollection : Dictionary<string, string>
 {

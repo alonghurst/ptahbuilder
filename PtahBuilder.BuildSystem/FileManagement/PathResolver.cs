@@ -1,6 +1,4 @@
-﻿using System.IO;
-using System.Linq;
-using PtahBuilder.BuildSystem.Metadata;
+﻿using PtahBuilder.BuildSystem.Metadata;
 
 namespace PtahBuilder.BuildSystem.FileManagement;
 
