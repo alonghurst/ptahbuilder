@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using Humanizer;
+﻿using Humanizer;
 using PtahBuilder.BuildSystem.Generators;
 using PtahBuilder.BuildSystem.Generators.Context;
 using PtahBuilder.BuildSystem.Generators.Operations;
