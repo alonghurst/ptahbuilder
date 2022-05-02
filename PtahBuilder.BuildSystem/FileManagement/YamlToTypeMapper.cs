@@ -284,7 +284,7 @@ public abstract class YamlToTypeMapper<T> : DirectoryParser where T : new()
             // If the target property is an array but a scalar value was passed then simple wrap the result in array
             var arrValue = Array.CreateInstance(elementType ?? throw new InvalidOperationException(), 1);
             // ReSharper disable once RedundantCast
-            ((dynamic)arrValue)[0] = (dynamic)value;
+            ((dynamic)arrValue)[0] = (dynamic)ConvertScalarValue(elementType, value);
 
             value = arrValue;
         }
