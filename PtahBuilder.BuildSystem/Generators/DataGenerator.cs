@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.IO;
-using PtahBuilder.BuildSystem.FileManagement;
+﻿using PtahBuilder.BuildSystem.FileManagement;
 using PtahBuilder.BuildSystem.Metadata;
 
 namespace PtahBuilder.BuildSystem.Generators;

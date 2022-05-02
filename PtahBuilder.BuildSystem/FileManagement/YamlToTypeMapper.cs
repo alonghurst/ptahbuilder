@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Reflection;
+﻿using System.Reflection;
 using PtahBuilder.BuildSystem.Exceptions;
 using PtahBuilder.BuildSystem.Helpers;
 using PtahBuilder.BuildSystem.Metadata;

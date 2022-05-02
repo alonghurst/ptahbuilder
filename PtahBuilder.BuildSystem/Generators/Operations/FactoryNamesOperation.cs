@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using PtahBuilder.BuildSystem.Generators.Context;
+﻿using PtahBuilder.BuildSystem.Generators.Context;
 using PtahBuilder.BuildSystem.Helpers;
 using PtahBuilder.BuildSystem.Metadata;
 using PtahBuilder.BuildSystem.Syntax;

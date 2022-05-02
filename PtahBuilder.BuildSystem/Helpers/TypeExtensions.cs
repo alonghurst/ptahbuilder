@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace PtahBuilder.BuildSystem.Helpers;
+﻿namespace PtahBuilder.BuildSystem.Helpers;
 
 public static class ReflectionExtensions
 {
