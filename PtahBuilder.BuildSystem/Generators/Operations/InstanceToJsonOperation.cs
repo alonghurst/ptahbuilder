@@ -6,7 +6,13 @@ namespace PtahBuilder.BuildSystem.Generators.Operations;
 
 public class InstanceToJsonProvider<T> : Operation<T>
 {
+    private readonly JsonSerializerOptions _options = new JsonSerializerOptions()
+    {
+        PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+    }; 
+    
     public override int Priority => int.MaxValue;
+
 
     public InstanceToJsonProvider(IOperationContext<T> context) : base(context)
     {
@@ -19,7 +25,7 @@ public class InstanceToJsonProvider<T> : Operation<T>
 
         var entities = Entities.WhereIsNotBuildOnly();
 
-        var json = JsonSerializer.Serialize(entities.ToArray());
+        var json = JsonSerializer.Serialize(entities.ToArray(), _options);
 
         File.WriteAllText(path, json);
     }
