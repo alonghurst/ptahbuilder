@@ -217,7 +217,7 @@ public abstract class YamlToTypeMapper<T> : DirectoryParser where T : new()
             }
             else
             {
-                throw new NotImplementedException();
+                throw new NotImplementedException($"Unable to parse yaml \"{yamlNode.ToString()}\" for property \"{property.Name}\"");
             }
         }
         else if (yamlNode is YamlMappingNode mappingNode)
