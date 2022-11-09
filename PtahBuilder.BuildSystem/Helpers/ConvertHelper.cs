@@ -10,4 +10,13 @@ public static class ConvertHelper
         }
         return 0;
     }
+
+    public static float StringToFloat(object input)
+    {
+        if (float.TryParse(input.ToString(), out float d))
+        {
+            return d;
+        }
+        return 0;
+    }
 }

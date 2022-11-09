@@ -11,6 +11,7 @@ public class Logger
 {
     private readonly List<string> _warnings = new List<string>();
     private readonly List<string> _infos = new List<string>();
+    private readonly List<string> _errors = new List<string>();
     private readonly Dictionary<string, Section> _sections = new Dictionary<string, Section>();
     private readonly Dictionary<string, object[]> _contents = new Dictionary<string, object[]>();
     private class Section
@@ -52,10 +53,22 @@ public class Logger
         }
     }
 
+    public void Error(string error)
+    {
+        _errors.Add(error);
+        var col = Console.ForegroundColor;
+        Console.ForegroundColor = ConsoleColor.Red;
+        Console.WriteLine(error);
+        Console.ForegroundColor = col;
+    }
+
     public void Warning(string warning)
     {
         _warnings.Add(warning);
+        var col = Console.ForegroundColor;
+        Console.ForegroundColor = ConsoleColor.Yellow;
         Console.WriteLine(warning);
+        Console.ForegroundColor = col;
     }
 
     public void Info(string info)
@@ -77,6 +90,8 @@ public class Logger
                     h1.Write($"Build Report {DateTime.Now.ToString(CultureInfo.InvariantCulture)}");
                 }
 
+                LiWithHeader(sb, "Errors", _errors);
+                
                 LiWithHeader(sb, "Warnings", _warnings);
 
                 foreach (var content in _contents)

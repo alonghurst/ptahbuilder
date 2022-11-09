@@ -105,7 +105,15 @@ public abstract class YamlToTypeMapper<T> : DirectoryParser where T : new()
                 var property = FindProperty(type, key);
                 if (property != null)
                 {
-                    SetValueFromYamlNode(entity, property, entry.Value);
+                    try
+                    {
+                        SetValueFromYamlNode(entity, property, entry.Value);
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.Error($"Error mapping on {property.Name} value {entry.Value}");
+                        throw;
+                    }
                 }
             }
         }
@@ -274,6 +282,7 @@ public abstract class YamlToTypeMapper<T> : DirectoryParser where T : new()
         value = type.LazyConvertForType(value, Convert.ToBoolean);
         value = type.LazyConvertForType(value, Convert.ToInt32);
         value = type.LazyConvertForType(value, ConvertHelper.StringToDouble);
+        value = type.LazyConvertForType(value, ConvertHelper.StringToFloat);
         value = type.LazyConvertForType(value, LazyTimeSpan);
         value = type.LazyConvertEnumForProperty(value);
 
