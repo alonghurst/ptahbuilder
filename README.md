@@ -2,6 +2,8 @@
 
 [![Build Status](https://goatstruck.visualstudio.com/PtahBuilder/_apis/build/status/alonghurst.ptahbuilder?branchName=master)](https://goatstruck.visualstudio.com/PtahBuilder/_build/latest?definitionId=5&branchName=master)
 
+https://www.nuget.org/packages/PtahBuilder.BuildSystem
+
 # Overview
 
 Instantiate a DataGeneratorFactory with a target list of types to generate data instances for and a path to a folder containing data files. The DataGeneratorFactory will process these files into type instances which can be inspected and modified in C# before being written to various other generators.
