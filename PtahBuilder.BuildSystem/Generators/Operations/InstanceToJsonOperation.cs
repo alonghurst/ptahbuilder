@@ -4,29 +4,37 @@ using PtahBuilder.BuildSystem.Helpers;
 
 namespace PtahBuilder.BuildSystem.Generators.Operations;
 
-public class InstanceToJsonProvider<T> : Operation<T>
+public class InstanceToJsonOperation<T> : Operation<T>
 {
     private readonly JsonSerializerOptions _options = new JsonSerializerOptions()
     {
         PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-    }; 
-    
+    };
+
     public override int Priority => int.MaxValue;
 
 
-    public InstanceToJsonProvider(IOperationContext<T> context) : base(context)
+    public InstanceToJsonOperation(IOperationContext<T> context) : base(context)
     {
     }
 
     [Operate]
     public void Operate()
     {
-        var path = PathResolver.OutputFile(MetadataResolver.EntityTypeName, ".json");
+        var directory = PathResolver.OutputDirectory(MetadataResolver.EntityShortName);
 
-        var entities = Entities.WhereIsNotBuildOnly();
+        if (!Directory.Exists(directory))
+        {
+            Directory.CreateDirectory(directory);
+        }
 
-        var json = JsonSerializer.Serialize(entities.ToArray(), _options);
+        foreach (var entity in Entities.WhereIsNotBuildOnly())
+        {
+            var path = Path.Combine(directory, $"{MetadataResolver.GetEntityId(entity)}.json");
 
-        File.WriteAllText(path, json);
+            var json = JsonSerializer.Serialize(entity, _options);
+
+            File.WriteAllText(path, json);
+        }
     }
 }
