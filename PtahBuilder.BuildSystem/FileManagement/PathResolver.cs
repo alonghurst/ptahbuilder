@@ -50,6 +50,18 @@ public class PathResolver
         return Path.Combine(DataDirectory(directory), fileName + ".yaml");
     }
 
+    public string OutputDirectory(string directoryName)
+    {
+        var directoryPath = Files.Output;
+
+        if (!Directory.Exists(directoryPath))
+        {
+            Directory.CreateDirectory(directoryPath);
+        }
+
+        return Path.Combine(directoryPath, directoryName);
+    }
+
     public string OutputFile(string fileName, string extension)
     {
         var directoryPath = Files.Output;

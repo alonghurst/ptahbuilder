@@ -3,14 +3,14 @@ using PtahBuilder.BuildSystem.Generators.Operations;
 
 namespace PtahBuilder.BuildSystem.Generators.OperationProviders;
 
-public class InstanceToJsonOperationProvider<T> : OperationProvider<T>
+public class InstanceToJsonArrayOperationProvider<T> : OperationProvider<T>
 {
     protected override Operation<T> FinalOperation()
     {
         return new InstanceToJsonOperation<T>(Context);
     }
 
-    public InstanceToJsonOperationProvider(IOperationContext<T> context) : base(context)
+    public InstanceToJsonArrayOperationProvider(IOperationContext<T> context) : base(context)
     {
     }
 }

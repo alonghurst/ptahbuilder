@@ -18,7 +18,7 @@ public class FixPunctuationOperation<T> : Operation<T>
 
         if (property == null)
         {
-            throw new ArgumentNullException(_propertyName);
+            return;
         }
 
         foreach (var entity in Entities)
