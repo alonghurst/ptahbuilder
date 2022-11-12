@@ -1,4 +1,5 @@
 ﻿using System.Text.Json;
+using Humanizer;
 using PtahBuilder.BuildSystem.Generators.Context;
 using PtahBuilder.BuildSystem.Helpers;
 
@@ -21,7 +22,7 @@ public class InstanceToJsonOperation<T> : Operation<T>
     [Operate]
     public void Operate()
     {
-        var directory = PathResolver.OutputDirectory(MetadataResolver.EntityShortName);
+        var directory = PathResolver.OutputDirectory(MetadataResolver.EntityShortName.Pluralize());
 
         if (!Directory.Exists(directory))
         {
