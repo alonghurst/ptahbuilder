@@ -2,7 +2,7 @@
 
 public static class ValueParsers
 {
-    internal static List<KeyValuePair<Type, Func<object, object>>> UserDefinedValueParsers { get; } = new List<KeyValuePair<Type, Func<object, object>>>();
+    internal static List<KeyValuePair<Type, Func<object, object>>> UserDefinedValueParsers { get; } = new();
 
     public static void AddUserDefinedValueParser(Type type, Func<object, object> parser)
     {

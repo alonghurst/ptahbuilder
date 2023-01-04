@@ -1,12 +1,19 @@
-﻿using PtahBuilder.BuildSystem.FileManagement;
+﻿using Newtonsoft.Json;
+using PtahBuilder.BuildSystem.FileManagement;
 using PtahBuilder.BuildSystem.Metadata;
 
 namespace PtahBuilder.BuildSystem.Generators.Context;
 
 public interface IOperationContext<T>
 {
-    public Logger Logger { get; }
-    public PathResolver PathResolver { get; }
-    public Dictionary<T, MetadataCollection> Entities { get; }
-    public BaseDataMetadataResolver<T> MetadataResolver { get; }
+    Logger Logger { get; }
+    PathResolver PathResolver { get; }
+    Dictionary<T, MetadataCollection> Entities { get; }
+    BaseDataMetadataResolver<T> MetadataResolver { get; }
+    SettingsBlob Settings { get; }
+}
+
+public class SettingsBlob
+{
+    public JsonSerializerSettings JsonSerializerSettings { get; set; } = new();
 }

@@ -13,6 +13,8 @@ public class DataGeneratorFactory
     public PathResolver PathResolver { get; }
     private Type[] _typesToGenerate;
 
+    public SettingsBlob Settings { get; } = new();
+
     public DataGeneratorFactory(Logger logger, IFiles files, params Type[] typesToGenerate) :
         this(logger, new PathResolver(files), typesToGenerate)
 
@@ -30,6 +32,13 @@ public class DataGeneratorFactory
     {
         public object MetadataResolver { get; set; }
         public object Output { get; set; }
+    }
+
+    public DataGeneratorFactory WithSettings(Action<SettingsBlob> callback)
+    {
+        callback(Settings);
+
+        return this;
     }
 
     public void Process()
@@ -137,7 +146,7 @@ public class DataGeneratorFactory
     private void ProcessOperations(Dictionary<Type, ProcessedType> processedTypes)
     {
         var allContexts = processedTypes.ToDictionary(t => t.Key,
-            t => ReflectionHelper.InstantiateConcreteInstanceFromGenericType(typeof(OperationContext<>), t.Key, Logger, PathResolver, t.Value.MetadataResolver, t.Value.Output));
+            t => ReflectionHelper.InstantiateConcreteInstanceFromGenericType(typeof(OperationContext<>), t.Key, Logger, PathResolver,Settings, t.Value.MetadataResolver, t.Value.Output));
 
         List<dynamic> allOperations = new List<dynamic>();
 

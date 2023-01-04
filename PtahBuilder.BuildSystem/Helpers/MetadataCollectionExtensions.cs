@@ -14,7 +14,7 @@ public static class MetadataCollectionExtensions
         return false;
     }
 
-    public static IEnumerable<T> WhereIsNotBuildOnly<T>(this Dictionary<T, MetadataCollection> entities) 
+    public static IEnumerable<T> WhereIsNotBuildOnly<T>(this Dictionary<T, MetadataCollection> entities) where T : notnull
     {
         return entities.Where(e => !e.Value.IsBuildOnly())
             .Select(e => e.Key);

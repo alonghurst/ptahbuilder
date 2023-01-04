@@ -3,7 +3,7 @@ using PtahBuilder.BuildSystem.Metadata;
 
 namespace PtahBuilder.BuildSystem.Generators;
 
-public class DataGenerator<T> where T :  new()
+public class DataGenerator<T> where T : notnull, new()
 {
     public PathResolver PathResolver { get; }
     public Logger Logger { get; }

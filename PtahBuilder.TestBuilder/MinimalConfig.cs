@@ -1,5 +1,4 @@
-﻿using System.IO;
-using PtahBuilder.BuildSystem.FileManagement;
+﻿using PtahBuilder.BuildSystem.FileManagement;
 using PtahBuilder.BuildSystem.Metadata;
 using PtahBuilder.TestBuilder.Types;
 

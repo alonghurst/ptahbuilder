@@ -5,7 +5,7 @@ using PtahBuilder.BuildSystem.Syntax;
 
 namespace PtahBuilder.BuildSystem.Generators.Operations;
 
-public class FactoryNamesOperation<T> : Operation<T>
+public class FactoryNamesOperation<T> : Operation<T> where T: notnull
 {
     public override int Priority => int.MaxValue;
 

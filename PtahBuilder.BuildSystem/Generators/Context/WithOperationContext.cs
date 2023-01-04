@@ -3,7 +3,7 @@ using PtahBuilder.BuildSystem.Metadata;
 
 namespace PtahBuilder.BuildSystem.Generators.Context;
 
-public abstract class WithOperationContext<T>
+public abstract class WithOperationContext<T> where T : notnull
 {
     protected IOperationContext<T> Context { get; }
 

@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using PtahBuilder.BuildSystem;
+﻿using PtahBuilder.BuildSystem;
 using PtahBuilder.BuildSystem.Helpers;
 using PtahBuilder.TestBuilder.Types;
 

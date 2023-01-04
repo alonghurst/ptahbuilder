@@ -1,5 +1,4 @@
-﻿using System;
-using PtahBuilder.BuildSystem.Generators;
+﻿using PtahBuilder.BuildSystem.Generators;
 using PtahBuilder.BuildSystem.Generators.Context;
 using PtahBuilder.BuildSystem.Generators.Operations;
 using PtahBuilder.TestBuilder.Types;

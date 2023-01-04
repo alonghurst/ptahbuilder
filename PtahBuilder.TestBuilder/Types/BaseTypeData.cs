@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace PtahBuilder.TestBuilder.Types;
+﻿namespace PtahBuilder.TestBuilder.Types;
 
 public class BaseTypeData
 {
