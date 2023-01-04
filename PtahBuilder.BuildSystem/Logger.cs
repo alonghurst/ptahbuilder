@@ -9,11 +9,11 @@ namespace PtahBuilder.BuildSystem;
 
 public class Logger
 {
-    private readonly List<string> _warnings = new List<string>();
-    private readonly List<string> _infos = new List<string>();
-    private readonly List<string> _errors = new List<string>();
-    private readonly Dictionary<string, Section> _sections = new Dictionary<string, Section>();
-    private readonly Dictionary<string, object[]> _contents = new Dictionary<string, object[]>();
+    private readonly List<string> _warnings = new();
+    private readonly List<string> _infos = new();
+    private readonly List<string> _errors = new();
+    private readonly Dictionary<string, Section> _sections = new();
+    private readonly Dictionary<string, object[]> _contents = new();
     private class Section
     {
         public Section(int priority, string[] messages)

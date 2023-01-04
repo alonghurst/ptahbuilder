@@ -27,14 +27,14 @@ public class YamlToBaseDataMapper<T> : YamlToTypeMapper<T> where T : new()
     }
 }
 
-public abstract class YamlToTypeMapper<T> : DirectoryParser where T : new()
+public abstract class YamlToTypeMapper<T> : DirectoryParser where T : notnull, new()
 {
-    public Dictionary<T, MetadataCollection> ParsedEntitiesMetadata { get; } = new Dictionary<T, MetadataCollection>();
-    private readonly Dictionary<T, HashSet<string>> _explicitlySetPropertiesPerEntity = new Dictionary<T, HashSet<string>>();
+    public Dictionary<T, MetadataCollection> ParsedEntitiesMetadata { get; } = new();
+    private readonly Dictionary<T, HashSet<string>> _explicitlySetPropertiesPerEntity = new();
 
     public Logger Logger { get; }
 
-    private readonly Dictionary<Type, Dictionary<string, PropertyInfo>> _properties = new Dictionary<Type, Dictionary<string, PropertyInfo>>();
+    private readonly Dictionary<Type, Dictionary<string, PropertyInfo>> _properties = new();
 
     protected abstract string GetEntityId(T entity);
 

@@ -13,9 +13,9 @@ public class InstanceToSyntaxMapper
         Logger = logger;
     }
 
-    public List<Type> FoundTypes { get; } = new List<Type>();
+    public List<Type> FoundTypes { get; } = new();
     public Logger Logger { get; }
-    private Dictionary<Type, InstanceToSyntaxMapper> _childMappers = new Dictionary<Type, InstanceToSyntaxMapper>();
+    private Dictionary<Type, InstanceToSyntaxMapper> _childMappers = new();
 
     public ObjectCreationExpressionSyntax InstanceToSyntax(object instance)
     {

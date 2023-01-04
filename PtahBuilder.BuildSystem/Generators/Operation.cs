@@ -4,7 +4,7 @@ using PtahBuilder.BuildSystem.Metadata;
 
 namespace PtahBuilder.BuildSystem.Generators;
 
-public abstract class Operation<T>
+public abstract class Operation<T> where T : notnull
 {
     private readonly IOperationContext<T> _context;
 
@@ -12,6 +12,7 @@ public abstract class Operation<T>
     public PathResolver PathResolver => _context.PathResolver;
     public Dictionary<T, MetadataCollection> Entities => _context.Entities;
     public BaseDataMetadataResolver<T> MetadataResolver => _context.MetadataResolver;
+    public SettingsBlob Settings => _context.Settings;
 
     public virtual int Priority { get; }
 

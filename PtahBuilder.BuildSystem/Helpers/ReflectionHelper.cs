@@ -7,7 +7,7 @@ namespace PtahBuilder.BuildSystem.Helpers;
 
 public static class ReflectionHelper
 {
-    private static readonly Dictionary<Type, object> BlankInstances = new Dictionary<Type, object>();
+    private static readonly Dictionary<Type, object> BlankInstances = new();
 
     public static IEnumerable<KeyValuePair<PropertyInfo, object>> GetNonDefaultPropertyAndTheNewValue(object instance)
     {
