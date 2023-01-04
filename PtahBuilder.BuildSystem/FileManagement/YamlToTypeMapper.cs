@@ -269,7 +269,7 @@ public abstract class YamlToTypeMapper<T> : DirectoryParser where T : notnull, n
 
         foreach (var parser in ValueParsers.UserDefinedValueParsers)
         {
-            if (type.IsAssignableFrom(parser.Key))
+            if (parser.Key.IsAssignableFrom(type))
             {
                 var result = parser.Value.Invoke(value);
                 if (result != null)
