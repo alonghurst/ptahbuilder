@@ -1,6 +1,5 @@
-﻿namespace PtahBuilder.BuildSystem.Execution
+﻿namespace PtahBuilder.BuildSystem.Execution;
+
+public interface IExecutionContext
 {
-    public interface IExecutionContext
-    {
-    }
 }

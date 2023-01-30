@@ -1,22 +1,21 @@
-﻿namespace PtahBuilder.BuildSystem.Config
+﻿namespace PtahBuilder.BuildSystem.Config;
+
+public class ExecutionConfig
 {
-    public class ExecutionConfig
+    public bool DeleteOutputDirectory { get; set; } = true;
+
+    public Dictionary<Type, PipelineConfig> EntityPipelines { get; } = new();
+
+    public ExecutionConfig AddPipeline<T>(Action<PipelineConfig<T>> configure, string? name = null)
     {
-        public bool DeleteOutputDirectory { get; set; } = true;
+        name = string.IsNullOrWhiteSpace(name) ? $"{typeof(T).Name}_Pipeline" : name;
 
-        public Dictionary<Type, PipelineConfig> EntityPipelines { get; } = new();
+        var pipeline = new PipelineConfig<T>(name);
 
-        public ExecutionConfig AddPipeline<T>(Action<PipelineConfig<T>> configure, string? name = null)
-        {
-            name = string.IsNullOrWhiteSpace(name) ? $"{typeof(T).Name}_Pipeline" : name;
+        configure(pipeline);
 
-            var pipeline = new PipelineConfig<T>(name);
+        EntityPipelines.Add(typeof(T), pipeline);
 
-            configure(pipeline);
-
-            EntityPipelines.Add(typeof(T), pipeline);
-
-            return this;
-        }
+        return this;
     }
 }
