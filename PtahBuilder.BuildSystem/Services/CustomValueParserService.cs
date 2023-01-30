@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using PtahBuilder.BuildSystem.Config.Internal;
+﻿using PtahBuilder.BuildSystem.Config.Internal;
 
 namespace PtahBuilder.BuildSystem.Services
 {
@@ -16,18 +11,16 @@ namespace PtahBuilder.BuildSystem.Services
             _config = config;
         }
 
-        public object? TryParseValue(Type destinationType, object value, out bool success)
+        public bool TryParseValue(Type destinationType, object value, out object? result)
         {
             if (_config.CustomValueParsers.TryGetValue(destinationType, out var parser))
             {
-                var parsed = parser(value);
-                success = true;
-
-                return parsed;
+                result = parser(value);
+                return true;
             }
 
-            success = false;
-            return null;
+            result = null;
+            return false;
         }
     }
 }
