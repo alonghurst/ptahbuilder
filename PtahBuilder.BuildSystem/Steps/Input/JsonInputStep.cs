@@ -1,18 +1,17 @@
 ﻿using PtahBuilder.BuildSystem.Entities;
 using PtahBuilder.BuildSystem.Execution.Abstractions;
-using PtahBuilder.BuildSystem.Execution.Pipelines;
 using PtahBuilder.BuildSystem.Extensions;
 using PtahBuilder.BuildSystem.Services;
 using PtahBuilder.Util.Services;
 
-namespace PtahBuilder.BuildSystem.Stages.Input;
+namespace PtahBuilder.BuildSystem.Steps.Input;
 
-public class JsonInputStage<T> : IStage<T>
+public class JsonInputStep<T> : IStep<T>
 {
     private readonly IJsonService _jsonService;
     private readonly IInputFileService _inputFileService;
 
-    public JsonInputStage(IJsonService jsonService, IInputFileService inputFileService)
+    public JsonInputStep(IJsonService jsonService, IInputFileService inputFileService)
     {
         _jsonService = jsonService;
         _inputFileService = inputFileService;

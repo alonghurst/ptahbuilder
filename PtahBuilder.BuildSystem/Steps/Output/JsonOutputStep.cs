@@ -1,17 +1,16 @@
 ﻿using PtahBuilder.BuildSystem.Entities;
 using PtahBuilder.BuildSystem.Execution.Abstractions;
-using PtahBuilder.BuildSystem.Execution.Pipelines;
 using PtahBuilder.BuildSystem.Services;
 using PtahBuilder.Util.Services;
 
-namespace PtahBuilder.BuildSystem.Stages.Output;
+namespace PtahBuilder.BuildSystem.Steps.Output;
 
-public class JsonOutputStage<T> : IStage<T>
+public class JsonOutputStep<T> : IStep<T>
 {
     private readonly IJsonService _jsonService;
     private readonly IOutputFileService _outputFileService;
 
-    public JsonOutputStage(IJsonService jsonService, IOutputFileService outputFileService)
+    public JsonOutputStep(IJsonService jsonService, IOutputFileService outputFileService)
     {
         _jsonService = jsonService;
         _outputFileService = outputFileService;

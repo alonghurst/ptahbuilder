@@ -1,7 +1,7 @@
 ﻿using PtahBuilder.BuildSystem;
-using PtahBuilder.BuildSystem.Stages.Input;
-using PtahBuilder.BuildSystem.Stages.Output;
-using PtahBuilder.BuildSystem.Stages.Process;
+using PtahBuilder.BuildSystem.Steps.Input;
+using PtahBuilder.BuildSystem.Steps.Output;
+using PtahBuilder.BuildSystem.Steps.Process;
 using PtahBuilder.Tests.TestBuilder.Entities;
 using PtahBuilder.Util.Helpers;
 
@@ -14,15 +14,15 @@ await new BuilderFactory()
     {
         x.AddPipeline<Fruit>(p =>
         {
-            p.AddInputStage<JsonInputStage<Fruit>>();
-            p.AddOutputStage<JsonOutputStage<Fruit>>();
+            p.AddInputStage<JsonInputStep<Fruit>>();
+            p.AddOutputStage<JsonOutputStep<Fruit>>();
         });
 
         x.AddPipeline<Recipe>(p =>
         {
-            p.AddInputStage<JsonInputStage<Recipe>>();
-            p.AddProcessStage<ValidateEntityReferenceStage<Recipe, Fruit>>((Recipe r) => r.ValidFruits);
-            p.AddOutputStage<JsonOutputStage<Recipe>>();
+            p.AddInputStage<JsonInputStep<Recipe>>();
+            p.AddProcessStage<ValidateEntityReferenceStep<Recipe, Fruit>>((Recipe r) => r.ValidFruits);
+            p.AddOutputStage<JsonOutputStep<Recipe>>();
         });
     })
     .Run();

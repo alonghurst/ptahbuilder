@@ -1,18 +1,16 @@
 ﻿using PtahBuilder.BuildSystem.Entities;
-using PtahBuilder.BuildSystem.Execution;
 using PtahBuilder.BuildSystem.Execution.Abstractions;
-using PtahBuilder.BuildSystem.Execution.Pipelines;
 using PtahBuilder.Util.Services.Logging;
 
-namespace PtahBuilder.BuildSystem.Stages.Process;
+namespace PtahBuilder.BuildSystem.Steps.Process;
 
-public class ValidateEntityReferenceStage<TFrom, TTo> : IStage<TFrom>
+public class ValidateEntityReferenceStep<TFrom, TTo> : IStep<TFrom>
 {
     private readonly IEntityProvider<TTo> _referencing;
     private readonly ILogger _logger;
     private readonly Func<TFrom, object?> _getReferencingValue;
 
-    public ValidateEntityReferenceStage(IEntityProvider<TTo> referencing, ILogger logger, Func<TFrom, object?> getReferencingValue)
+    public ValidateEntityReferenceStep(IEntityProvider<TTo> referencing, ILogger logger, Func<TFrom, object?> getReferencingValue)
     {
         _referencing = referencing;
         _logger = logger;

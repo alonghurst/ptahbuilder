@@ -7,7 +7,7 @@ public abstract class PipelineConfig
 {
     public string Name { get; }
 
-    public Dictionary<Stage, List<StageConfig>> Stages { get; } = new();
+    public Dictionary<Stage, List<StepConfig>> Stages { get; } = new();
 
     public PipelineConfig(string name)
     {
@@ -15,7 +15,7 @@ public abstract class PipelineConfig
 
         foreach (var stage in Enum.GetValues<Stage>())
         {
-            Stages.Add(stage, new List<StageConfig>());
+            Stages.Add(stage, new List<StepConfig>());
         }
     }
 
@@ -27,9 +27,9 @@ public abstract class PipelineConfig
     }
 
 
-    public PipelineConfig AddStage(Stage stage, Type stageType, params object?[] args)
+    public PipelineConfig AddStep(Stage stage, Type stageType, params object[] args)
     {
-        Stages[stage].Add(new StageConfig(stageType, args));
+        Stages[stage].Add(new StepConfig(stageType, args));
 
         return this;
     }
@@ -79,36 +79,38 @@ public class PipelineConfig<T> : PipelineConfig
         return _ => Guid.NewGuid().ToString();
     }
 
-    public PipelineConfig AddStage<TS>(Stage stage, params object?[] args) where TS : IStage<T>
+    public PipelineConfig AddStep<TS>(Stage stage, params object[] args) where TS : IStep<T>
     {
-        base.AddStage(stage, typeof(TS), args);
+        base.AddStep(stage, typeof(TS), args);
 
         return this;
     }
 
-    public PipelineConfig AddInputStage<TS>(params object?[] args) where TS : IStage<T>
+    public PipelineConfig AddInputStage<TS>(params object[] args) where TS : IStep<T>
     {
-        AddStage<TS>(Stage.Input, args);
+        AddStep<TS>(Stage.Input, args);
 
         return this;
     }
 
-    public PipelineConfig AddOutputStage<TS>(params object?[] args) where TS : IStage<T>
+    public PipelineConfig AddOutputStage<TS>(params object[] args) where TS : IStep<T>
     {
-        AddStage<TS>(Stage.Output, args);
+        AddStep<TS>(Stage.Output, args);
 
         return this;
     }
 
-    public PipelineConfig AddProcessStage<TS>(params object?[] args) where TS : IStage<T>
+    public PipelineConfig AddProcessStage<TS>(params object[] args) where TS : IStep<T>
     {
-        AddStage<TS>(Stage.Process, args);
+        AddStep<TS>(Stage.Process, args);
 
         return this;
     }
 
     public PipelineConfig Configure(Action<PipelineConfig<T>> configure)
     {
+        configure(this);
+
         return this;
     }
 }

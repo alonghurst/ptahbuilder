@@ -1,4 +1,4 @@
-﻿using PtahBuilder.BuildSystem.Execution.Pipelines;
+﻿using PtahBuilder.BuildSystem.Execution.Abstractions;
 
 namespace PtahBuilder.BuildSystem.Extensions;
 
