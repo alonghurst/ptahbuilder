@@ -1,7 +1,5 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
-using System.Xml;
-using PtahBuilder.Util.Helpers;
 
 namespace PtahBuilder.Util.Services;
 
