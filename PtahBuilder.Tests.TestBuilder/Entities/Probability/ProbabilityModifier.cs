@@ -1,6 +1,4 @@
-﻿using System.Text.Json.Serialization;
-
-namespace PtahBuilder.Tests.TestBuilder.Entities.Probability;
+﻿namespace PtahBuilder.Tests.TestBuilder.Entities.Probability;
 
 public struct ProbabilityModifier
 {

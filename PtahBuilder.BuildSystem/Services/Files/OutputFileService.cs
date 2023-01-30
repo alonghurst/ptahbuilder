@@ -1,21 +1,22 @@
-﻿using Humanizer;
-using PtahBuilder.BuildSystem.Config;
+﻿using PtahBuilder.BuildSystem.Config;
 using PtahBuilder.BuildSystem.Entities;
 
-namespace PtahBuilder.BuildSystem.Services;
+namespace PtahBuilder.BuildSystem.Services.Files;
 
 public class OutputFileService : IOutputFileService
 {
     private readonly IFilesConfig _filesConfig;
+    private readonly IEntityMetadataService _entityMetadataService;
 
-    public OutputFileService(IFilesConfig filesConfig)
+    public OutputFileService(IFilesConfig filesConfig, IEntityMetadataService entityMetadataService)
     {
         _filesConfig = filesConfig;
+        _entityMetadataService = entityMetadataService;
     }
 
     public string GetOutputDirectoryForEntity<T>()
     {
-        var directory = Path.Combine(_filesConfig.OutputDirectory, typeof(T).Name.Pluralize());
+        var directory = Path.Combine(_filesConfig.OutputDirectory, _entityMetadataService.GetSimpleNamePlural<T>());
 
         if (!Directory.Exists(directory))
         {
