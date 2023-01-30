@@ -1,15 +1,20 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using System.Reflection;
+using System.Text.Json.Serialization;
+using Microsoft.Extensions.DependencyInjection;
 using PtahBuilder.BuildSystem.Config;
 using PtahBuilder.BuildSystem.Config.Internal;
 using PtahBuilder.BuildSystem.Execution;
 using PtahBuilder.BuildSystem.Extensions;
 using PtahBuilder.Util.Extensions;
+using PtahBuilder.Util.Helpers;
 
 namespace PtahBuilder.BuildSystem;
 
 public class BuilderFactory
 {
-    private readonly Dictionary<Type, Func<object, object>> _customValueParsers = new ();
+    private readonly Dictionary<Type, Func<object, object>> _customValueParsers = new();
+
+    private readonly List<JsonConverter> _jsonConverters = new();
 
     private Action<IServiceCollection>? _configureServices;
     private Action<ExecutionConfig>? _configureExecutionConfig;
@@ -19,6 +24,31 @@ public class BuilderFactory
     public BuilderFactory ConfigureFiles(Action<FilesConfig> configureFiles)
     {
         configureFiles(_filesConfig);
+
+        return this;
+    }
+
+    public BuilderFactory AddJsonConverterTypes(Assembly assembly)
+    {
+        var types = ReflectionHelper.GetLoadedTypesThatAreAssignableTo(typeof(JsonConverter), assemblyFilter: assembly.FullName!);
+
+        foreach (var type in types)
+        {
+            if (Activator.CreateInstance(type) is JsonConverter instance)
+            {
+                AddJsonConverters(instance);
+            }
+        }
+
+        return this;
+    }
+
+    public BuilderFactory AddJsonConverters(params JsonConverter[] converters)
+    {
+        foreach (var jsonConverter in converters)
+        {
+            _jsonConverters.Add(jsonConverter);
+        }
 
         return this;
     }
@@ -75,9 +105,10 @@ public class BuilderFactory
         var services = new ServiceCollection()
                 .AddPtahUtilServices()
                 .AddPtahBuildSystemServices()
-                .AddSingleton<CustomValueParserConfig>(new CustomValueParserConfig(_customValueParsers))
+                .AddSingleton(new CustomValueParserConfig(_customValueParsers))
+                .AddSingleton(new JsonConverterConfig(_jsonConverters))
                 .AddSingleton<IFilesConfig>(_filesConfig);
-        
+
         _configureServices?.Invoke(services);
 
         return services;

@@ -1,12 +1,11 @@
-﻿namespace PtahBuilder.BuildSystem.Config.Internal
-{
-    public class CustomValueParserConfig
-    {
-        public CustomValueParserConfig(Dictionary<Type, Func<object, object>> customValueParsers)
-        {
-            CustomValueParsers = customValueParsers;
-        }
+﻿namespace PtahBuilder.BuildSystem.Config.Internal;
 
-        public Dictionary<Type, Func<object, object>> CustomValueParsers { get; }
+public class CustomValueParserConfig
+{
+    public CustomValueParserConfig(Dictionary<Type, Func<object, object>> customValueParsers)
+    {
+        CustomValueParsers = customValueParsers;
     }
+
+    public Dictionary<Type, Func<object, object>> CustomValueParsers { get; }
 }

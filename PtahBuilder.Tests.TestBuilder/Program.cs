@@ -1,7 +1,6 @@
 ﻿using PtahBuilder.BuildSystem;
 using PtahBuilder.BuildSystem.Steps.Input;
 using PtahBuilder.BuildSystem.Steps.Output;
-using PtahBuilder.BuildSystem.Steps.Process;
 using PtahBuilder.Tests.TestBuilder.Entities;
 using PtahBuilder.Tests.TestBuilder.Entities.Conditions;
 using PtahBuilder.Tests.TestBuilder.Entities.Dice;
@@ -12,6 +11,7 @@ await new BuilderFactory()
     {
         f.Configure(PathHelper.GetRootPath("Data", args));
     })
+    .AddJsonConverterTypes(typeof(Program).Assembly)
     .AddCustomValueParser(typeof(PtahBuilder.Tests.TestBuilder.Entities.Range), v =>
     {
         try
@@ -47,18 +47,18 @@ await new BuilderFactory()
     })
     .ConfigureExecution(x =>
     {
-        x.AddPipeline<Fruit>(p =>
-        {
-            p.AddInputStage<JsonInputStep<Fruit>>();
-            p.AddOutputStage<JsonOutputStep<Fruit>>();
-        });
+        //x.AddPipeline<Fruit>(p =>
+        //{
+        //    p.AddInputStage<JsonInputStep<Fruit>>();
+        //    p.AddOutputStage<JsonOutputStep<Fruit>>();
+        //});
 
-        x.AddPipeline<Recipe>(p =>
-        {
-            p.AddInputStage<JsonInputStep<Recipe>>();
-            p.AddProcessStage<ValidateEntityReferenceStep<Recipe, Fruit>>((Recipe r) => r.ValidFruits);
-            p.AddOutputStage<JsonOutputStep<Recipe>>();
-        });
+        //x.AddPipeline<Recipe>(p =>
+        //{
+        //    p.AddInputStage<JsonInputStep<Recipe>>();
+        //    p.AddProcessStage<ValidateEntityReferenceStep<Recipe, Fruit>>((Recipe r) => r.ValidFruits);
+        //    p.AddOutputStage<JsonOutputStep<Recipe>>();
+        //});
 
         x.AddPipeline<CreatureType>(p =>
         {

@@ -1,7 +1,7 @@
 ﻿using PtahBuilder.BuildSystem.Entities;
 using PtahBuilder.BuildSystem.Execution.Abstractions;
 using PtahBuilder.BuildSystem.Services.Files;
-using PtahBuilder.Util.Services;
+using PtahBuilder.BuildSystem.Services.Serialization;
 
 namespace PtahBuilder.BuildSystem.Steps.Output;
 

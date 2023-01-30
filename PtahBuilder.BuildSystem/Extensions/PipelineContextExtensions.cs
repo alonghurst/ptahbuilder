@@ -1,4 +1,5 @@
-﻿using PtahBuilder.BuildSystem.Execution.Abstractions;
+﻿using PtahBuilder.BuildSystem.Config;
+using PtahBuilder.BuildSystem.Execution.Abstractions;
 
 namespace PtahBuilder.BuildSystem.Extensions;
 
@@ -8,7 +9,7 @@ public static class PipelineContextExtensions
     {
         metadata ??= new Dictionary<string, object>();
 
-        metadata.Add("SourceFile", filename);
+        metadata.Add(MetadataKeys.SourceFile, filename);
 
         context.AddEntity(entity, metadata);
     }

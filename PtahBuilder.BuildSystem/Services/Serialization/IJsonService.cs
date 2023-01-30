@@ -1,4 +1,4 @@
-﻿namespace PtahBuilder.Util.Services;
+﻿namespace PtahBuilder.BuildSystem.Services.Serialization;
 
 public interface IJsonService
 {
