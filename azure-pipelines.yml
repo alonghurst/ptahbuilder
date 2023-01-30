@@ -13,7 +13,7 @@ continueOnError: false
 
 variables:
   projects: "**/*.csproj"
-  projectToPublish: "**/*.csproj,!**/*.TestBuilder.csproj"
+  projectToPublish: "**/*.csproj,!**/*.Tests.*.csproj"
   testBuilder: "**/*.TestBuilder.csproj"
   buildConfiguration: "Release"
   packageVersionRelease: "$(Build.BuildNumber)"
