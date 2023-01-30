@@ -52,7 +52,7 @@ public class PipelineContext<T> : IPipelineContext<T>, IEntityProvider<T>
 
         await _diagnostics.Time(message, async () =>
          {
-             var instance = ActivatorUtilities.CreateInstance<IStep<T>>(serviceProvider, stepConfig.Arguments);
+             var instance = (IStep<T>)ActivatorUtilities.CreateInstance(serviceProvider, stepConfig.StepType, stepConfig.Arguments);
 
              try
              {

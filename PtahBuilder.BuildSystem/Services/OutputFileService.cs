@@ -15,7 +15,7 @@ public class OutputFileService : IOutputFileService
 
     public string GetOutputDirectoryForEntity<T>()
     {
-        var directory = Path.Combine(_filesConfig.DataDirectory, typeof(T).Name.Pluralize());
+        var directory = Path.Combine(_filesConfig.OutputDirectory, typeof(T).Name.Pluralize());
 
         if (!Directory.Exists(directory))
         {
@@ -31,7 +31,7 @@ public class OutputFileService : IOutputFileService
 
         if (!fileType.StartsWith("."))
         {
-            fileType = ".";
+            fileType = $".{fileType}";
         }
 
         return Path.Combine(directory, $"{entity.Id}{fileType}");

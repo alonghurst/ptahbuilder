@@ -36,7 +36,6 @@ public class BuilderFactory
 
     public async Task Run()
     {
-
         var services = BuildServices();
         var config = BuildExecutionConfig();
 
@@ -66,7 +65,7 @@ public class BuilderFactory
         var services = new ServiceCollection()
                 .AddPtahUtilServices()
                 .AddPtahBuildSystemServices()
-                .AddSingleton<IFilesConfig, FilesConfig>();
+                .AddSingleton<IFilesConfig>(_filesConfig);
 
         _configureServices?.Invoke(services);
 
