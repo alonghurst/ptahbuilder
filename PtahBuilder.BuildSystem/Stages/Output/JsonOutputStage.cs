@@ -1,5 +1,6 @@
 ﻿using PtahBuilder.BuildSystem.Entities;
-using PtahBuilder.BuildSystem.Execution;
+using PtahBuilder.BuildSystem.Execution.Abstractions;
+using PtahBuilder.BuildSystem.Execution.Pipelines;
 using PtahBuilder.BuildSystem.Services;
 using PtahBuilder.Util.Services;
 

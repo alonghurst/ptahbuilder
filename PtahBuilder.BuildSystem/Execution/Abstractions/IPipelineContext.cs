@@ -1,4 +1,4 @@
-﻿namespace PtahBuilder.BuildSystem.Execution;
+﻿namespace PtahBuilder.BuildSystem.Execution.Pipelines;
 
 public interface IPipelineContext<in T>
 {

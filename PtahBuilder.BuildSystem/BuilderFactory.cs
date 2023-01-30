@@ -36,7 +36,7 @@ public class BuilderFactory
 
     public Task Run()
     {
-        var services = BuildServiceProvider();
+        var services = BuildServices();
         var config = BuildExecutionConfig();
 
         var context = new BuilderContext(services, config);
@@ -53,7 +53,7 @@ public class BuilderFactory
         return executionConfig;
     }
 
-    private IServiceProvider BuildServiceProvider()
+    private IServiceCollection BuildServices()
     {
         var services = new ServiceCollection()
                 .AddPtahUtilServices()
@@ -62,6 +62,6 @@ public class BuilderFactory
 
         _configureServices?.Invoke(services);
 
-        return services.BuildServiceProvider();
+        return services;
     }
 }

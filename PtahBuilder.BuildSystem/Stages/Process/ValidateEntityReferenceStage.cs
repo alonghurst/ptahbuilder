@@ -1,5 +1,7 @@
 ﻿using PtahBuilder.BuildSystem.Entities;
 using PtahBuilder.BuildSystem.Execution;
+using PtahBuilder.BuildSystem.Execution.Abstractions;
+using PtahBuilder.BuildSystem.Execution.Pipelines;
 using PtahBuilder.Util.Services.Logging;
 
 namespace PtahBuilder.BuildSystem.Stages.Process;

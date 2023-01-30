@@ -1,6 +1,7 @@
 ﻿using PtahBuilder.BuildSystem.Entities;
+using PtahBuilder.BuildSystem.Execution.Pipelines;
 
-namespace PtahBuilder.BuildSystem.Execution;
+namespace PtahBuilder.BuildSystem.Execution.Abstractions;
 
 public interface IStage<T>
 {
