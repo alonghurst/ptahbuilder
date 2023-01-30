@@ -24,6 +24,16 @@ public class BuilderContext : IDisposable
         _serviceProvider = _services.BuildServiceProvider();
         _logger = _serviceProvider.GetRequiredService<ILogger>();
         _diagnostics = _serviceProvider.GetRequiredService<IDiagnostics>();
+
+        if (config.DeleteOutputDirectory)
+        {
+            var output = _serviceProvider.GetRequiredService<IFilesConfig>().OutputDirectory;
+
+            if (Directory.Exists(output))
+            {
+                Directory.Delete(output, true);
+            }
+        }
     }
 
     public async Task Run()
@@ -67,7 +77,7 @@ public class BuilderContext : IDisposable
         {
             var pipelineType = typeof(PipelineContext<>).MakeGenericType(config.Key);
 
-            var pipeline = Activator.CreateInstance(pipelineType, config, _logger, _diagnostics) as IPipelineContext;
+            var pipeline = Activator.CreateInstance(pipelineType, config.Value, _logger, _diagnostics) as IPipelineContext;
 
             if (pipeline == null)
             {
