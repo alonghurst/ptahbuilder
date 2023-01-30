@@ -1,6 +1,6 @@
 ﻿using PtahBuilder.BuildSystem.Entities;
 
-namespace PtahBuilder.BuildSystem.Services;
+namespace PtahBuilder.BuildSystem.Services.Files;
 
 public interface IOutputFileService
 {
