@@ -1,5 +1,5 @@
 ﻿using PtahBuilder.BuildSystem.Entities;
-using PtahBuilder.BuildSystem.Execution;
+using PtahBuilder.BuildSystem.Execution.Abstractions;
 
 namespace PtahBuilder.BuildSystem.Config;
 

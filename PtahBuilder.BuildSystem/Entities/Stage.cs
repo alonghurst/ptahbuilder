@@ -2,7 +2,7 @@
 
 public enum Stage
 {
-    Input,
-    Process,
-    Output
+    Input = 1,
+    Process = 2,
+    Output = 3
 }
