@@ -1,7 +1,6 @@
-﻿namespace PtahBuilder.BuildSystem.Execution
+﻿namespace PtahBuilder.BuildSystem.Execution;
+
+public interface IPipelineContext<in T>
 {
-    public interface IPipelineContext<in T>
-    {
-        void AddEntity(T entity, Dictionary<string, object> metadata);
-    }
+    void AddEntity(T entity, Dictionary<string, object> metadata);
 }

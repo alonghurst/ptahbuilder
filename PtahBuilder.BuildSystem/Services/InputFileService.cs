@@ -2,29 +2,28 @@
 using PtahBuilder.BuildSystem.Config;
 using PtahBuilder.Util.Extensions;
 
-namespace PtahBuilder.BuildSystem.Services
+namespace PtahBuilder.BuildSystem.Services;
+
+public class InputFileService : IInputFileService
 {
-    public class InputFileService : IInputFileService
+    private readonly IFilesConfig _filesConfig;
+
+    public InputFileService(IFilesConfig filesConfig)
     {
-        private readonly IFilesConfig _filesConfig;
+        _filesConfig = filesConfig;
+    }
 
-        public InputFileService(IFilesConfig filesConfig)
+    public IReadOnlyCollection<string> GetInputFilesForEntity<T>(string fileType)
+    {
+        var directory = Path.Combine(_filesConfig.DataDirectory, typeof(T).Name.Pluralize());
+
+        if (Directory.Exists(directory))
         {
-            _filesConfig = filesConfig;
+            fileType = fileType.ToFileTypeWildCard();
+
+            return Directory.GetFiles(directory, fileType);
         }
 
-        public IReadOnlyCollection<string> GetInputFilesForEntity<T>(string fileType)
-        {
-            var directory = Path.Combine(_filesConfig.DataDirectory, typeof(T).Name.Pluralize());
-
-            if (Directory.Exists(directory))
-            {
-                fileType = fileType.ToFileTypeWildCard();
-
-                return Directory.GetFiles(directory, fileType);
-            }
-
-            return Array.Empty<string>();
-        }
+        return Array.Empty<string>();
     }
 }

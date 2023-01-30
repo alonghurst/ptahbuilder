@@ -3,29 +3,28 @@ using PtahBuilder.BuildSystem.Execution;
 using PtahBuilder.BuildSystem.Services;
 using PtahBuilder.Util.Services;
 
-namespace PtahBuilder.BuildSystem.Stages.Output
+namespace PtahBuilder.BuildSystem.Stages.Output;
+
+public class JsonOutputStage<T> : IStage<T>
 {
-    public class JsonOutputStage<T> : IStage<T>
+    private readonly IJsonService _jsonService;
+    private readonly IOutputFileService _outputFileService;
+
+    public JsonOutputStage(IJsonService jsonService, IOutputFileService outputFileService)
     {
-        private readonly IJsonService _jsonService;
-        private readonly IOutputFileService _outputFileService;
+        _jsonService = jsonService;
+        _outputFileService = outputFileService;
+    }
 
-        public JsonOutputStage(IJsonService jsonService, IOutputFileService outputFileService)
+    public async Task Execute(IPipelineContext<T> context, IReadOnlyCollection<Entity<T>> entities)
+    {
+        foreach (var entity in entities)
         {
-            _jsonService = jsonService;
-            _outputFileService = outputFileService;
-        }
+            var file = _outputFileService.GetOutputFileForEntity(entity, "json");
 
-        public async Task Execute(IPipelineContext<T> context, IReadOnlyCollection<Entity<T>> entities)
-        {
-            foreach (var entity in entities)
-            {
-                var file = _outputFileService.GetOutputFileForEntity(entity, "json");
+            var json = _jsonService.Serialize(entity.Value);
 
-                var json = _jsonService.Serialize(entity.Value);
-
-                await File.WriteAllTextAsync(file, json);
-            }
+            await File.WriteAllTextAsync(file, json);
         }
     }
 }
