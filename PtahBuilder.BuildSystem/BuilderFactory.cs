@@ -34,14 +34,22 @@ public class BuilderFactory
         return this;
     }
 
-    public Task Run()
+    public async Task Run()
     {
+
         var services = BuildServices();
         var config = BuildExecutionConfig();
 
         var context = new BuilderContext(services, config);
 
-        return context.Run();
+        try
+        {
+            await context.Run();
+        }
+        finally
+        {
+            context.Dispose();
+        }
     }
 
     private ExecutionConfig BuildExecutionConfig()

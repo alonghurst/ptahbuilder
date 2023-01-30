@@ -20,7 +20,9 @@ public static class ServiceCollectionExtensions
 
         if (logToFile)
         {
-            services.AddSingleton<ILogger, RootLogger>();
+            var rootLogger = new RootLogger();
+
+            services.AddSingleton<ILogger>(rootLogger);
         }
         else
         {

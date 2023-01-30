@@ -8,26 +8,27 @@ using PtahBuilder.Util.Services.Logging;
 
 namespace PtahBuilder.BuildSystem.Execution;
 
-public class BuilderContext 
+public class BuilderContext : IDisposable
 {
     private readonly IServiceCollection _services;
     private readonly ExecutionConfig _config;
     private readonly ILogger _logger;
     private readonly IDiagnostics _diagnostics;
+    private readonly ServiceProvider _serviceProvider;
 
     public BuilderContext(IServiceCollection services, ExecutionConfig config)
     {
         _services = services;
         _config = config;
 
-        using var serviceProvider = _services.BuildServiceProvider();
-        _logger = serviceProvider.GetRequiredService<ILogger>();
-        _diagnostics = serviceProvider.GetRequiredService<IDiagnostics>();
+        _serviceProvider = _services.BuildServiceProvider();
+        _logger = _serviceProvider.GetRequiredService<ILogger>();
+        _diagnostics = _serviceProvider.GetRequiredService<IDiagnostics>();
     }
 
     public async Task Run()
     {
-        await OutputConfiguration();
+        OutputConfiguration();
 
         var pipelines = BuildPipelines().ToArray();
 
@@ -66,7 +67,7 @@ public class BuilderContext
         {
             var pipelineType = typeof(PipelineContext<>).MakeGenericType(config.Key);
 
-            var pipeline = Activator.CreateInstance(pipelineType, config, _logger) as IPipelineContext;
+            var pipeline = Activator.CreateInstance(pipelineType, config, _logger, _diagnostics) as IPipelineContext;
 
             if (pipeline == null)
             {
@@ -76,15 +77,13 @@ public class BuilderContext
             yield return (config.Key, pipeline);
         }
     }
-    
-    private async Task OutputConfiguration()
-    {
-        await using var serviceProvider = _services.BuildServiceProvider();
 
+    private void OutputConfiguration()
+    {
         var stages = Enum.GetValues<Stage>();
 
-        var json = serviceProvider.GetRequiredService<IJsonService>();
-        var files = serviceProvider.GetRequiredService<IFilesConfig>();
+        var json = _serviceProvider.GetRequiredService<IJsonService>();
+        var files = _serviceProvider.GetRequiredService<IFilesConfig>();
 
         _logger.Info($"Files:");
         _logger.Info(json.Serialize(files));
@@ -104,5 +103,10 @@ public class BuilderContext
                 }
             }
         }
+    }
+
+    public void Dispose()
+    {
+        _serviceProvider.Dispose();
     }
 }

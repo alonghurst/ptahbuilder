@@ -3,6 +3,7 @@ using PtahBuilder.BuildSystem.Config;
 using PtahBuilder.BuildSystem.Entities;
 using PtahBuilder.BuildSystem.Execution.Abstractions;
 using PtahBuilder.Util.Extensions;
+using PtahBuilder.Util.Services;
 using PtahBuilder.Util.Services.Logging;
 
 namespace PtahBuilder.BuildSystem.Execution;
@@ -13,12 +14,14 @@ public class PipelineContext<T> : IPipelineContext<T>, IEntityProvider<T>
     public Dictionary<string, Entity<T>> Entities { get; } = new();
 
     private readonly ILogger _logger;
+    private readonly IDiagnostics _diagnostics;
 
-    public PipelineContext( PipelineConfig<T> config, ILogger logger)
+    public PipelineContext(PipelineConfig<T> config, ILogger logger, IDiagnostics diagnostics)
     {
         Config = config;
 
         _logger = logger;
+        _diagnostics = diagnostics;
     }
 
     public void AddEntity(T entity, Dictionary<string, object> metadata)
@@ -31,7 +34,7 @@ public class PipelineContext<T> : IPipelineContext<T>, IEntityProvider<T>
 
         _logger.Info($"{Config.Name}: Added {val.Id}");
     }
-    
+
     public async Task ProcessStepsInStage(Stage stage, ServiceProvider serviceProvider)
     {
         if (Config.Stages.TryGetValue(stage, out var steps))
@@ -45,10 +48,21 @@ public class PipelineContext<T> : IPipelineContext<T>, IEntityProvider<T>
 
     private async Task ExecuteStep(ServiceProvider serviceProvider, StepConfig stepConfig)
     {
-        _logger.Info($"{Config.Name}: Processing {stepConfig.StepType.GetTypeName()}");
+        var message = $"{Config.Name}: Processing {stepConfig.StepType.GetTypeName()}";
 
-        var instance = ActivatorUtilities.CreateInstance<IStep<T>>(serviceProvider, stepConfig.Arguments);
+        await _diagnostics.Time(message, async () =>
+         {
+             var instance = ActivatorUtilities.CreateInstance<IStep<T>>(serviceProvider, stepConfig.Arguments);
 
-        await instance.Execute(this, Entities.Values);
+             try
+             {
+                 await instance.Execute(this, Entities.Values);
+             }
+             catch
+             {
+                 _logger.Error(message);
+                 throw;
+             }
+         });
     }
 }

@@ -44,6 +44,20 @@ public class Diagnostics : IDiagnostics
         return result;
     }
 
+    public async Task Time(string operationDescription, Func<Task> operation)
+    {
+        _depth++;
+        var sw = new Stopwatch();
+        sw.Start();
+
+        await operation.Invoke();
+
+        sw.Stop();
+
+        WriteResult(operationDescription, sw);
+        _depth--;
+    }
+
     private void WriteResult(string operationDescription, Stopwatch sw)
     {
         var timeStr = sw.Elapsed.TotalSeconds >= 10 ? $"{sw.Elapsed.TotalSeconds:F} sec" : $"{sw.ElapsedMilliseconds} ms";
