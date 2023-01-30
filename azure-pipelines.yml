@@ -13,6 +13,7 @@ continueOnError: false
 
 variables:
   projects: "**/*.csproj"
+  projectToPublish: "**/*.csproj,!**/*.TestBuilder.csproj"
   testBuilder: "**/*.TestBuilder.csproj"
   buildConfiguration: "Release"
   packageVersionRelease: "$(Build.BuildNumber)"
@@ -61,7 +62,7 @@ steps:
       publishWebProjects: false
       zipAfterPublish: false
       projects: |
-        $(projects)
+        $(projectToPublish)
       arguments: "--configuration $(buildConfiguration) --no-restore --output $(stagingDirectory)"
 
   - task: DotNetCoreCLI@2
