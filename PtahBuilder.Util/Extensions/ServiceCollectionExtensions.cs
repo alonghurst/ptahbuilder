@@ -6,7 +6,7 @@ namespace PtahBuilder.Util.Extensions;
 
 public static class ServiceCollectionExtensions
 {
-    public static IServiceCollection AddCoAServices(this IServiceCollection services, bool logToFile = true)
+    public static IServiceCollection AddPtahUtilServices(this IServiceCollection services, bool logToFile = true)
     {
         var @namespace = (typeof(ServiceCollectionExtensions).Namespace ?? string.Empty).Replace(".Extensions", string.Empty);
         services.AddInterfaceImplementations(@namespace, ScopeType.Singleton);
