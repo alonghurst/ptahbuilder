@@ -2,5 +2,5 @@
 
 public interface ICustomValueParserService
 {
-    object? TryParseValue(Type destinationType, object value, out bool success);
+    bool TryParseValue(Type destinationType, object value, out object? result);
 }

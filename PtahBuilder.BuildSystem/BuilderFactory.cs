@@ -1,10 +1,8 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using PtahBuilder.BuildSystem.Config;
 using PtahBuilder.BuildSystem.Config.Internal;
 using PtahBuilder.BuildSystem.Execution;
 using PtahBuilder.BuildSystem.Extensions;
-using PtahBuilder.BuildSystem.Services;
 using PtahBuilder.Util.Extensions;
 
 namespace PtahBuilder.BuildSystem;
