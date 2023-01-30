@@ -1,0 +1,32 @@
+﻿using Microsoft.Extensions.DependencyInjection;
+using PtahBuilder.Util.Helpers;
+using PtahBuilder.Util.Services.Logging;
+
+namespace PtahBuilder.Util.Extensions;
+
+public static class ServiceCollectionExtensions
+{
+    public static IServiceCollection AddCoAServices(this IServiceCollection services, bool logToFile = true)
+    {
+        var @namespace = (typeof(ServiceCollectionExtensions).Namespace ?? string.Empty).Replace(".Extensions", string.Empty);
+        services.AddInterfaceImplementations(@namespace, ScopeType.Singleton);
+
+        var loggers = services.Where(x => x.ServiceType == typeof(ILogger)).ToArray();
+
+        foreach (var logger in loggers)
+        {
+            services.Remove(logger);
+        }
+
+        if (logToFile)
+        {
+            services.AddSingleton<ILogger, RootLogger>();
+        }
+        else
+        {
+            services.AddSingleton<ILogger, ConsoleLogger>();
+        }
+
+        return services;
+    }
+}

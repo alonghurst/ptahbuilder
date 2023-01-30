@@ -1,163 +1,72 @@
-﻿using System;
-using System.Collections;
+﻿using System.Reflection;
 using System.Collections.Generic;
+using System;
 using System.Linq;
-using System.Reflection;
-using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace PtahBuilder.Util.Helpers;
 
 public static class ReflectionHelper
 {
-    private static readonly Dictionary<Type, object> BlankInstances = new();
+    private static List<Type>? _allLoadedTypes = null;
 
-    public static IEnumerable<KeyValuePair<PropertyInfo, object?>> GetNonDefaultPropertyAndTheNewValue(object instance)
+    public static IReadOnlyCollection<T> GetEnumValues<T>()
     {
-        var type = instance.GetType();
-        if (!BlankInstances.ContainsKey(type))
+        return (Enum.GetValues(typeof(T)) as T[])!;
+    }
+
+    public static IEnumerable<Assembly> GetLoadedAssemblies(string? assemblyFilter = null)
+    {
+        return AppDomain.CurrentDomain.GetAssemblies()
+            .Where(a => string.IsNullOrWhiteSpace(assemblyFilter) ||
+                        (!string.IsNullOrWhiteSpace(a.FullName) && a.FullName.StartsWith(assemblyFilter)));
+    }
+
+    public static IEnumerable<Type> GetAllLoadedTypes(string? assemblyFilter = null)
+    {
+        if (_allLoadedTypes == null)
         {
-            var blank = Activator.CreateInstance(type);
+            _allLoadedTypes = new List<Type>();
 
-            if (blank == null)
+            var assemblies = GetLoadedAssemblies();
+
+            foreach (var assembly in assemblies)
             {
-                throw new InvalidOperationException($"Unable to instantiate a {type.Name}");
-            }
+                try
+                {
+                    var types = assembly.GetTypes();
 
-            BlankInstances.Add(type, blank);
+                    foreach (var type in types)
+                    {
+                        _allLoadedTypes.Add(type);
+                    }
+                }
+                catch
+                {
+                    // ignored
+                }
+            }
         }
 
-        var blankInstance = BlankInstances[type];
-
-        foreach (var property in type.GetProperties().Where(p => p.CanWrite))
+        if (assemblyFilter != null)
         {
-            var a = property.GetValue(instance);
-            var b = property.GetValue(blankInstance);
-
-            if (a == null && b == null)
-            {
-                continue;
-            }
-
-            if (a != null && b == null)
-            {
-                yield return new KeyValuePair<PropertyInfo, object?>(property, a);
-                continue;
-            }
-
-            var propertyType = property.PropertyType;
-            if (propertyType != typeof(string) && typeof(IEnumerable).IsAssignableFrom(propertyType))
-            {
-                dynamic aEnumerable = a ?? Array.CreateInstance(propertyType, 0);
-                // ReSharper disable once ConstantNullCoalescingCondition
-                dynamic bEnumerable = b ?? Array.CreateInstance(propertyType, 0);
-
-                var equal = true;
-
-                foreach (var ae in aEnumerable)
-                {
-                    equal = false;
-                    foreach (var be in bEnumerable)
-                    {
-                        if (ae == be)
-                        {
-                            equal = true;
-                            break;
-                        }
-                    }
-
-                    if (!equal)
-                    {
-                        break;
-                    }
-                }
-
-                if (equal)
-                {
-                    continue;
-                }
-            }
-
-            if (a == null || !a.Equals(b))
-            {
-                yield return new KeyValuePair<PropertyInfo, object?>(property, a);
-            }
+            return _allLoadedTypes.Where(x => (!string.IsNullOrWhiteSpace(x.Assembly.FullName) && x.Assembly.FullName.StartsWith(assemblyFilter)));
         }
+
+        return _allLoadedTypes.ToArray();
     }
 
-    public static object InstantiateFromFirstConstructor(this Type type, params object?[] constructorArguments)
+    public static Type GetLoadedTypeByFullName(string fullTypeName, string? assemblyFilter = null)
     {
-        var constructor = type.GetConstructors().First();
-
-        return constructor.Invoke(constructorArguments);
+        return GetAllLoadedTypes(assemblyFilter).First(t => t.FullName == fullTypeName);
     }
 
-    public static object InstantiateConcreteInstanceFromGenericType(Type genericType, Type genericArgument, params object?[] constructorArguments)
+    public static IEnumerable<Type> GetLoadedTypesThatAreAssignableTo(Type type, bool instantiableOnly = true, string? assemblyFilter = null)
     {
-        var concreteType = genericType.MakeGenericType(genericArgument);
-
-        return concreteType.InstantiateFromFirstConstructor(constructorArguments);
+        return GetAllLoadedTypes(assemblyFilter).Where(t => type.IsAssignableFrom(t) && (!instantiableOnly || !t.IsAbstract && !t.IsInterface));
     }
 
-    public static Type FindDerivedTypeOrUseBaseType(Type forType, Type baseType)
-    {
-        var generatorBaseType = baseType.MakeGenericType(forType);
-
-        var concreteType = GetLoadedTypesThatAreAssignableTo(generatorBaseType, allowedPossibleGenericArgument: forType)
-            .MinBy(t => t.IsGenericType ? 1 : 0);
-
-        return concreteType ?? generatorBaseType;
-    }
-
-    public static IEnumerable<Assembly> GetLoadedAssemblies()
-    {
-        return AppDomain.CurrentDomain.GetAssemblies();
-    }
-
-    public static IEnumerable<Type> GetAllLoadedTypes()
-    {
-        return AppDomain.CurrentDomain.GetAssemblies().SelectMany(a => a.GetTypes());
-    }
-
-    public static Type GetLoadedTypeByFullName(string fullTypeName)
-    {
-        return GetAllLoadedTypes().First(t => t.FullName == fullTypeName);
-    }
-
-    public static IEnumerable<Type> GetLoadedTypesThatAreAssignableTo(Type type, bool instantiableOnly = true, Type? allowedPossibleGenericArgument = null)
-    {
-        return GetAllLoadedTypes().Select(t =>
-            {
-                var name = t.Name;
-                if (type.IsAssignableFrom(t) && (!instantiableOnly || !t.IsAbstract && !t.IsInterface))
-                {
-                    return (true, t);
-                }
-
-                if (t.IsGenericType && allowedPossibleGenericArgument != null)
-                {
-                    var genericArguments = t.GetGenericArguments();
-                    if (genericArguments.Length == 1)
-                    {
-                        var genericConstraints = genericArguments[0].GetGenericParameterConstraints();
-
-                        if (genericConstraints.Length == 0 || genericConstraints[0].IsAssignableFrom(allowedPossibleGenericArgument))
-                        {
-                            var generic = t.MakeGenericType(allowedPossibleGenericArgument);
-                            if (type.IsAssignableFrom(generic) && (!instantiableOnly || !generic.IsAbstract && !generic.IsInterface))
-                            {
-                                return (true, generic);
-                            }
-                        }
-                    }
-                }
-
-                return (false, t);
-            })
-            .Where(t => t.Item1)
-            .Select(t => t.Item2);
-    }
-
-    public static IEnumerable<Type> GetLoadedTypesThatImplementInterfaceWithGenericArgumentsOfType(Type interfaceType, params Type[] genericTypes)
+    public static IEnumerable<Type> GetLoadedTypesThatImplementInterfaceWithGenericArgumentsOfType(Type interfaceType, string? namespaceFilter, params Type[] genericTypes)
     {
         if (!interfaceType.IsInterface || !interfaceType.IsGenericType)
         {
@@ -166,7 +75,7 @@ public static class ReflectionHelper
 
         var constructedType = interfaceType.MakeGenericType(genericTypes);
 
-        return GetLoadedTypesThatAreAssignableTo(constructedType);
+        return GetLoadedTypesThatAreAssignableTo(constructedType, assemblyFilter: namespaceFilter);
     }
 
     public static bool IsEnumerable(this Type type)
@@ -197,40 +106,40 @@ public static class ReflectionHelper
         return type.GetTypeOrElementType();
     }
 
-    public static Type GetFirstGenericTypeOfNonGenericInterface(Type type, Type baseInterfaceType)
+    public static Type? GetFirstGenericTypeOfNonGenericInterface(Type type, Type baseInterfaceType)
     {
-        var firstInterface = type.GetInterfaces().First(f => baseInterfaceType.IsAssignableFrom(f) && f.IsGenericType);
+        var firstInterface = type.GetInterfaces().FirstOrDefault(f => baseInterfaceType.IsAssignableFrom(f) && f.IsGenericType);
 
-        return firstInterface.GetGenericArguments()[0];
+        return firstInterface?.GetGenericArguments()[0];
     }
 
     public static T? GetAttributeOfType<T>(this Type type) where T : Attribute
     {
-        var attr = type.GetCustomAttribute<T>(true);
-
-        return attr;
+        return type.GetCustomAttribute<T>(true);
     }
 
     public static T? GetAttributeOfType<T>(this PropertyInfo property) where T : Attribute
     {
-        var attr = property.GetCustomAttribute<T>(true);
-
-        return attr;
+        return property.GetCustomAttribute<T>(true);
     }
-
     public static bool HasAttributeOfType<T>(this PropertyInfo property) where T : Attribute
     {
         return property.GetCustomAttribute<T>(true) != null;
     }
 
-    public static IEnumerable<Type> GetLoadedTypesWithAttribute<T>() where T : Attribute
+    public static IEnumerable<Type> GetLoadedTypesWithAttribute<T>(string? namespaceFilter = null) where T : Attribute
     {
-        return GetAllLoadedTypes().Where(t => GetAttributeOfType<T>(t) != null);
+        return GetAllLoadedTypes(namespaceFilter).Where(t => GetAttributeOfType<T>(t) != null);
     }
 
     public static IEnumerable<PropertyInfo> GetPropertiesWithAttribute<T>(this Type type) where T : Attribute
     {
         return type.GetProperties().Where(p => p.GetCustomAttribute<T>(true) != null);
+    }
+
+    public static IEnumerable<PropertyInfo> GetPropertiesOfType<T>(this Type type)
+    {
+        return type.GetProperties().Where(p => typeof(T).IsAssignableFrom(p.PropertyType));
     }
 
 #nullable disable
@@ -250,10 +159,29 @@ public static class ReflectionHelper
             .ToArray();
     }
 
-    public static string NameWithGenericArguments(this Type type)
+    public static T[] InstantiateTypesThatAreAssignableTo<T>(this IServiceProvider services)
     {
-        var generics = type.IsGenericType ? $"<{string.Join(", ", type.GenericTypeArguments.Select(s => s.Name).ToArray())}>" : "";
+        var instances = GetLoadedTypesThatAreAssignableTo(typeof(T))
+            .Select(x => ActivatorUtilities.CreateInstance(services, x))
+            .OfType<T>()
+            .ToArray();
 
-        return $"{type.Name}{generics}";
+        return instances;
     }
+
+    public static Type? GetBaseGenericType(Type type)
+    {
+        if (type.BaseType == null || type.BaseType == typeof(object))
+        {
+            return null;
+        }
+
+        if (type.BaseType.GenericTypeArguments.Any())
+        {
+            return type.BaseType.GenericTypeArguments[0];
+        }
+
+        return GetBaseGenericType(type.BaseType);
+    }
+
 }
