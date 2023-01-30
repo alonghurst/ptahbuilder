@@ -1,14 +1,14 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFramework>net7.0</TargetFramework>
+		<OutputType>Exe</OutputType>
+		<TargetFramework>net6.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
-		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\PtahBuilder.Util\PtahBuilder.Util.csproj" />
+		<ProjectReference Include="..\PtahBuilder.LegacyBuildSystem\PtahBuilder.LegacyBuildSystem.csproj" />
 	</ItemGroup>
 
 </Project>
