@@ -1,26 +1,34 @@
 ﻿using PtahBuilder.BuildSystem.Config.Internal;
 
-namespace PtahBuilder.BuildSystem.Services
-{
-    public class CustomValueParserService : ICustomValueParserService
-    {
-        private readonly CustomValueParserConfig _config;
+namespace PtahBuilder.BuildSystem.Services;
 
-        public CustomValueParserService(CustomValueParserConfig config)
+public class CustomValueParserService : ICustomValueParserService
+{
+    private readonly CustomValueParserConfig _config;
+
+    public CustomValueParserService(CustomValueParserConfig config)
+    {
+        _config = config;
+    }
+
+    public bool TryParseValue(Type destinationType, object value, out object? result)
+    {
+        if (_config.CustomValueParsers.TryGetValue(destinationType, out var parser))
         {
-            _config = config;
+            result = parser(value);
+            return true;
         }
 
-        public bool TryParseValue(Type destinationType, object value, out object? result)
+        foreach (var (type, p) in _config.CustomValueParsers)
         {
-            if (_config.CustomValueParsers.TryGetValue(destinationType, out var parser))
+            if (type.IsAssignableFrom(destinationType))
             {
-                result = parser(value);
+                result = p(value);
                 return true;
             }
-
-            result = null;
-            return false;
         }
+
+        result = null;
+        return false;
     }
 }

@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using System.Reflection.Metadata.Ecma335;
+using Microsoft.Extensions.DependencyInjection;
 using PtahBuilder.BuildSystem.Config;
 using PtahBuilder.BuildSystem.Entities;
 using PtahBuilder.BuildSystem.Execution.Abstractions;
@@ -28,11 +29,31 @@ public class PipelineContext<T> : IPipelineContext<T>, IEntityProvider<T>
     {
         var id = Config.GetId(entity);
 
+        if (string.IsNullOrWhiteSpace(id))
+        {
+            var newId = FindBackupId(metadata);
+
+            Config.SetId(entity, newId);
+            id = Config.GetId(entity);
+        }
+
         var val = new Entity<T>(id, entity, new Metadata(metadata));
 
         Entities.Add(val.Id, val);
 
         _logger.Info($"{Config.Name}: Added {val.Id}");
+    }
+
+    private string FindBackupId(Dictionary<string, object> metadata)
+    {
+        if (metadata.ContainsKey(MetadataKeys.SourceFile))
+        {
+            var file = metadata[MetadataKeys.SourceFile].ToString();
+
+            return Path.GetFileNameWithoutExtension(file)!;
+        }
+
+        throw new InvalidOperationException($"{Config.Name}: Unable to find backup Id");
     }
 
     public async Task ProcessStepsInStage(Stage stage, ServiceProvider serviceProvider)

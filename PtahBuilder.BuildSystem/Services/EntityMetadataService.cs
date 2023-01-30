@@ -1,25 +1,24 @@
 ﻿using Humanizer;
 
-namespace PtahBuilder.BuildSystem.Services
+namespace PtahBuilder.BuildSystem.Services;
+
+public class EntityMetadataService : IEntityMetadataService
 {
-    public class EntityMetadataService : IEntityMetadataService
+    public string GetSimpleName<T>() => GetSimpleName(typeof(T));
+
+    public string GetSimpleName(Type type)
     {
-        public string GetSimpleName<T>() => GetSimpleName(typeof(T));
+        var name = type.Name;
 
-        public string GetSimpleName(Type type)
+        if (name.EndsWith("Type"))
         {
-            var name = type.Name;
-
-            if (name.EndsWith("Type"))
-            {
-                name = name.Substring(0, name.Length - "Type".Length);
-            }
-
-            return name;
+            name = name.Substring(0, name.Length - "Type".Length);
         }
 
-        public string GetSimpleNamePlural<T>() => GetSimpleNamePlural(typeof(T));
-
-        public string GetSimpleNamePlural(Type type) => GetSimpleName(type).Pluralize();
+        return name;
     }
+
+    public string GetSimpleNamePlural<T>() => GetSimpleNamePlural(typeof(T));
+
+    public string GetSimpleNamePlural(Type type) => GetSimpleName(type).Pluralize();
 }

@@ -1,4 +1,5 @@
-﻿using PtahBuilder.BuildSystem.Entities;
+﻿using System.Reflection;
+using PtahBuilder.BuildSystem.Entities;
 using PtahBuilder.BuildSystem.Execution.Abstractions;
 
 namespace PtahBuilder.BuildSystem.Config;
@@ -37,6 +38,8 @@ public abstract class PipelineConfig
 
 public class PipelineConfig<T> : PipelineConfig
 {
+    public string[] IdProperties { get; set; } = Array.Empty<string>();
+
     public Func<T, string> GetId { get; set; }
 
     public PipelineConfig(string name) : base(name)
@@ -46,37 +49,55 @@ public class PipelineConfig<T> : PipelineConfig
 
     private Func<T, string> CreateDefaultGetId()
     {
+        foreach (var property in GetIdProperties())
+        {
+            return x => property.GetValue(x)?.ToString() ?? throw new InvalidOperationException();
+        }
+
+        return _ => $"{DefaultIdPrefix}_{Guid.NewGuid().ToString()}";
+    }
+
+    private const string DefaultIdPrefix = $"DFID_";
+
+    private IEnumerable<PropertyInfo> GetIdProperties()
+    {
         var properties = typeof(T).GetProperties();
 
-        var entityId = properties.FirstOrDefault(x => x.Name == $"{typeof(T).Name}Id");
-
-        if (entityId != null)
+        IEnumerable<string> PropertyNames()
         {
-            return x => entityId.GetValue(x)?.ToString() ?? throw new InvalidOperationException();
+            foreach (var idProperty in IdProperties)
+            {
+                yield return idProperty;
+            }
+
+            yield return $"{typeof(T).Name}Id";
+            yield return "Id";
+            yield return "TypeName";
+            yield return "Name";
         }
 
-        var id = properties.FirstOrDefault(x => x.Name == "Id");
-
-        if (id != null)
+        foreach (var propertyName in PropertyNames())
         {
-            return x => id.GetValue(x)?.ToString() ?? throw new InvalidOperationException();
+            var property = properties.FirstOrDefault(x => x.Name == propertyName);
+
+            if (property != null)
+            {
+                yield return property;
+            }
         }
+    }
 
-        var typeName = properties.FirstOrDefault(x => x.Name == "TypeName");
-
-        if (typeName != null)
+    public void SetId(T entity, string id)
+    {
+        foreach (var propertyInfo in GetIdProperties())
         {
-            return x => typeName.GetValue(x)?.ToString() ?? throw new InvalidOperationException();
+            var current = propertyInfo.GetValue(entity)?.ToString();
+
+            if (string.IsNullOrWhiteSpace(current) || current.StartsWith(DefaultIdPrefix))
+            {
+                propertyInfo.SetValue(entity, id);
+            }
         }
-
-        var name = properties.FirstOrDefault(x => x.Name == "Name");
-
-        if (name != null)
-        {
-            return x => name.GetValue(x)?.ToString() ?? throw new InvalidOperationException();
-        }
-
-        return _ => Guid.NewGuid().ToString();
     }
 
     public PipelineConfig AddStep<TS>(Stage stage, params object[] args) where TS : IStep<T>
