@@ -65,7 +65,8 @@ steps:
     condition: ne(variables['Build.SourceBranch'], 'refs/heads/master')
     inputs:
       command: "pack"
-      packagesToPack: "$(projectToPublish)"
+      packagesToPack: |
+        $(projectToPublish)
       packDirectory: "$(Build.ArtifactStagingDirectory)"
       nobuild: true
       versioningScheme: "byEnvVar"
@@ -76,7 +77,8 @@ steps:
     condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
     inputs:
       command: "pack"
-      packagesToPack: "$(projectToPublish)"
+      packagesToPack: |
+        $(projectToPublish)
       packDirectory: "$(Build.ArtifactStagingDirectory)"
       nobuild: true
       versioningScheme: "byEnvVar"
