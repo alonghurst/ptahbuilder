@@ -13,7 +13,9 @@ continueOnError: false
 
 variables:
   projects: "**/*.csproj"
-  projectToPublish:  "**/*.csproj;!**/*.Tests.*.csproj"
+  projectToPublish:  |
+    **/*.csproj
+    !**/*.Tests.*.csproj
   buildConfiguration: "Release"
   packageVersionRelease: "$(Build.BuildNumber)"
   packageVersionPreRelease: "$(Build.BuildNumber)-alpha"
