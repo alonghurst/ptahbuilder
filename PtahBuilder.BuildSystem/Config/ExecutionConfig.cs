@@ -18,4 +18,29 @@ public class ExecutionConfig
 
         return this;
     }
+
+    public ExecutionConfig AddPipelinePhase(Action<PhaseAddContext> phase)
+    {
+        var config = new PhaseAddContext();
+
+        phase(config);
+
+        var phaseNumber = EntityPipelines.Values.Max(x => x.Phase);
+
+        // If this is the first phase that has been added then allow them to stay at zero, otherwise increment
+        if (phaseNumber > 0)
+        {
+            phaseNumber++;
+        }
+
+        foreach (var pipelineConfig in config.EntityPipelines)
+        {
+            pipelineConfig.Value.Phase = phaseNumber;
+
+            EntityPipelines.Add(pipelineConfig.Key, pipelineConfig.Value);
+        }
+
+
+        return this;
+    }
 }
