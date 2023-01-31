@@ -15,6 +15,7 @@ variables:
   projects: "**/*.csproj"
   projectToPublish:  |
     **/*.csproj
+    !**/PtahBuilder.Tests.TestBuilder.csproj
     !**/*.Tests.*.csproj
   buildConfiguration: "Release"
   packageVersionRelease: "$(Build.BuildNumber)"
