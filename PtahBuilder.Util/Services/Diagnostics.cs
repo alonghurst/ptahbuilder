@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using PtahBuilder.Util.Extensions;
 using PtahBuilder.Util.Services.Logging;
 
 namespace PtahBuilder.Util.Services;
@@ -63,6 +64,6 @@ public class Diagnostics : IDiagnostics
         var timeStr = sw.Elapsed.TotalSeconds >= 10 ? $"{sw.Elapsed.TotalSeconds:F} sec" : $"{sw.ElapsedMilliseconds} ms";
         var prefix = new string(' ', _depth);
 
-        _logger.Info($"{prefix}{operationDescription}: {timeStr}");
+        _logger.Info($"{prefix}{operationDescription}: {timeStr}".Colour(ConsoleColor.DarkGreen));
     }
 }

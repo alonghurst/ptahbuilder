@@ -6,6 +6,8 @@ namespace PtahBuilder.BuildSystem.Config;
 
 public abstract class PipelineConfig
 {
+    public int Phase { get; set; }
+
     public string Name { get; }
 
     public Dictionary<Stage, List<StepConfig>> Stages { get; } = new();
