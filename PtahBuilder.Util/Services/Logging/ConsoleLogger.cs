@@ -1,10 +1,13 @@
-﻿namespace PtahBuilder.Util.Services.Logging;
+﻿using PtahBuilder.Util.Extensions;
+using Spectre.Console;
+
+namespace PtahBuilder.Util.Services.Logging;
 
 public class ConsoleLogger : ILogger
 {
     public void Info(string message)
     {
-        Console.WriteLine(message);
+        AnsiConsole.MarkupLine(message);
     }
 
     public void Warning(string message)
@@ -22,13 +25,8 @@ public class ConsoleLogger : ILogger
         LogWithColour(ConsoleColor.Green, message);
     }
 
-    private void LogWithColour(ConsoleColor colour, object message)
+    private void LogWithColour(ConsoleColor colour, string message)
     {
-        var prev = Console.ForegroundColor;
-        Console.ForegroundColor = colour;
-
-        Console.WriteLine(message);
-
-        Console.ForegroundColor = prev;
+        AnsiConsole.MarkupLine(message.Colour(colour));
     }
 }

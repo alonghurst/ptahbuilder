@@ -1,4 +1,6 @@
-﻿namespace PtahBuilder.Util.Services.Logging;
+﻿using Spectre.Console;
+
+namespace PtahBuilder.Util.Services.Logging;
 
 public class FileLogger : ILogger, IDisposable
 {
@@ -26,21 +28,26 @@ public class FileLogger : ILogger, IDisposable
 
     public void Info(string message)
     {
+        WriteLine(message);
+    }
+
+    private void WriteLine(string message)
+    {
         _file?.WriteLine(message);
     }
 
     public void Warning(string message)
     {
-        _file?.WriteLine(message);
+        WriteLine(message.RemoveMarkup());
     }
 
     public void Error(string message)
     {
-        _file?.WriteLine(message);
+        WriteLine(message);
     }
 
     public void Success(string message)
     {
-        _file?.WriteLine(message);
+        WriteLine(message);
     }
 }

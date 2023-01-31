@@ -10,6 +10,8 @@ namespace PtahBuilder.BuildSystem.Execution;
 
 public class PipelineContext<T> : IPipelineContext<T>, IEntityProvider<T>
 {
+    public int Phase => Config.Phase;
+
     public PipelineConfig<T> Config { get; }
     public Dictionary<string, Entity<T>> Entities { get; } = new();
 
@@ -66,9 +68,10 @@ public class PipelineContext<T> : IPipelineContext<T>, IEntityProvider<T>
         }
     }
 
+
     private async Task ExecuteStep(ServiceProvider serviceProvider, StepConfig stepConfig)
     {
-        var message = $"{Config.Name}: Processing {stepConfig.StepType.GetTypeName()}";
+        var message = $"{Config.Name}: Processed {stepConfig.StepType.GetTypeName()}";
 
         await _diagnostics.Time(message, async () =>
          {

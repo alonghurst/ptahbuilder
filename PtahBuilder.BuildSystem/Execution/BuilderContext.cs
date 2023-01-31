@@ -61,15 +61,27 @@ public class BuilderContext : IDisposable
 
         var stages = Enum.GetValues<Stage>();
 
-        foreach (var stage in stages)
-        {
-            _logger.Info($"Executing stage: {stage}");
+        var phasedPipelines = pipelines
+            .GroupBy(x => x.pipeline.Phase)
+            .OrderBy(x => x.Key)
+            .ToArray();
 
-            foreach (var (_, pipeline) in pipelines)
+        foreach (var phaseGroup in phasedPipelines)
+        {
+            _logger.Info($"Executing phase: {phaseGroup.Key}".Colour(ConsoleColor.Magenta));
+
+            foreach (var stage in stages)
             {
-                await pipeline.ProcessStepsInStage(stage, serviceProvider);
+                _logger.Info($"Executing stage: {stage}".Colour(ConsoleColor.Blue));
+
+                foreach (var (_, pipeline) in phaseGroup)
+                {
+                    await pipeline.ProcessStepsInStage(stage, serviceProvider);
+                }
             }
         }
+
+
     }
 
     private IEnumerable<(Type type, IPipelineContext pipeline)> BuildPipelines()
