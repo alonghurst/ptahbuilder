@@ -109,21 +109,21 @@ public class PipelineConfig<T> : PipelineConfig
         return this;
     }
 
-    public PipelineConfig AddInputStage<TS>(params object[] args) where TS : IStep<T>
+    public PipelineConfig AddInputStep<TS>(params object[] args) where TS : IStep<T>
     {
         AddStep<TS>(Stage.Input, args);
 
         return this;
     }
 
-    public PipelineConfig AddOutputStage<TS>(params object[] args) where TS : IStep<T>
+    public PipelineConfig AddOutputStep<TS>(params object[] args) where TS : IStep<T>
     {
         AddStep<TS>(Stage.Output, args);
 
         return this;
     }
 
-    public PipelineConfig AddProcessStage<TS>(params object[] args) where TS : IStep<T>
+    public PipelineConfig AddProcessStep<TS>(params object[] args) where TS : IStep<T>
     {
         AddStep<TS>(Stage.Process, args);
 
