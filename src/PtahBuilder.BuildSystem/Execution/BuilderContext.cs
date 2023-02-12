@@ -92,10 +92,10 @@ public class BuilderContext : IDisposable
                 _logger.Warning($"{group.Key.Name} Validation Errors");
                 foreach (var entity in group)
                 {
-                    _logger.Warning($"\t{entity.id}");
+                    _logger.Warning($"  {entity.id}");
                     foreach (var error in entity.errors)
                     {
-                        _logger.Warning($"\t\t{error.Source}: {error.Error}");
+                        _logger.Warning($"    {error.Source}: {error.Error}");
                     }
                 }
             }
