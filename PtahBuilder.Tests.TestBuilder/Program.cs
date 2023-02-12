@@ -4,11 +4,14 @@ using PtahBuilder.BuildSystem.Steps.Output;
 using PtahBuilder.BuildSystem.Steps.Process;
 using PtahBuilder.Tests.TestBuilder.Entities;
 using PtahBuilder.Util.Helpers;
+using Constants = PtahBuilder.Tests.TestBuilder.Constants;
 
 await new BuilderFactory()
     .ConfigureFiles(f =>
     {
         f.Configure(PathHelper.GetRootPath("Data", args));
+
+        f.AdditionalDirectories.Add(Constants.DirectoryKeys.CodeOutput, Path.Combine(f.OutputDirectory, "Code"));
     })
     .AddJsonConverterTypes(typeof(Program).Assembly)
     .AddCustomValueParser(typeof(PtahBuilder.Tests.TestBuilder.Entities.Range), v =>

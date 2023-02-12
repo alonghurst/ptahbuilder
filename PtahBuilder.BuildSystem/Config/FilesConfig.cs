@@ -7,6 +7,8 @@ public class FilesConfig : IFilesConfig
     public string DataDirectory { get; set; } = "./Data";
     public string OutputDirectory { get; set; } = "./Output";
 
+    public Dictionary<string, string> AdditionalDirectories { get; } = new();
+
     public void Configure(string workingDirectory, string relativeDataDirectory = "Data", string relativeOutputDirectory = "Output")
     {
         WorkingDirectory = Path.GetFullPath(workingDirectory);
