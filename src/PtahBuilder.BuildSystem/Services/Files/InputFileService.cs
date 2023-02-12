@@ -22,7 +22,7 @@ public class InputFileService : IInputFileService
         {
             fileType = fileType.ToFileTypeWildCard();
 
-            return Directory.GetFiles(directory, fileType);
+            return Directory.GetFiles(directory, fileType, SearchOption.AllDirectories);
         }
 
         return Array.Empty<string>();
