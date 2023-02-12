@@ -2,6 +2,13 @@
 
 public class ExecutionConfig
 {
+    public ExecutionConfig(FilesConfig filesConfig)
+    {
+        Files=filesConfig;
+    }
+
+    public FilesConfig Files { get; }
+
     public bool DeleteOutputDirectory { get; set; } = true;
 
     public Dictionary<Type, PipelineConfig> EntityPipelines { get; } = new();

@@ -93,7 +93,7 @@ public class BuilderFactory
 
     private ExecutionConfig BuildExecutionConfig()
     {
-        var executionConfig = new ExecutionConfig();
+        var executionConfig = new ExecutionConfig(_filesConfig);
 
         _configureExecutionConfig?.Invoke(executionConfig);
 
