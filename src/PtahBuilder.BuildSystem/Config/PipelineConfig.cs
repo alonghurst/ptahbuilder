@@ -53,7 +53,7 @@ public class PipelineConfig<T> : PipelineConfig
     {
         foreach (var property in GetIdProperties())
         {
-            return x => property.GetValue(x)?.ToString() ?? throw new InvalidOperationException();
+            return x => property.GetValue(x)?.ToString() ?? string.Empty;
         }
 
         return _ => $"{DefaultIdPrefix}_{Guid.NewGuid().ToString()}";
