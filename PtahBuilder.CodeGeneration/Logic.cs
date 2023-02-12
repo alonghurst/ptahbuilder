@@ -51,7 +51,7 @@ public static class LogicHelper
     public static BinaryExpressionSyntax Comparison(string propertyName, string identifierA, string identifierB, bool isEquality)
     {
         ExpressionSyntax accessA = string.IsNullOrEmpty(identifierA) ?
-            (ExpressionSyntax)SyntaxFactory.IdentifierName(
+            SyntaxFactory.IdentifierName(
                 propertyName)
             :
             SyntaxFactory.MemberAccessExpression(
@@ -64,7 +64,7 @@ public static class LogicHelper
                         SyntaxKind.DotToken));
 
         ExpressionSyntax accessB = string.IsNullOrEmpty(identifierB) ?
-            (ExpressionSyntax)SyntaxFactory.IdentifierName(
+            SyntaxFactory.IdentifierName(
                 propertyName)
             :
             SyntaxFactory.MemberAccessExpression(

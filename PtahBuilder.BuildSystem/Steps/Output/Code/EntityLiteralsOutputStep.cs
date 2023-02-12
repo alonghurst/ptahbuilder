@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Humanizer;
+﻿using Humanizer;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using PtahBuilder.BuildSystem.Entities;
@@ -18,7 +13,7 @@ namespace PtahBuilder.BuildSystem.Steps.Output.Code
     {
         public string OutputDirectory { get; set; } = string.Empty;
         public string Namespace { get; set; } = "Entities";
-        public string Name {get;set;} ="Names";
+        public string Name { get; set; } = "Ids";
         public string FileType { get; set; } = ".generated.cs";
         public Func<Entity<T>, string> Accessor { get; set; } = x => x.Id;
     }
@@ -39,7 +34,7 @@ namespace PtahBuilder.BuildSystem.Steps.Output.Code
             var filename = $"{_entityMetadataService.GetSimpleName(typeof(T))}{_config.Name}{_config.FileType}";
 
             var content = CreateCodeFile(entities).Definition();
-            
+
             return (filename, content);
         }
 

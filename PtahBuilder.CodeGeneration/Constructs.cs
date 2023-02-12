@@ -180,14 +180,7 @@ public static partial class Constructs
         if (theNamespace.EndsWith("."))
             theNamespace = theNamespace.Substring(0, theNamespace.Length - 1);
 
-        return SyntaxFactory.NamespaceDeclaration(
-                ((QualifiedNameSyntax)TurnStringIntoFullyQualifiedName(theNamespace))
-                .WithDotToken(
-                    SyntaxFactory.Token(
-                        SyntaxKind.DotToken)))
-            .WithNamespaceKeyword(
-                SyntaxFactory.Token(
-                    SyntaxKind.NamespaceKeyword));
+        return SyntaxFactory.NamespaceDeclaration(TurnStringIntoFullyQualifiedName(theNamespace));
     }
 
     private static UsingDirectiveSyntax UsingTypeWithAlias(string type, string fullyQualifiedType)
