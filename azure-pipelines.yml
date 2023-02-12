@@ -13,10 +13,7 @@ continueOnError: false
 
 variables:
   projects: "**/*.csproj"
-  projectToPublish:  |
-    **/*.csproj
-    !**/PtahBuilder.Tests.TestBuilder.csproj
-    !**/*.Tests.*.csproj
+  projectToPublish: "src/**/*.csproj"
   buildConfiguration: "Release"
   packageVersionRelease: "$(Build.BuildNumber)"
   packageVersionPreRelease: "$(Build.BuildNumber)-alpha"
@@ -39,15 +36,8 @@ steps:
     displayName: "Run builder"
     inputs:
       script: "dotnet run -c '$(buildConfiguration)' -- ."
-      workingDirectory: "$(System.DefaultWorkingDirectory)/PtahBuilder.Tests.TestBuilder/"
+      workingDirectory: "$(System.DefaultWorkingDirectory)/tests/PtahBuilder.Tests.TestBuilder/"
       failOnStderr: true
-
-  - task: CmdLine@2
-    displayName: "Rebuild test builder to verify"
-    inputs:
-      command: "build"
-      projects: "$(testBuilder)"
-      arguments: "--configuration $(buildConfiguration) --no-restore"
 
   - task: DotNetCoreCLI@2
     displayName: "Publish Dotnet"
