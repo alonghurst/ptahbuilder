@@ -8,7 +8,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\PtahBuilder.BuildSystem\PtahBuilder.BuildSystem.csproj" />
+    <ProjectReference Include="..\..\src\PtahBuilder.BuildSystem\PtahBuilder.BuildSystem.csproj" />
   </ItemGroup>
-
 </Project>
