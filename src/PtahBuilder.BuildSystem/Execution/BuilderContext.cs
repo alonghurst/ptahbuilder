@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.VisualBasic;
 using PtahBuilder.BuildSystem.Config;
 using PtahBuilder.BuildSystem.Entities;
 using PtahBuilder.BuildSystem.Execution.Abstractions;
@@ -81,7 +82,31 @@ public class BuilderContext : IDisposable
             }
         }
 
+        var errorEntities = pipelines.SelectMany(x => x.pipeline.ValidationErrors()).ToArray();
 
+        if (errorEntities.Any())
+        {
+            var grouped = errorEntities.GroupBy(x => x.type);
+
+            foreach (var group in grouped)
+            {
+                _logger.Warning($"{group.Key.Name} Validation Errors");
+                foreach (var entity in group)
+                {
+                    _logger.Warning($"\t{entity.id}");
+                    foreach (var error in entity.errors)
+                    {
+                        _logger.Warning($"\t\t{error.Source}: {error.Error}");
+                    }
+                }
+            }
+
+            _logger.Warning("Execution completed with validation errors.");
+        }
+        else
+        {
+            _logger.Success("Execution completed with no validation errors.");
+        }
     }
 
     private IEnumerable<(Type type, IPipelineContext pipeline)> BuildPipelines()

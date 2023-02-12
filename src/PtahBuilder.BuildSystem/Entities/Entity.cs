@@ -7,6 +7,8 @@ public class Entity<T>
 
     public Metadata Metadata { get; }
 
+    public Validation Validation { get; } = new();
+
     public Entity(string id, T value, Metadata metadata)
     {
         Id = id;
