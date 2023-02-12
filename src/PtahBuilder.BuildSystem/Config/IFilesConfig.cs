@@ -2,7 +2,8 @@
 
 public interface IFilesConfig
 {
-    string WorkingDirectory { get; set; }
-    string DataDirectory { get; set; }
-    string OutputDirectory { get; set; }
+    string WorkingDirectory { get; }
+    string DataDirectory { get; }
+    string OutputDirectory { get; }
+    Dictionary<string, string> AdditionalDirectories { get; }
 }
