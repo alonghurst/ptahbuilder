@@ -1,9 +1,0 @@
-Size: Large
-Health: 2d8 + 24
-HasBiography: true
-Cultures:
-  - Turkish
-  - Arabic
-Conditions:
-  Biome: SubtropicalDesert
-Rarity: Rare

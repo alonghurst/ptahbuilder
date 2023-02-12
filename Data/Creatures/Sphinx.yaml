@@ -1,7 +1,0 @@
-Size: Giant
-Health: 4d6 + 36
-HasBiography: true
-Cultures: AncientEgyptian
-Conditions:
-  Biome: SubtropicalDesert
-Rarity: Mythic

@@ -1,9 +1,0 @@
-Size: Large
-Health: 3d8 + 14
-HasBiography: true
-Cultures:
-  - Danish
-  - Swedish
-Conditions:
-  Tags: bridge
-Tags: humanoid monster

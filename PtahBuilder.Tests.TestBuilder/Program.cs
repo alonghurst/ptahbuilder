@@ -36,11 +36,5 @@ await new BuilderFactory()
             p.AddProcessStep<ValidateEntityReferenceStep<Recipe, Fruit>>((Recipe r) => r.ValidFruits);
             p.AddOutputStep<JsonOutputStep<Recipe>>();
         });
-
-        x.AddPipeline<CreatureType>(p =>
-        {
-            p.AddInputStep<YamlInputStep<CreatureType>>();
-            p.AddOutputStep<JsonOutputStep<CreatureType>>();
-        });
     })
     .Run();
