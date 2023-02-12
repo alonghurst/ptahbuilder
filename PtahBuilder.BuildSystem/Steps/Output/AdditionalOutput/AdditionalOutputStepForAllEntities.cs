@@ -18,5 +18,5 @@ public abstract class AdditionalOutputStepForAllEntities<T> : AdditionalOutputSt
         return File.WriteAllTextAsync(filename, content.content);
     }
 
-    protected abstract (string filename, string content) GenerateContent(IPipelineContext<T> context, IReadOnlyCollection<Entity<T>> entity);
+    protected abstract (string filename, string content) GenerateContent(IPipelineContext<T> context, IReadOnlyCollection<Entity<T>> entities);
 }

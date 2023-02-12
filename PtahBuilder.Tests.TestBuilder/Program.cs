@@ -1,6 +1,7 @@
 ﻿using PtahBuilder.BuildSystem;
 using PtahBuilder.BuildSystem.Steps.Input;
 using PtahBuilder.BuildSystem.Steps.Output;
+using PtahBuilder.BuildSystem.Steps.Output.Code;
 using PtahBuilder.BuildSystem.Steps.Process;
 using PtahBuilder.Tests.TestBuilder.Entities;
 using PtahBuilder.Util.Helpers;
@@ -31,6 +32,10 @@ await new BuilderFactory()
         {
             p.AddInputStep<JsonInputStep<Fruit>>();
             p.AddOutputStep<JsonOutputStep<Fruit>>();
+            p.AddOutputStep<EntityLiteralsOutputStep<Fruit>>(new EntityLiteralsConfig<Fruit>
+            {
+                OutputDirectory = x.Files.AdditionalDirectories[Constants.DirectoryKeys.CodeOutput]
+            });
         });
 
         x.AddPipeline<Recipe>(p =>
@@ -38,6 +43,10 @@ await new BuilderFactory()
             p.AddInputStep<JsonInputStep<Recipe>>();
             p.AddProcessStep<ValidateEntityReferenceStep<Recipe, Fruit>>((Recipe r) => r.ValidFruits);
             p.AddOutputStep<JsonOutputStep<Recipe>>();
+            p.AddOutputStep<EntityLiteralsOutputStep<Recipe>>(new EntityLiteralsConfig<Recipe>
+            {
+                OutputDirectory = x.Files.AdditionalDirectories[Constants.DirectoryKeys.CodeOutput]
+            });
         });
     })
     .Run();
