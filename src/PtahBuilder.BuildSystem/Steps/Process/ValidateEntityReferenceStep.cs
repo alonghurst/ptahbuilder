@@ -27,12 +27,12 @@ public class ValidateEntityReferenceStep<TFrom, TTo> : IStep<TFrom>
             {
                 foreach (var s in strings)
                 {
-                    Validate(entity, s);
+                    Validate(context,entity, s);
                 }
             }
             else if (reference is string s)
             {
-                Validate(entity, s);
+                Validate(context,entity, s);
             }
             else if (reference != null)
             {
@@ -43,14 +43,13 @@ public class ValidateEntityReferenceStep<TFrom, TTo> : IStep<TFrom>
         return Task.CompletedTask;
     }
 
-    private void Validate(Entity<TFrom> entity, string id)
+    private void Validate(IPipelineContext<TFrom> context, Entity<TFrom> entity, string id)
     {
         if (!_referencing.Entities.ContainsKey(id))
         {
-            var error = $"{entity.Id}: Unable to find a \"{typeof(TTo).Name}\" with Id \"{id}\" ";
-            _logger.Error(error);
+            var error = "Unable to find a \"{typeof(TTo).Name}\" with Id \"{id}\" ";
 
-            throw new InvalidOperationException(error);
+            context.AddValidationError(entity, this, error);
         }
     }
 }

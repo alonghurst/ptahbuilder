@@ -11,7 +11,6 @@ namespace PtahBuilder.BuildSystem.Execution;
 public class PipelineContext<T> : IPipelineContext<T>, IEntityProvider<T>
 {
     public int Phase => Config.Phase;
-
     public PipelineConfig<T> Config { get; }
     public Dictionary<string, Entity<T>> Entities { get; } = new();
 
@@ -43,6 +42,15 @@ public class PipelineContext<T> : IPipelineContext<T>, IEntityProvider<T>
         Entities.Add(val.Id, val);
 
         _logger.Info($"{Config.Name}: Added {val.Id}");
+    }
+
+    public void AddValidationError(Entity<T> entity, IStep<T> step, string error)
+    {
+        var name = step.GetType().GetTypeName();
+
+        _logger.Warning($"{entity.Id}: Validation Error - {name}: {error}");
+
+        entity.Validation.Errors.Add(new ValidationError(name, error));
     }
 
     private string FindBackupId(Dictionary<string, object> metadata)
@@ -87,5 +95,17 @@ public class PipelineContext<T> : IPipelineContext<T>, IEntityProvider<T>
                  throw;
              }
          });
+    }
+
+
+    public IEnumerable<(Type, string, ValidationError[])> ValidationErrors()
+    {
+        foreach (var entity in Entities.Values)
+        {
+            if (!entity.Validation.IsValid)
+            {
+                yield return (typeof(T), entity.Id, entity.Validation.Errors.ToArray());
+            }
+        }
     }
 }
