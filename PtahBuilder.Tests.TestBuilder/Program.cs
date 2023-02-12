@@ -3,8 +3,6 @@ using PtahBuilder.BuildSystem.Steps.Input;
 using PtahBuilder.BuildSystem.Steps.Output;
 using PtahBuilder.BuildSystem.Steps.Process;
 using PtahBuilder.Tests.TestBuilder.Entities;
-using PtahBuilder.Tests.TestBuilder.Entities.Conditions;
-using PtahBuilder.Tests.TestBuilder.Entities.Dice;
 using PtahBuilder.Util.Helpers;
 
 await new BuilderFactory()
@@ -24,47 +22,25 @@ await new BuilderFactory()
             return null!;
         }
     })
-    .AddCustomValueParser(typeof(IDiceValue), v =>
-    {
-        try
-        {
-            return DiceParser.Parse(v.ToString()!);
-        }
-        catch
-        {
-            return null!;
-        }
-    })
-    .AddCustomValueParser(typeof(ICondition), v =>
-    {
-        try
-        {
-            return ConditionParser.Parse(v.ToString()!.Replace("\"", string.Empty));
-        }
-        catch
-        {
-            return null!;
-        }
-    })
     .ConfigureExecution(x =>
     {
         x.AddPipeline<Fruit>(p =>
         {
-            p.AddInputStage<JsonInputStep<Fruit>>();
-            p.AddOutputStage<JsonOutputStep<Fruit>>();
+            p.AddInputStep<JsonInputStep<Fruit>>();
+            p.AddOutputStep<JsonOutputStep<Fruit>>();
         });
 
         x.AddPipeline<Recipe>(p =>
         {
-            p.AddInputStage<JsonInputStep<Recipe>>();
-            p.AddProcessStage<ValidateEntityReferenceStep<Recipe, Fruit>>((Recipe r) => r.ValidFruits);
-            p.AddOutputStage<JsonOutputStep<Recipe>>();
+            p.AddInputStep<JsonInputStep<Recipe>>();
+            p.AddProcessStep<ValidateEntityReferenceStep<Recipe, Fruit>>((Recipe r) => r.ValidFruits);
+            p.AddOutputStep<JsonOutputStep<Recipe>>();
         });
 
         x.AddPipeline<CreatureType>(p =>
         {
-            p.AddInputStage<YamlInputStep<CreatureType>>();
-            p.AddOutputStage<JsonOutputStep<CreatureType>>();
+            p.AddInputStep<YamlInputStep<CreatureType>>();
+            p.AddOutputStep<JsonOutputStep<CreatureType>>();
         });
     })
     .Run();

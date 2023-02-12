@@ -1,7 +1,4 @@
-﻿using PtahBuilder.Tests.TestBuilder.Entities.Dice;
-using PtahBuilder.Tests.TestBuilder.Entities.Probability;
-
-namespace PtahBuilder.Tests.TestBuilder.Entities;
+﻿namespace PtahBuilder.Tests.TestBuilder.Entities;
 
 public class CreatureType
 {
@@ -17,15 +14,9 @@ public class CreatureType
 
     public Culture[] Cultures { get; set; } = Array.Empty<Culture>();
 
-    public Conditions.Conditions? Conditions { get; set; }
-
-    public ProbabilitySet Probability { get; set; } = ProbabilitySet.Default();
-
     public string[] Tags { get; set; } = Array.Empty<string>();
 
     public Rarity Rarity { get; set; } = Rarity.Common;
 
     public float MoveSpeed { get; set; } = 1f;
-
-    public IDiceValue Health { get; set; } = new ConstantDiceValue(1);
 }
