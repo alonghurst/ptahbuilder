@@ -24,7 +24,7 @@ public class MoveInputFileStep<T>:IStep<T>
         {
             if (entity.Metadata.TryGetValue(MetadataKeys.SourceFile, out var value) && value is string filename)
             {
-                var desiredCategory = property.GetValue(entity)?.ToString();
+                var desiredCategory = property.GetValue(entity.Value)?.ToString();
 
                 if (!string.IsNullOrWhiteSpace(desiredCategory))
                 {
