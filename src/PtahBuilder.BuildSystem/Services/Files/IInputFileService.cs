@@ -2,5 +2,6 @@
 
 public interface IInputFileService
 {
-    IReadOnlyCollection<string> GetInputFilesForEntity<T>(string fileType);
+    IReadOnlyCollection<string> GetInputFilesForEntityType<T>(string fileType);
+    string GetInputDirectoryForEntityType<T>();
 }

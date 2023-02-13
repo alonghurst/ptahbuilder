@@ -22,7 +22,7 @@ public class JsonInputStep<T> : IStep<T>
 
     public async Task Execute(IPipelineContext<T> context, IReadOnlyCollection<Entity<T>> entities)
     {
-        foreach (var file in _inputFileService.GetInputFilesForEntity<T>("json"))
+        foreach (var file in _inputFileService.GetInputFilesForEntityType<T>("json"))
         {
             _logger.Info($"Reading {file}");
 

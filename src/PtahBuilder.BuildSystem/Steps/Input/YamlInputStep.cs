@@ -22,7 +22,7 @@ public class YamlInputStep<T> : IStep<T>
 
     public async Task Execute(IPipelineContext<T> context, IReadOnlyCollection<Entity<T>> entities)
     {
-        foreach (var file in _inputFileService.GetInputFilesForEntity<T>("yaml"))
+        foreach (var file in _inputFileService.GetInputFilesForEntityType<T>("yaml"))
         {
             _logger.Info($"Reading {file}");
 
