@@ -4,7 +4,7 @@ public class ExecutionConfig
 {
     public ExecutionConfig(FilesConfig filesConfig)
     {
-        Files=filesConfig;
+        Files = filesConfig;
     }
 
     public FilesConfig Files { get; }
@@ -32,14 +32,8 @@ public class ExecutionConfig
 
         phase(config);
 
-        var phaseNumber = EntityPipelines.Values.Max(x => x.Phase);
-
-        // If this is the first phase that has been added then allow them to stay at zero, otherwise increment
-        if (phaseNumber > 0)
-        {
-            phaseNumber++;
-        }
-
+        var phaseNumber = EntityPipelines.Any() ? EntityPipelines.Values.Max(x => x.Phase + 1) : 0;
+        
         foreach (var pipelineConfig in config.EntityPipelines)
         {
             pipelineConfig.Value.Phase = phaseNumber;
