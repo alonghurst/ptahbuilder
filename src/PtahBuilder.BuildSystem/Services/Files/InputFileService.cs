@@ -14,9 +14,9 @@ public class InputFileService : IInputFileService
         _entityMetadataService = entityMetadataService;
     }
 
-    public IReadOnlyCollection<string> GetInputFilesForEntity<T>(string fileType)
+    public IReadOnlyCollection<string> GetInputFilesForEntityType<T>(string fileType)
     {
-        var directory = Path.Combine(_filesConfig.DataDirectory, _entityMetadataService.GetSimpleNamePlural<T>());
+        var directory = GetInputDirectoryForEntityType<T>();
 
         if (Directory.Exists(directory))
         {
@@ -27,4 +27,6 @@ public class InputFileService : IInputFileService
 
         return Array.Empty<string>();
     }
+
+    public string GetInputDirectoryForEntityType<T>() => Path.Combine(_filesConfig.DataDirectory, _entityMetadataService.GetSimpleNamePlural<T>());
 }

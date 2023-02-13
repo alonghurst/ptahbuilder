@@ -28,4 +28,6 @@ public class Metadata
     {
         Values[key] = value;
     }
+
+    public bool TryGetValue(string sourceFile, out object? o) => Values.TryGetValue(sourceFile, out o);
 }
