@@ -8,20 +8,22 @@ public class ValidateEntityReferenceStep<TFrom, TTo> : IStep<TFrom>
 {
     private readonly IEntityProvider<TTo> _referencing;
     private readonly ILogger _logger;
-    private readonly Func<TFrom, object?> _getReferencingValue;
+    private readonly string _propertyName;
 
-    public ValidateEntityReferenceStep(IEntityProvider<TTo> referencing, ILogger logger, Func<TFrom, object?> getReferencingValue)
+    public ValidateEntityReferenceStep(IEntityProvider<TTo> referencing, ILogger logger, string propertyName)
     {
         _referencing = referencing;
         _logger = logger;
-        _getReferencingValue = getReferencingValue;
+        _propertyName = propertyName;
     }
 
     public Task Execute(IPipelineContext<TFrom> context, IReadOnlyCollection<Entity<TFrom>> entities)
     {
+        var property = typeof(TFrom).GetProperty(_propertyName) ?? throw new InvalidOperationException($"Unable to find a property named {_propertyName}");
+
         foreach (var entity in entities)
         {
-            var reference = _getReferencingValue(entity.Value);
+            var reference = property.GetValue(entity.Value);
 
             if (reference is IEnumerable<string> strings)
             {
