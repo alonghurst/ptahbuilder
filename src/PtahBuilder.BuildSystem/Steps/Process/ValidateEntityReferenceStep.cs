@@ -47,9 +47,9 @@ public class ValidateEntityReferenceStep<TFrom, TTo> : IStep<TFrom>
 
     private void Validate(IPipelineContext<TFrom> context, Entity<TFrom> entity, string id)
     {
-        if (!_referencing.Entities.ContainsKey(id))
+        if (!string.IsNullOrWhiteSpace(id) && !_referencing.Entities.ContainsKey(id))
         {
-            var error = "Unable to find a \"{typeof(TTo).Name}\" with Id \"{id}\" ";
+            var error = $"Unable to find a \"{typeof(TTo).Name}\" with Id \"{id}\" ";
 
             context.AddValidationError(entity, this, error);
         }
