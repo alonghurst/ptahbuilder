@@ -1,28 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using PtahBuilder.BuildSystem.Entities;
+﻿using PtahBuilder.BuildSystem.Entities;
 using PtahBuilder.BuildSystem.Execution.Abstractions;
 
-namespace PtahBuilder.BuildSystem.Steps.Input
-{
-    public abstract class FilterStep<T>:IStep<T>
-    {
-        public Task Execute(IPipelineContext<T> context, IReadOnlyCollection<Entity<T>> entities)
-        {
-            foreach (var entity in entities)
-            {
-                if (ShouldBeFiltered(entity))
-                {
-                    context.RemoveEntity(entity);
-                }
-            }
+namespace PtahBuilder.BuildSystem.Steps.Input;
 
-            return Task.CompletedTask;
+public abstract class FilterStep<T>:IStep<T>
+{
+    public Task Execute(IPipelineContext<T> context, IReadOnlyCollection<Entity<T>> entities)
+    {
+        foreach (var entity in entities)
+        {
+            if (ShouldBeFiltered(entity))
+            {
+                context.RemoveEntity(entity);
+            }
         }
 
-        protected abstract bool ShouldBeFiltered(Entity<T> entity);
+        return Task.CompletedTask;
     }
+
+    protected abstract bool ShouldBeFiltered(Entity<T> entity);
 }
