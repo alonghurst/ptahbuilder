@@ -6,6 +6,8 @@ public class FileLogger : ILogger, IDisposable
 {
     private StreamWriter? _file;
 
+    static SemaphoreSlim _semaphoreSlim = new SemaphoreSlim(1);
+
     public FileLogger()
     {
         var fileName = $"log_{DateTime.Now:yyyy-M-d-HH-mm-ss}.txt";
@@ -33,7 +35,9 @@ public class FileLogger : ILogger, IDisposable
 
     private void WriteLine(string message)
     {
+        _semaphoreSlim.Wait();
         _file?.WriteLine(message);
+        _semaphoreSlim.Release();
     }
 
     public void Warning(string message)
@@ -49,5 +53,9 @@ public class FileLogger : ILogger, IDisposable
     public void Success(string message)
     {
         WriteLine(message);
+    }
+
+    public void Verbose(string message)
+    {
     }
 }

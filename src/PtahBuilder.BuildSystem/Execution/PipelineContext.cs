@@ -43,7 +43,7 @@ public class PipelineContext<T> : IPipelineContext<T>, IEntityProvider<T>
 
         Entities.Add(val.Id, val);
 
-        _logger.Info($"{Config.Name}: Added {val.Id}");
+        _logger.Verbose($"{Config.Name}: Added {val.Id}");
 
         return val;
     }

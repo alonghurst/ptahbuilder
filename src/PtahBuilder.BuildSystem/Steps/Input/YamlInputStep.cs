@@ -24,7 +24,7 @@ public class YamlInputStep<T> : IStep<T>
     {
         foreach (var file in _inputFileService.GetInputFilesForEntityType<T>("yaml"))
         {
-            _logger.Info($"Reading {file}");
+            _logger.Verbose($"Reading {file}");
 
             var text = await File.ReadAllTextAsync(file);
 
