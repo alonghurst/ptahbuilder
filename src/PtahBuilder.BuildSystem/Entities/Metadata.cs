@@ -18,6 +18,8 @@ public class Metadata
     public string[]? GetArray(string key) => Values.ContainsKey(key) ? Values[key] is string ? new[] { Values[key].ToString()! } : Values[key] as string[] : null;
     public string? GetString(string key) => Values.ContainsKey(key) && Values[key] is string ? Values[key].ToString() : null;
 
+    public T Get<T>(string key) where T : class => Values[key] as T ?? throw new InvalidOperationException($"Unable to parse {key} as {typeof(T).Name}");
+
     public Dictionary<string, object> Values { get; } = new();
 
     public void Add(string key, object value)
