@@ -27,6 +27,8 @@ public class PipelineContext<T> : IPipelineContext<T>, IEntityProvider<T>
 
     public Entity<T> AddEntity(T entity, Dictionary<string, object>? metadata)
     {
+        metadata ??= new Dictionary<string, object>();
+
         var id = Config.GetId(entity);
 
         if (string.IsNullOrWhiteSpace(id))
@@ -42,6 +44,8 @@ public class PipelineContext<T> : IPipelineContext<T>, IEntityProvider<T>
         Entities.Add(val.Id, val);
 
         _logger.Info($"{Config.Name}: Added {val.Id}");
+
+        return val;
     }
 
     public void AddValidationError(Entity<T> entity, IStep<T> step, string error)
@@ -51,6 +55,11 @@ public class PipelineContext<T> : IPipelineContext<T>, IEntityProvider<T>
         _logger.Warning($"{entity.Id}: Validation Error - {name}: {error}");
 
         entity.Validation.Errors.Add(new ValidationError(name, error));
+    }
+
+    public void RemoveEntity(Entity<T> entity)
+    {
+        Entities.Remove(entity.Id);
     }
 
     private string FindBackupId(Dictionary<string, object> metadata)
@@ -75,7 +84,6 @@ public class PipelineContext<T> : IPipelineContext<T>, IEntityProvider<T>
             }
         }
     }
-
 
     private async Task ExecuteStep(ServiceProvider serviceProvider, StepConfig stepConfig)
     {
