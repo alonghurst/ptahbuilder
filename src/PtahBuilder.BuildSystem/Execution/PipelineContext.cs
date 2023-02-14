@@ -87,7 +87,7 @@ public class PipelineContext<T> : IPipelineContext<T>, IEntityProvider<T>
 
     private async Task ExecuteStep(ServiceProvider serviceProvider, StepConfig stepConfig)
     {
-        var message = $"{Config.Name}: Processed {stepConfig.StepType.GetTypeName()}";
+        var message = $"{Config.Name}: Processing {stepConfig.StepType.GetTypeName()}";
 
         await _diagnostics.Time(message, async () =>
          {
