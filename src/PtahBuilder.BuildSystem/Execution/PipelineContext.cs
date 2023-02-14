@@ -25,7 +25,7 @@ public class PipelineContext<T> : IPipelineContext<T>, IEntityProvider<T>
         _diagnostics = diagnostics;
     }
 
-    public void AddEntity(T entity, Dictionary<string, object> metadata)
+    public Entity<T> AddEntity(T entity, Dictionary<string, object>? metadata)
     {
         var id = Config.GetId(entity);
 

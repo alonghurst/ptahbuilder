@@ -13,7 +13,7 @@ public interface IPipelineContext
 
 public interface IPipelineContext<T> : IPipelineContext
 {
-    void AddEntity(T entity, Dictionary<string, object> metadata);
+    Entity<T> AddEntity(T entity, Dictionary<string, object>? metadata = null);
 
     void AddValidationError(Entity<T> entity, IStep<T> step, string error);
     void RemoveEntity(Entity<T> entity);
