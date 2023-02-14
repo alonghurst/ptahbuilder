@@ -6,4 +6,5 @@ public interface ILogger
     void Warning(string message);
     void Error(string message);
     void Success(string message);
+    void Verbose(string message);
 }

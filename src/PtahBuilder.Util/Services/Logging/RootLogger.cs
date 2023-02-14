@@ -50,4 +50,12 @@ public class RootLogger : ILogger, IDisposable
             logger.Success(message);
         }
     }
+
+    public void Verbose(string message)
+    {
+        foreach (var logger in _loggers)
+        {
+            logger.Verbose(message);
+        }
+    }
 }

@@ -25,6 +25,10 @@ public class ConsoleLogger : ILogger
         LogWithColour(ConsoleColor.Green, message);
     }
 
+    public void Verbose(string message)
+    {
+    }
+
     private void LogWithColour(ConsoleColor colour, string message)
     {
         AnsiConsole.MarkupLine(message.Colour(colour));
