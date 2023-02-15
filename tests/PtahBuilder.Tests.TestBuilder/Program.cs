@@ -41,7 +41,7 @@ await new BuilderFactory()
         x.AddPipeline<Recipe>(p =>
         {
             p.AddInputStep<JsonInputStep<Recipe>>();
-            p.AddProcessStep<ValidateEntityReferenceStep<Recipe, Fruit>>((Recipe r) => r.ValidFruits);
+            p.AddProcessStep<ValidateEntityReferenceStep<Recipe, Fruit>>(nameof(Recipe.ValidFruits));
             p.AddOutputStep<JsonOutputStep<Recipe>>();
             p.AddOutputStep<EntityLiteralsOutputStep<Recipe>>(new EntityLiteralsConfig<Recipe>
             {
