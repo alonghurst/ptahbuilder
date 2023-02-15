@@ -22,7 +22,7 @@ public class JsonInputStep<T> : IStep<T>
 
     public async Task Execute(IPipelineContext<T> context, IReadOnlyCollection<Entity<T>> entities)
     {
-        var tasks = _inputFileService.GetInputFilesForEntityType<T>("json").Select(async file =>
+        foreach (var file in _inputFileService.GetInputFilesForEntityType<T>("json"))
         {
             _logger.Verbose($"Reading {file}");
 
@@ -31,10 +31,6 @@ public class JsonInputStep<T> : IStep<T>
             var entity = _jsonService.Deserialize<T>(text);
 
             context.AddEntityFromFile(entity, file);
-
-            return true;
-        });
-
-        await Task.WhenAll(tasks);
+        }
     }
 }
