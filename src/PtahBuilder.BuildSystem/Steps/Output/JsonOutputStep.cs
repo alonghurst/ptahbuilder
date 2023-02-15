@@ -18,13 +18,15 @@ public class JsonOutputStep<T> : IStep<T>
 
     public async Task Execute(IPipelineContext<T> context, IReadOnlyCollection<Entity<T>> entities)
     {
-        foreach (var entity in entities)
+        var tasks = entities.Select(x =>
         {
-            var file = _outputFileService.GetOutputFileForEntity(entity, "json");
+            var file = _outputFileService.GetOutputFileForEntity(x, "json");
 
-            var json = _jsonService.Serialize(entity.Value);
+            var json = _jsonService.Serialize(x.Value);
 
-            await File.WriteAllTextAsync(file, json);
-        }
+            return File.WriteAllTextAsync(file, json);
+        });
+
+        await Task.WhenAll(tasks);
     }
 }
