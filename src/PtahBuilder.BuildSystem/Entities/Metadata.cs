@@ -31,5 +31,5 @@ public class Metadata
         Values[key] = value;
     }
 
-    public bool TryGetValue(string sourceFile, out object? o) => Values.TryGetValue(sourceFile, out o);
+    public bool TryGetValue(string key, out object? o) => Values.TryGetValue(key, out o);
 }
