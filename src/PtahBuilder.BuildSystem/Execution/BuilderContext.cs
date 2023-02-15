@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using PtahBuilder.BuildSystem.Config;
 using PtahBuilder.BuildSystem.Entities;
 using PtahBuilder.BuildSystem.Execution.Abstractions;
@@ -43,22 +44,6 @@ public class BuilderContext : IDisposable
 
         var pipelines = BuildPipelines().ToArray();
 
-        foreach (var (type, pipeline) in pipelines)
-        {
-            var providerType = typeof(IEntityProvider<>).MakeGenericType(type);
-
-            if (pipeline.GetType().IsAssignableTo(providerType))
-            {
-                _services.AddSingleton(providerType, pipeline);
-            }
-            else
-            {
-                _logger.Warning($"Unable to assign {pipeline.GetType().GetTypeName()} to {providerType.GetTypeName()}");
-            }
-        }
-
-        await using var serviceProvider = _services.BuildServiceProvider();
-
         var stages = Enum.GetValues<Stage>();
 
         var phasedPipelines = pipelines
@@ -68,6 +53,24 @@ public class BuilderContext : IDisposable
 
         foreach (var phaseGroup in phasedPipelines)
         {
+            foreach (var (type, pipeline) in phaseGroup)
+            {
+                var providerType = typeof(IEntityProvider<>).MakeGenericType(type);
+
+                if (pipeline.GetType().IsAssignableTo(providerType))
+                {
+                    var descriptor = new ServiceDescriptor(providerType, pipeline);
+
+                    _services.Replace(descriptor);
+                }
+                else
+                {
+                    _logger.Warning($"Unable to assign {pipeline.GetType().GetTypeName()} to {providerType.GetTypeName()}");
+                }
+            }
+
+            await using var serviceProvider = _services.BuildServiceProvider();
+
             _logger.Info($"Executing phase: {phaseGroup.Key}".Colour(ConsoleColor.Magenta));
 
             foreach (var stage in stages)
@@ -112,17 +115,25 @@ public class BuilderContext : IDisposable
     {
         foreach (var config in _config.EntityPipelines)
         {
-            var pipelineType = typeof(PipelineContext<>).MakeGenericType(config.Key);
+            var type = config.GetType();
 
-            var pipeline = Activator.CreateInstance(pipelineType, config.Value, _logger, _diagnostics) as IPipelineContext;
-
-            if (pipeline == null)
+            if (type.IsAssignableTo(typeof(PipelineConfig<>)))
             {
-                throw new InvalidOperationException($"Unable to instantiate pipeline for {config.Key.Name}");
-            }
+                var entityType = type.GetGenericArguments()[0];
 
-            yield return (config.Key, pipeline);
+                var pipelineType = typeof(PipelineContext<>).MakeGenericType(entityType);
+
+                var pipeline = Activator.CreateInstance(pipelineType, config, _logger, _diagnostics) as IPipelineContext;
+
+                if (pipeline == null)
+                {
+                    throw new InvalidOperationException($"Unable to instantiate pipeline for {entityType.GetTypeName()}");
+                }
+
+                yield return (entityType, pipeline);
+            }
         }
+
     }
 
     private void OutputConfiguration()
@@ -137,11 +148,11 @@ public class BuilderContext : IDisposable
 
         foreach (var entityPipeline in _config.EntityPipelines)
         {
-            _logger.Info($"{entityPipeline.Value.Name}: {entityPipeline.Key.GetTypeName()}");
+            _logger.Info($"{entityPipeline.Name}: {entityPipeline.GetType().GetTypeName()}");
 
             foreach (var stage in stages)
             {
-                if (entityPipeline.Value.Stages.TryGetValue(stage, out var steps) && steps.Any())
+                if (entityPipeline.Stages.TryGetValue(stage, out var steps) && steps.Any())
                 {
                     foreach (var step in steps)
                     {
