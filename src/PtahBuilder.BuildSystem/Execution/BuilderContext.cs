@@ -117,7 +117,7 @@ public class BuilderContext : IDisposable
         {
             var type = config.GetType();
 
-            if (type.IsAssignableTo(typeof(PipelineConfig<>)))
+            if (type.GenericTypeArguments.Length > 0)
             {
                 var entityType = type.GetGenericArguments()[0];
 
@@ -133,7 +133,6 @@ public class BuilderContext : IDisposable
                 yield return (entityType, pipeline);
             }
         }
-
     }
 
     private void OutputConfiguration()
