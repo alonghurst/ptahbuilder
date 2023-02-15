@@ -40,6 +40,8 @@ public abstract class PipelineConfig
 
 public class PipelineConfig<T> : PipelineConfig
 {
+    public DuplicateIdBehaviour DuplicateIdBehaviour { get; set; } = DuplicateIdBehaviour.Throw;
+
     public string[] IdProperties { get; set; } = Array.Empty<string>();
 
     public Func<T, string> GetId { get; set; }
@@ -136,4 +138,11 @@ public class PipelineConfig<T> : PipelineConfig
 
         return this;
     }
+}
+
+public enum DuplicateIdBehaviour
+{
+    Throw,
+    Replace,
+    Skip
 }

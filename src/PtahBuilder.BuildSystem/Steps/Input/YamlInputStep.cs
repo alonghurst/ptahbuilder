@@ -22,7 +22,7 @@ public class YamlInputStep<T> : IStep<T>
 
     public async Task Execute(IPipelineContext<T> context, IReadOnlyCollection<Entity<T>> entities)
     {
-        var tasks = _inputFileService.GetInputFilesForEntityType<T>("yaml").Select(async file =>
+        foreach (var file in _inputFileService.GetInputFilesForEntityType<T>("yaml"))
         {
             _logger.Verbose($"Reading {file}");
 
@@ -31,10 +31,6 @@ public class YamlInputStep<T> : IStep<T>
             var entity = string.IsNullOrWhiteSpace(text) ? Activator.CreateInstance<T>() : _yamlService.Deserialize<T>(text);
 
             context.AddEntityFromFile(entity, file);
-
-            return true;
-        });
-
-        await Task.WhenAll(tasks);
+        }
     }
 }

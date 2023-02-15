@@ -39,9 +39,20 @@ public class PipelineContext<T> : IPipelineContext<T>, IEntityProvider<T>
             id = Config.GetId(entity);
         }
 
+        if (Entities.ContainsKey(id))
+        {
+            switch (Config.DuplicateIdBehaviour)
+            {
+                case DuplicateIdBehaviour.Throw:
+                    throw new InvalidOperationException($"An entity with Id \"{id}\" has already been added");
+                case DuplicateIdBehaviour.Skip:
+                    return Entities[id];
+            }
+        }
+        
         var val = new Entity<T>(id, entity, new Metadata(metadata));
 
-        Entities.Add(val.Id, val);
+        Entities[val.Id] = val;
 
         _logger.Verbose($"{Config.Name}: Added {val.Id}");
 
