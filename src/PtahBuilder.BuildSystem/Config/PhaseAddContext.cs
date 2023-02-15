@@ -2,7 +2,7 @@
 
 public class PhaseAddContext
 {
-    public Dictionary<Type, PipelineConfig> EntityPipelines { get; } = new ();
+    public List<PipelineConfig> EntityPipelines { get; } = new();
 
     public PhaseAddContext AddPipeline<T>(Action<PipelineConfig<T>> configure, string? name = null)
     {
@@ -10,9 +10,9 @@ public class PhaseAddContext
 
         var pipeline = new PipelineConfig<T>(name);
 
-        configure(pipeline); 
+        configure(pipeline);
 
-        EntityPipelines.Add(typeof(T), pipeline);
+        EntityPipelines.Add(pipeline);
 
         return this;
     }

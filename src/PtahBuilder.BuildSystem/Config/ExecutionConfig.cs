@@ -11,7 +11,7 @@ public class ExecutionConfig
 
     public bool DeleteOutputDirectory { get; set; } = true;
 
-    public Dictionary<Type, PipelineConfig> EntityPipelines { get; } = new();
+    public List<PipelineConfig> EntityPipelines { get; } = new();
 
     public ExecutionConfig AddPipeline<T>(Action<PipelineConfig<T>> configure, string? name = null)
     {
@@ -21,7 +21,7 @@ public class ExecutionConfig
 
         configure(pipeline);
 
-        EntityPipelines.Add(typeof(T), pipeline);
+        EntityPipelines.Add( pipeline);
 
         return this;
     }
@@ -32,13 +32,13 @@ public class ExecutionConfig
 
         phase(config);
 
-        var phaseNumber = EntityPipelines.Any() ? EntityPipelines.Values.Max(x => x.Phase + 1) : 0;
+        var phaseNumber = EntityPipelines.Any() ? EntityPipelines.Max(x => x.Phase + 1) : 0;
         
         foreach (var pipelineConfig in config.EntityPipelines)
         {
-            pipelineConfig.Value.Phase = phaseNumber;
+            pipelineConfig.Phase = phaseNumber;
 
-            EntityPipelines.Add(pipelineConfig.Key, pipelineConfig.Value);
+            EntityPipelines.Add(pipelineConfig);
         }
 
 
