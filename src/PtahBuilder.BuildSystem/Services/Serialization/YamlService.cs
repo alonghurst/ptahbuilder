@@ -27,7 +27,7 @@ public class YamlService : IYamlService
         var mapping = (YamlMappingNode)yaml.Documents[0].RootNode;
 
         var entity = Activator.CreateInstance<T>()!;
-            
+
         SetValuesFromYamlMapping(mapping, typeof(T), entity);
 
         return entity;
@@ -262,7 +262,7 @@ public class YamlService : IYamlService
     {
         if (!_properties.ContainsKey(onType))
         {
-            _properties.Add(onType, onType.GetProperties().ToDictionary(p => p.Name, p => p));
+            _properties.Add(onType, onType.GetProperties().ToDictionary(p => p.Name, p => p, StringComparer.OrdinalIgnoreCase));
         }
 
         if (!_properties[onType].ContainsKey(propertyName))
