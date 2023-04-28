@@ -67,10 +67,15 @@ public class CsvInputStep<T> : IStep<T> where T : class
                 continue;
             }
 
+            var columns = line.Split(_options.ColumnSeparator, StringSplitOptions.TrimEntries);
+
+            if (columns.All(string.IsNullOrWhiteSpace))
+            {
+                continue;
+            }
+
             var entity = _mapping.Instantiate();
-
-            var columns = line.Split(_options.ColumnSeparator, StringSplitOptions.RemoveEmptyEntries);
-
+            
             for (int i = 0; i < columns.Length && i < _mapping.ColumnPropertyNames.Length; i++)
             {
                 var propertyName = _mapping.ColumnPropertyNames[i];
