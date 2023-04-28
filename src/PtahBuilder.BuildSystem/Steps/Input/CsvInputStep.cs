@@ -9,12 +9,13 @@ namespace PtahBuilder.BuildSystem.Steps.Input;
 
 public class CsvReadOptions
 {
+    public bool SkipFirstLine { get; set; } = true;
     public string ColumnSeparator { get; set; } = ",";
 }
 
 public class CsvMapping<T>
 {
-    public CsvMapping(Func<T> instantiate, string[] columnPropertyNames)
+    public CsvMapping(Func<T> instantiate, params string[] columnPropertyNames)
     {
         Instantiate = instantiate;
         ColumnPropertyNames = columnPropertyNames;
@@ -51,9 +52,16 @@ public class CsvInputStep<T> : IStep<T> where T : class
         _logger.Verbose($"Reading {file}");
 
         var lines = await File.ReadAllLinesAsync(file);
+        var hasSkipped = false;
 
         foreach (var line in lines)
         {
+            if (_options.SkipFirstLine && !hasSkipped)
+            {
+                hasSkipped = true;
+                continue;
+            }
+
             if (string.IsNullOrWhiteSpace(line))
             {
                 continue;
