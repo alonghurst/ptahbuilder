@@ -8,13 +8,13 @@ namespace PtahBuilder.BuildSystem.Services.Serialization;
 public class YamlService : IYamlService
 {
     private readonly ILogger _logger;
-    private readonly ICustomValueParserService _customValueParserService;
+    private readonly IScalarValueService _scalarValueService;
     private readonly Dictionary<Type, Dictionary<string, PropertyInfo>> _properties = new();
 
-    public YamlService(ILogger logger, ICustomValueParserService customValueParserService)
+    public YamlService(ILogger logger, IScalarValueService scalarValueService)
     {
         _logger = logger;
-        _customValueParserService = customValueParserService;
+        _scalarValueService = scalarValueService;
     }
 
     public T Deserialize<T>(string text)
@@ -111,7 +111,7 @@ public class YamlService : IYamlService
         {
             object? value = ((YamlScalarNode)yamlNode).Value;
 
-            value = ConvertScalarValue(property.PropertyType, value);
+            value = _scalarValueService.ConvertScalarValue(property.PropertyType, value);
 
             property.SetValue(entity, value);
         }
@@ -129,58 +129,7 @@ public class YamlService : IYamlService
         return array;
     }
 
-    private object? ConvertScalarValue(Type type, object? value)
-    {
-        if (value == null)
-        {
-            return null;
-        }
-
-        if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
-        {
-            var argument = type.GetGenericArguments()[0];
-
-            return ConvertScalarValue(argument, value);
-        }
-
-        if (_customValueParserService.TryParseValue(type, value, out var result))
-        {
-            return result!;
-        }
-
-        value = type.LazyConvertForValue(value, Convert.ToBoolean);
-        value = type.LazyConvertForValue(value, Convert.ToInt32);
-        value = type.LazyConvertForValue(value, ConvertHelper.StringToDouble);
-        value = type.LazyConvertForValue(value, ConvertHelper.StringToFloat);
-        value = type.LazyConvertForValue(value, LazyTimeSpan);
-        value = type.LazyConvertEnumForProperty(value);
-
-        if (type.IsArray && type.HasElementType)
-        {
-            var elementType = type.GetElementType();
-
-            // If the target property is an array but a scalar value was passed then simple wrap the result in array
-            var arrValue = Array.CreateInstance(elementType ?? throw new InvalidOperationException(), 1);
-            // ReSharper disable once RedundantCast
-            ((dynamic)arrValue)[0] = (dynamic?)ConvertScalarValue(elementType, value);
-
-            value = arrValue;
-        }
-
-        return value;
-    }
-
-    private TimeSpan LazyTimeSpan(object v)
-    {
-        var toString = v.ToString() ?? string.Empty;
-
-        if (toString.Contains(":"))
-        {
-            return TimeSpan.Parse(toString);
-        }
-
-        return TimeSpan.FromHours(Convert.ToDouble(toString));
-    }
+    
 
     private IEnumerable<dynamic?> GetSequenceValuesForArray(Type type, YamlSequenceNode sequenceNode)
     {
@@ -205,7 +154,7 @@ public class YamlService : IYamlService
             }
             else if (node is YamlScalarNode scalar)
             {
-                yield return ConvertScalarValue(type, scalar.Value);
+                yield return _scalarValueService.ConvertScalarValue(type, scalar.Value);
             }
         }
     }
@@ -223,8 +172,8 @@ public class YamlService : IYamlService
 
                     var value = valueNode.Value.Substring(stringyValues[0].Length + 1);
 
-                    var keyValue = ConvertScalarValue(type.GetGenericArguments()[0], stringyValues[0].Trim());
-                    var valueValue = ConvertScalarValue(type.GetGenericArguments()[1], value.Trim());
+                    var keyValue = _scalarValueService.ConvertScalarValue(type.GetGenericArguments()[0], stringyValues[0].Trim());
+                    var valueValue = _scalarValueService.ConvertScalarValue(type.GetGenericArguments()[1], value.Trim());
 
                     yield return Activator.CreateInstance(type, keyValue, valueValue);
                 }
@@ -233,12 +182,12 @@ public class YamlService : IYamlService
                     var key = mappingNode.Children[new YamlScalarNode("Key")];
                     var value = mappingNode.Children[new YamlScalarNode("Value")];
 
-                    var keyValue = ConvertScalarValue(type.GetGenericArguments()[0], ((YamlScalarNode)key).Value);
+                    var keyValue = _scalarValueService.ConvertScalarValue(type.GetGenericArguments()[0], ((YamlScalarNode)key).Value);
                     object? valueValue;
 
                     if (value is YamlScalarNode scalar)
                     {
-                        valueValue = ConvertScalarValue(type.GetGenericArguments()[1], scalar.Value);
+                        valueValue = _scalarValueService.ConvertScalarValue(type.GetGenericArguments()[1], scalar.Value);
                     }
                     else if (value is YamlMappingNode mapping)
                     {
