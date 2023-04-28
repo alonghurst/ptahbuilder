@@ -7,7 +7,7 @@ using PtahBuilder.BuildSystem.Execution.Abstractions;
 #pragma warning disable CA1416 // Validate platform compatibility
 namespace PtahBuilder.BuildSystem.Steps.Output.Imaging;
 
-public record EntityImageConfig(string Filename, int Width, int Height, int Columns, ImageFormat? ImageFormat = null);
+public record EntityImageConfig(string Filename, int EntityWidth, int EntityHeight, int Columns, ImageFormat? ImageFormat = null);
 
 public abstract class CreateTiledImageStep<T> : CreateImageStep<T>
 {
@@ -21,17 +21,20 @@ public abstract class CreateTiledImageStep<T> : CreateImageStep<T>
     {
         var x = 0;
         var y = 0;
-
+        
         foreach (var entity in entities)
         {
-            var xPos = x * _entityImageConfig.Width;
-            var yPos = y * _entityImageConfig.Height;
-            var region = new Region(new Rectangle(xPos, yPos, _entityImageConfig.Width, _entityImageConfig.Height));
+            var xPos = x * _entityImageConfig.EntityWidth;
+            var yPos = y * _entityImageConfig.EntityHeight;
+
+            var region = new Region(new Rectangle(xPos, yPos, _entityImageConfig.EntityWidth, _entityImageConfig.EntityHeight));
 
             graphics.Clip = region;
             graphics.TranslateTransform(xPos, yPos);
 
             await RenderEntity(context, entity, graphics);
+
+            //graphics.DrawString($"{x} / {y}", ImagingDebug.Font, Brushes.Black, 2, 2);
 
             x++;
             if (x >= _entityImageConfig.Columns)
@@ -39,10 +42,10 @@ public abstract class CreateTiledImageStep<T> : CreateImageStep<T>
                 x = 0;
                 y++;
             }
-        }
 
-        graphics.Clip = new Region();
-        graphics.TranslateTransform(0, 0);
+            graphics.ResetClip();
+            graphics.ResetTransform();
+        }
     }
 
     protected abstract Task RenderEntity(IPipelineContext<T> context, Entity<T> entity, Graphics graphics);
@@ -51,13 +54,17 @@ public abstract class CreateTiledImageStep<T> : CreateImageStep<T>
     {
         _entityImageConfig = CreateConfig();
 
-        var rows = (int)Math.Ceiling((decimal)entities.Count / _entityImageConfig.Columns);
+        var cols = _entityImageConfig.Columns < entities.Count ? _entityImageConfig.Columns : entities.Count;
 
-        var width = _entityImageConfig.Width * _entityImageConfig.Columns;
-        var height = rows * _entityImageConfig.Height;
+        var rows = (int)Math.Ceiling((decimal)entities.Count / cols);
+
+        var width = _entityImageConfig.EntityWidth * cols;
+        var height = rows * _entityImageConfig.EntityHeight;
 
         return new(_entityImageConfig.Filename, width, height, _entityImageConfig.ImageFormat);
     }
+
+
 
     protected abstract EntityImageConfig CreateConfig();
 }
