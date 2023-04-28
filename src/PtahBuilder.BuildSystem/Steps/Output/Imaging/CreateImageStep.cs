@@ -26,10 +26,17 @@ public abstract class CreateImageStep<T> : IStep<T>
         {
             using (var graphics = Graphics.FromImage(image))
             {
+                graphics.Clear(Color.White);
+
                 await Render(context, entities, graphics);
             }
 
             var path = Path.Combine(_filesConfig.OutputDirectory, config.Filename);
+
+            if (!Directory.Exists(_filesConfig.OutputDirectory))
+            {
+                Directory.CreateDirectory(_filesConfig.OutputDirectory);
+            }
 
             image.Save(path, config.ImageFormat ?? ImageFormat.Png);
         }

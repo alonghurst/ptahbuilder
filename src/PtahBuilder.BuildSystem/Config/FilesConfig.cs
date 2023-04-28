@@ -14,5 +14,10 @@ public class FilesConfig : IFilesConfig
         WorkingDirectory = Path.GetFullPath(workingDirectory);
         DataDirectory = Path.Combine(WorkingDirectory, relativeDataDirectory);
         OutputDirectory = Path.Combine(WorkingDirectory, relativeOutputDirectory);
+
+        if (!Directory.Exists(OutputDirectory))
+        {
+            Directory.CreateDirectory(OutputDirectory);
+        }
     }
 }
