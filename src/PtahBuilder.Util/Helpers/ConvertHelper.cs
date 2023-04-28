@@ -19,4 +19,13 @@ public static class ConvertHelper
         }
         return 0;
     }
+
+    public static int StringToInt(object input)
+    {
+        if (int.TryParse(input.ToString(), out int d))
+        {
+            return d;
+        }
+        return 0;
+    }
 }

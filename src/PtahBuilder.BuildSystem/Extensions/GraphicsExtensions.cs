@@ -10,27 +10,30 @@ public static class GraphicsExtensions
     {
         string[] words = text.Split(' ');
 
-        StringBuilder currentLine = new StringBuilder();
-        SizeF size;
+        var currentLine = new StringBuilder();
 
         foreach (string word in words)
         {
-            currentLine.Append(word + " ");
-            size = graphics.MeasureString(currentLine.ToString(), font);
+            var size = graphics.MeasureString(currentLine + " " + word, font);
 
             if (size.Width > maxWidth)
             {
-                // The current line is too long, so draw it and start a new one.
                 graphics.DrawString(currentLine.ToString().TrimEnd(), font, brush, location);
                 location.Y += font.Height;
-                currentLine = new StringBuilder(word + " ");
+                currentLine = new StringBuilder();
             }
+
+            currentLine.Append(word + " ");
         }
 
-        // Draw the last line.
-        graphics.DrawString(currentLine.ToString().TrimEnd(), font, brush, location);
+        var final = currentLine.ToString().TrimEnd();
 
-        location.Y += font.Height;
+        if (!string.IsNullOrWhiteSpace(final))
+        {
+            graphics.DrawString(final, font, brush, location);
+
+            location.Y += font.Height;
+        }
 
         return location;
     }

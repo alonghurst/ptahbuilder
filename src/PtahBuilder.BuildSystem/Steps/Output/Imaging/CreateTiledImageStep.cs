@@ -22,7 +22,7 @@ public abstract class CreateTiledImageStep<T> : CreateImageStep<T>
         var x = 0;
         var y = 0;
         
-        foreach (var entity in entities)
+        foreach (var entity in Sort(entities))
         {
             var xPos = x * _entityImageConfig.EntityWidth;
             var yPos = y * _entityImageConfig.EntityHeight;
@@ -48,6 +48,8 @@ public abstract class CreateTiledImageStep<T> : CreateImageStep<T>
         }
     }
 
+    protected virtual IEnumerable<Entity<T>> Sort(IReadOnlyCollection<Entity<T>> entities) => entities;
+    
     protected abstract Task RenderEntity(IPipelineContext<T> context, Entity<T> entity, Graphics graphics);
 
     protected sealed override ImageOutputConfig CreateConfig(IPipelineContext<T> context, IReadOnlyCollection<Entity<T>> entities)

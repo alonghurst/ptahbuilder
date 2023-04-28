@@ -31,7 +31,7 @@ public class ScalarValueService : IScalarValueService
         }
 
         value = type.LazyConvertForValue(value, Convert.ToBoolean);
-        value = type.LazyConvertForValue(value, Convert.ToInt32);
+        value = type.LazyConvertForValue(value, ConvertHelper.StringToInt);
         value = type.LazyConvertForValue(value, ConvertHelper.StringToDouble);
         value = type.LazyConvertForValue(value, ConvertHelper.StringToFloat);
         value = type.LazyConvertForValue(value, LazyTimeSpan);
