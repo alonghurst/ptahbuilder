@@ -1,6 +1,5 @@
 ﻿using PtahBuilder.BuildSystem.Entities;
 using PtahBuilder.BuildSystem.Execution.Abstractions;
-using PtahBuilder.Util.Extensions;
 
 namespace PtahBuilder.BuildSystem.Steps.Input;
 
