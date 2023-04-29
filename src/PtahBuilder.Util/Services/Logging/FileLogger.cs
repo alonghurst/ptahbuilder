@@ -8,9 +8,13 @@ public class FileLogger : ILogger, IDisposable
 
     static SemaphoreSlim _semaphoreSlim = new SemaphoreSlim(1);
 
-    public FileLogger()
+    public FileLogger(string logDir = "Logs")
     {
-        var fileName = $"log_{DateTime.Now:yyyy-M-d-HH-mm-ss}.txt";
+        if (!Directory.Exists(logDir))
+        {
+            Directory.CreateDirectory(logDir);
+        }
+        var fileName = Path.Combine(logDir, $"log_{DateTime.Now:yyyy-M-d-HH-mm-ss}.txt");
 
         _file = new StreamWriter(fileName);
     }
