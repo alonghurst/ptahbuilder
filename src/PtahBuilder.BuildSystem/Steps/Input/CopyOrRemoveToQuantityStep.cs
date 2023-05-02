@@ -4,14 +4,15 @@ using PtahBuilder.BuildSystem.Execution.Abstractions;
 namespace PtahBuilder.BuildSystem.Steps.Input;
 
 /// <summary>
-/// Creates a new instance of an object and uses reflection to copy writable property values from the original entity. Values are copied by reference.
+/// Removes or creates new instances of an object and uses reflection to copy writable property values from the original entity. Values are copied by reference.
 /// The quantityFunc specifies how many instances should be maintained, per entity - a value of 1 will do nothing, a value of 2 will create 1 copy etc.
+/// A value of zero or less removes the entity
 /// </summary>
-public class SimpleCopyStep<T> : IStep<T> where T : class, new()
+public class CopyOrRemoveToQuantityStep<T> : IStep<T> where T : class, new()
 {
     private readonly Func<T, int> _quantityFunc;
 
-    public SimpleCopyStep(Func<T, int> quantityFunc)
+    public CopyOrRemoveToQuantityStep(Func<T, int> quantityFunc)
     {
         _quantityFunc = quantityFunc;
     }
@@ -38,6 +39,10 @@ public class SimpleCopyStep<T> : IStep<T> where T : class, new()
 
                     context.AddEntity(clone);
                 }
+            }
+            else if (quantity <= 0)
+            {
+                context.RemoveEntity(entity);
             }
         }
 
