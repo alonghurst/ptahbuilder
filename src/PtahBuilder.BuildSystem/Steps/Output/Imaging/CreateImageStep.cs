@@ -7,7 +7,7 @@ using PtahBuilder.BuildSystem.Execution.Abstractions;
 #pragma warning disable CA1416 // Validate platform compatibility
 namespace PtahBuilder.BuildSystem.Steps.Output.Imaging;
 
-public record ImageOutputConfig(string Filename, int Width, int Height, ImageFormat? ImageFormat = null);
+public record ImageOutputConfig<T>(string Filename, int Width, int Height, ImageFormat? ImageFormat = null, Func<Entity<T>, bool>? EntityFilter = null);
 
 public abstract class CreateImageStep<T> : IStep<T>
 {
@@ -20,30 +20,35 @@ public abstract class CreateImageStep<T> : IStep<T>
 
     public async Task Execute(IPipelineContext<T> context, IReadOnlyCollection<Entity<T>> entities)
     {
-        var config = CreateConfig(context, entities);
+        var configs = CreateConfigs(context, entities).ToArray();
 
-        using (var image = new Bitmap(config.Width, config.Height))
+        foreach (var config in configs)
         {
-            using (var graphics = Graphics.FromImage(image))
+            using (var image = new Bitmap(config.Width, config.Height))
             {
-                graphics.Clear(Color.White);
+                using (var graphics = Graphics.FromImage(image))
+                {
+                    graphics.Clear(Color.White);
 
-                await Render(context, entities, graphics);
+                    var filteredEntities = config.EntityFilter != null ? entities.Where(x => config.EntityFilter(x)).ToArray() : entities;
+                    
+                    await Render(config, context, filteredEntities, graphics);
+                }
+
+                var path = Path.Combine(_filesConfig.OutputDirectory, config.Filename);
+
+                if (!Directory.Exists(_filesConfig.OutputDirectory))
+                {
+                    Directory.CreateDirectory(_filesConfig.OutputDirectory);
+                }
+
+                image.Save(path, config.ImageFormat ?? ImageFormat.Png);
             }
-
-            var path = Path.Combine(_filesConfig.OutputDirectory, config.Filename);
-
-            if (!Directory.Exists(_filesConfig.OutputDirectory))
-            {
-                Directory.CreateDirectory(_filesConfig.OutputDirectory);
-            }
-
-            image.Save(path, config.ImageFormat ?? ImageFormat.Png);
         }
     }
 
-    protected abstract Task Render(IPipelineContext<T> context, IReadOnlyCollection<Entity<T>> entities, Graphics graphics);
+    protected abstract Task Render(ImageOutputConfig<T> imageOutputConfig, IPipelineContext<T> context, IReadOnlyCollection<Entity<T>> entities, Graphics graphics);
 
-    protected abstract ImageOutputConfig CreateConfig(IPipelineContext<T> context, IReadOnlyCollection<Entity<T>> entities);
+    protected abstract IEnumerable<ImageOutputConfig<T>> CreateConfigs(IPipelineContext<T> context, IReadOnlyCollection<Entity<T>> entities);
 }
 #pragma warning restore CA1416 // Validate platform compatibility

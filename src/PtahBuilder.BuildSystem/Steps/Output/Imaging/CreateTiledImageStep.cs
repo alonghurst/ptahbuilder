@@ -7,27 +7,28 @@ using PtahBuilder.BuildSystem.Execution.Abstractions;
 #pragma warning disable CA1416 // Validate platform compatibility
 namespace PtahBuilder.BuildSystem.Steps.Output.Imaging;
 
-public record EntityImageConfig(string Filename, int EntityWidth, int EntityHeight, int Columns, ImageFormat? ImageFormat = null);
+public record EntityImageConfig<T>(string Filename, int EntityWidth, int EntityHeight, int Columns, ImageFormat? ImageFormat = null, Func<Entity<T>, bool>? EntityFilter = null);
 
 public abstract class CreateTiledImageStep<T> : CreateImageStep<T>
 {
-    private EntityImageConfig _entityImageConfig = null!;
+    private IReadOnlyCollection<EntityImageConfig<T>> _entityImageConfig = null!;
 
     protected CreateTiledImageStep(IFilesConfig filesConfig) : base(filesConfig)
     {
     }
 
-    protected sealed override async Task Render(IPipelineContext<T> context, IReadOnlyCollection<Entity<T>> entities, Graphics graphics)
+    protected sealed override async Task Render(ImageOutputConfig<T> imageOutputConfig, IPipelineContext<T> context, IReadOnlyCollection<Entity<T>> entities, Graphics graphics)
     {
+        var config = _entityImageConfig.Single(x => x.Filename == imageOutputConfig.Filename);
         var x = 0;
         var y = 0;
-        
+
         foreach (var entity in Sort(entities))
         {
-            var xPos = x * _entityImageConfig.EntityWidth;
-            var yPos = y * _entityImageConfig.EntityHeight;
+            var xPos = x * config.EntityWidth;
+            var yPos = y * config.EntityHeight;
 
-            var region = new Region(new Rectangle(xPos, yPos, _entityImageConfig.EntityWidth, _entityImageConfig.EntityHeight));
+            var region = new Region(new Rectangle(xPos, yPos, config.EntityWidth, config.EntityHeight));
 
             graphics.Clip = region;
             graphics.TranslateTransform(xPos, yPos);
@@ -37,7 +38,7 @@ public abstract class CreateTiledImageStep<T> : CreateImageStep<T>
             //graphics.DrawString($"{x} / {y}", ImagingDebug.Font, Brushes.Black, 2, 2);
 
             x++;
-            if (x >= _entityImageConfig.Columns)
+            if (x >= config.Columns)
             {
                 x = 0;
                 y++;
@@ -49,26 +50,29 @@ public abstract class CreateTiledImageStep<T> : CreateImageStep<T>
     }
 
     protected virtual IEnumerable<Entity<T>> Sort(IReadOnlyCollection<Entity<T>> entities) => entities;
-    
+
     protected abstract Task RenderEntity(IPipelineContext<T> context, Entity<T> entity, Graphics graphics);
-
-    protected sealed override ImageOutputConfig CreateConfig(IPipelineContext<T> context, IReadOnlyCollection<Entity<T>> entities)
+    
+    protected override IEnumerable<ImageOutputConfig<T>> CreateConfigs(IPipelineContext<T> context, IReadOnlyCollection<Entity<T>> entities)
     {
-        _entityImageConfig = CreateConfig();
+        _entityImageConfig = CreateConfigs().ToArray();
 
-        var cols = _entityImageConfig.Columns < entities.Count ? _entityImageConfig.Columns : entities.Count;
+        foreach (var config in _entityImageConfig)
+        {
+            var filteredEntities = config.EntityFilter != null ? entities.Where(x => config.EntityFilter(x)).ToArray() : entities;
 
-        var rows = (int)Math.Ceiling((decimal)entities.Count / cols);
+            var cols = config.Columns < filteredEntities.Count ? config.Columns : filteredEntities.Count;
 
-        var width = _entityImageConfig.EntityWidth * cols;
-        var height = rows * _entityImageConfig.EntityHeight;
+            var rows = (int)Math.Ceiling((decimal)filteredEntities.Count / cols);
 
-        return new(_entityImageConfig.Filename, width, height, _entityImageConfig.ImageFormat);
+            var width = config.EntityWidth * cols;
+            var height = rows * config.EntityHeight;
+
+            yield return new(config.Filename, width, height, config.ImageFormat);
+        }
     }
 
-
-
-    protected abstract EntityImageConfig CreateConfig();
+    protected abstract IEnumerable<EntityImageConfig<T>> CreateConfigs();
 }
 
 #pragma warning restore CA1416 // Validate platform compatibility
