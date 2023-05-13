@@ -23,7 +23,7 @@ public static class ReflectionHelper
     {
         if (_allLoadedTypes == null)
         {
-            _allLoadedTypes = new List<Type>();
+            _allLoadedTypes = new();
 
             var assemblies = GetLoadedAssemblies();
 

@@ -18,7 +18,7 @@ public abstract class PipelineConfig
 
         foreach (var stage in Enum.GetValues<Stage>())
         {
-            Stages.Add(stage, new List<StepConfig>());
+            Stages.Add(stage, new());
         }
     }
 
@@ -32,7 +32,7 @@ public abstract class PipelineConfig
 
     public PipelineConfig AddStep(Stage stage, Type stageType, params object[] args)
     {
-        Stages[stage].Add(new StepConfig(stageType, args));
+        Stages[stage].Add(new(stageType, args));
 
         return this;
     }

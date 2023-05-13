@@ -6,7 +6,7 @@ public class FileLogger : ILogger, IDisposable
 {
     private StreamWriter? _file;
 
-    static SemaphoreSlim _semaphoreSlim = new SemaphoreSlim(1);
+    static SemaphoreSlim _semaphoreSlim = new(1);
 
     public FileLogger(string logDir = "Logs")
     {
@@ -16,7 +16,7 @@ public class FileLogger : ILogger, IDisposable
         }
         var fileName = Path.Combine(logDir, $"log_{DateTime.Now:yyyy-M-d-HH-mm-ss}.txt");
 
-        _file = new StreamWriter(fileName);
+        _file = new(fileName);
     }
 
     private void CloseFile()
