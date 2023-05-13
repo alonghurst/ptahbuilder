@@ -34,9 +34,7 @@ public abstract class CreateTiledImageStep<T> : CreateImageStep<T>
             graphics.TranslateTransform(xPos, yPos);
 
             await RenderEntity(context, entity, graphics);
-
-            //graphics.DrawString($"{x} / {y}", ImagingDebug.Font, Brushes.Black, 2, 2);
-
+            
             x++;
             if (x >= config.Columns)
             {
