@@ -40,7 +40,7 @@ public class CsvInputStep<T> : IStep<T> where T : class
         _filesConfig = filesConfig;
         _logger = logger;
         _fileName = fileName;
-        _options = options ?? new();
+        _options = options ?? new CsvReadOptions();
         _mapping = mapping;
         _dynamicMappingService = dynamicMappingService;
     }

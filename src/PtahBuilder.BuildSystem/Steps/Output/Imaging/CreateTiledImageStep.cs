@@ -63,7 +63,7 @@ public abstract class CreateTiledImageStep<T> : CreateImageStep<T>
         var width = _entityImageConfig.EntityWidth * cols;
         var height = rows * _entityImageConfig.EntityHeight;
 
-        return new(_entityImageConfig.Filename, width, height, _entityImageConfig.ImageFormat);
+        return new ImageOutputConfig(_entityImageConfig.Filename, width, height, _entityImageConfig.ImageFormat);
     }
 
 
