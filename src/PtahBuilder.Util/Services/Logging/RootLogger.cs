@@ -8,8 +8,8 @@ public class RootLogger : ILogger, IDisposable
 
     public RootLogger()
     {
-        _fileLogger = new FileLogger();
-        _consoleLogger = new ConsoleLogger();
+        _fileLogger = new();
+        _consoleLogger = new();
 
         _loggers = new ILogger[] { _fileLogger, _consoleLogger };
     }
