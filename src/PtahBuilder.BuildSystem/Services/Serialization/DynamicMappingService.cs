@@ -6,7 +6,7 @@ namespace PtahBuilder.BuildSystem.Services.Serialization;
 public class DynamicMappingService : IDynamicMappingService
 {
     private readonly IScalarValueService _scalarValueService;
-    private readonly Dictionary<Type, Dictionary<string, PropertyInfo>> _entityPropertyies = new Dictionary<Type, Dictionary<string, PropertyInfo>>();
+    private readonly Dictionary<Type, Dictionary<string, PropertyInfo>> _entityPropertyies = new();
 
     public DynamicMappingService(IScalarValueService scalarValueService)
     {
