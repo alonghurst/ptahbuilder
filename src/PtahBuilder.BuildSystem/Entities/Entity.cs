@@ -1,5 +1,8 @@
-﻿namespace PtahBuilder.BuildSystem.Entities;
+﻿using System.Diagnostics;
 
+namespace PtahBuilder.BuildSystem.Entities;
+
+[DebuggerDisplay(("{Id}: {Value}"))]
 public class Entity<T>
 {
     public string Id { get; }
