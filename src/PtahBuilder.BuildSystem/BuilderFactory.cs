@@ -16,7 +16,7 @@ public class BuilderFactory
 
     private readonly List<JsonConverter> _jsonConverters = new();
 
-    private Action<IServiceCollection>? _configureServices;
+    private List<Action<IServiceCollection>> _configureServices = new();
     private Action<ExecutionConfig>? _configureExecutionConfig;
 
     private readonly FilesConfig _filesConfig = new();
@@ -62,7 +62,7 @@ public class BuilderFactory
 
     public BuilderFactory ConfigureServices(Action<IServiceCollection> configureServices)
     {
-        _configureServices = configureServices;
+        _configureServices.Add(configureServices);
 
         return this;
     }
@@ -109,7 +109,10 @@ public class BuilderFactory
                 .AddSingleton(new JsonConverterConfig(_jsonConverters))
                 .AddSingleton<IFilesConfig>(_filesConfig);
 
-        _configureServices?.Invoke(services);
+        foreach (var configureService in _configureServices)
+        {
+            configureService.Invoke(services);
+        }
 
         return services;
     }

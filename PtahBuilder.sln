@@ -21,6 +21,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PtahBuilder.Util", "src\Pta
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PtahBuilder.Tests.TestBuilder", "tests\PtahBuilder.Tests.TestBuilder\PtahBuilder.Tests.TestBuilder.csproj", "{8C9E4D88-B9E0-43C2-A1FD-92588F5AC938}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PtahBuilder.NewtonsoftJson", "src\PtahBuilder.NewtonsoftJson\PtahBuilder.NewtonsoftJson.csproj", "{3AB32C9A-C0F5-4B14-B047-984917BF3BC2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -43,6 +45,10 @@ Global
 		{8C9E4D88-B9E0-43C2-A1FD-92588F5AC938}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8C9E4D88-B9E0-43C2-A1FD-92588F5AC938}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8C9E4D88-B9E0-43C2-A1FD-92588F5AC938}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3AB32C9A-C0F5-4B14-B047-984917BF3BC2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3AB32C9A-C0F5-4B14-B047-984917BF3BC2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3AB32C9A-C0F5-4B14-B047-984917BF3BC2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3AB32C9A-C0F5-4B14-B047-984917BF3BC2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -52,6 +58,7 @@ Global
 		{005CEEA4-E1E1-4EAD-94CC-FADAB76AFF9F} = {C1EE98F3-ADB1-4F40-A3D9-9B9EE0D23F53}
 		{D5FE6812-CA3E-4EB8-83B7-C6D5D5D3AF3D} = {C1EE98F3-ADB1-4F40-A3D9-9B9EE0D23F53}
 		{8C9E4D88-B9E0-43C2-A1FD-92588F5AC938} = {82C75FB5-D14D-4D42-B94F-0016E514A23A}
+		{3AB32C9A-C0F5-4B14-B047-984917BF3BC2} = {C1EE98F3-ADB1-4F40-A3D9-9B9EE0D23F53}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {BDC82931-BAE5-4F2B-8064-D1697C570B37}
