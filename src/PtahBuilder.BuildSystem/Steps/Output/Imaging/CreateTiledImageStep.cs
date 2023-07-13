@@ -66,7 +66,7 @@ public abstract class CreateTiledImageStep<T> : CreateImageStep<T>
             var width = config.EntityWidth * cols;
             var height = rows * config.EntityHeight;
 
-            yield return new(config.Filename, width, height, config.ImageFormat, config.EntityFilter);
+            yield return new ImageOutputConfig<T>(config.Filename, width, height, config.ImageFormat, config.EntityFilter);
         }
     }
 

@@ -10,7 +10,7 @@ public class JsonService : IJsonService
 
     public JsonService(JsonConverterConfig config)
     {
-        Options = new()
+        Options = new JsonSerializerOptions
         {
             WriteIndented = true,
             DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull

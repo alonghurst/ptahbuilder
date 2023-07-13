@@ -1,7 +1,7 @@
 ﻿using PtahBuilder.BuildSystem.Entities;
 using PtahBuilder.BuildSystem.Execution.Abstractions;
 
-namespace PtahBuilder.BuildSystem.Steps.Output.AdditionalOutput;
+namespace PtahBuilder.BuildSystem.Steps.Output.AdditionalTextOutput;
 
 public abstract class AdditionalOutputStepPerEntity<T> : AdditionalOutputStep<T>
 {

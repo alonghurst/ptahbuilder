@@ -27,7 +27,7 @@ public class PipelineContext<T> : IPipelineContext<T>, IEntityProvider<T>
 
     public Entity<T> AddEntity(T entity, Dictionary<string, object>? metadata)
     {
-        metadata ??= new();
+        metadata ??= new Dictionary<string, object>();
 
         var id = Config.GetId(entity);
 
@@ -50,7 +50,7 @@ public class PipelineContext<T> : IPipelineContext<T>, IEntityProvider<T>
             }
         }
         
-        var val = new Entity<T>(id, entity, new(metadata));
+        var val = new Entity<T>(id, entity, new Metadata(metadata));
 
         Entities[val.Id] = val;
 
@@ -65,7 +65,7 @@ public class PipelineContext<T> : IPipelineContext<T>, IEntityProvider<T>
 
         _logger.Warning($"{entity.Id}: Validation Error - {name}: {error}");
 
-        entity.Validation.Errors.Add(new(name, error));
+        entity.Validation.Errors.Add(new ValidationError(name, error));
     }
 
     public void RemoveEntity(Entity<T> entity)
