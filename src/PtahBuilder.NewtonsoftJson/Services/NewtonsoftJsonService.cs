@@ -10,7 +10,7 @@ namespace PtahBuilder.NewtonsoftJson.Services
 
         public NewtonsoftJsonService(NewtonsoftJsonConverterConfig config)
         {
-            Settings = new()
+            Settings = new JsonSerializerSettings
             {
                 Formatting = Formatting.Indented,
                 NullValueHandling = NullValueHandling.Ignore

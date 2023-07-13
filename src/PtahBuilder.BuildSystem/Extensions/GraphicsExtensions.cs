@@ -20,7 +20,7 @@ public static class GraphicsExtensions
             {
                 graphics.DrawString(currentLine.ToString().TrimEnd(), font, brush, location);
                 location.Y += font.Height;
-                currentLine = new();
+                currentLine = new StringBuilder();
             }
 
             currentLine.Append(word + " ");

@@ -4,7 +4,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using PtahBuilder.BuildSystem.Entities;
 using PtahBuilder.BuildSystem.Execution.Abstractions;
 using PtahBuilder.BuildSystem.Services;
-using PtahBuilder.BuildSystem.Steps.Output.AdditionalOutput;
+using PtahBuilder.BuildSystem.Steps.Output.AdditionalTextOutput;
 using PtahBuilder.CodeGeneration;
 
 namespace PtahBuilder.BuildSystem.Steps.Output.Code;
@@ -40,7 +40,7 @@ public class EntityLiteralsOutputStep<T> : AdditionalOutputStepForAllEntities<T>
 
     private CodeFile CreateCodeFile(IReadOnlyCollection<Entity<T>> entities)
     {
-        return new()
+        return new CodeFile
         {
             DefinedInNamespace = _config.Namespace,
             ClassName = $"{_entityMetadataService.GetSimpleName(typeof(T))}{_config.Name}",
