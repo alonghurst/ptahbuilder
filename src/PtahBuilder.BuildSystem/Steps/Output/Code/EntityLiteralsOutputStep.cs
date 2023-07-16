@@ -40,7 +40,7 @@ public class EntityLiteralsOutputStep<T> : AdditionalOutputStepForAllEntities<T>
 
     private CodeFile CreateCodeFile(IReadOnlyCollection<Entity<T>> entities)
     {
-        return new CodeFile
+        return new()
         {
             DefinedInNamespace = _config.Namespace,
             ClassName = $"{_entityMetadataService.GetSimpleName(typeof(T))}{_config.Name}",
