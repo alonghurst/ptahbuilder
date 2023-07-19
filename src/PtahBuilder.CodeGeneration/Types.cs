@@ -117,7 +117,7 @@ public static class Types
     public static ArrayTypeSyntax ArrayType(TypeSyntax baseType)
     {
         return SyntaxFactory.ArrayType(baseType,
-            SyntaxFactory.SingletonList<ArrayRankSpecifierSyntax>(SyntaxFactory.ArrayRankSpecifier(SyntaxFactory.SingletonSeparatedList<ExpressionSyntax>(SyntaxFactory.OmittedArraySizeExpression()))));
+            SyntaxFactory.SingletonList(SyntaxFactory.ArrayRankSpecifier(SyntaxFactory.SingletonSeparatedList<ExpressionSyntax>(SyntaxFactory.OmittedArraySizeExpression()))));
     }
 
     public static TypeSyntax NullableTypeWithQuestion(string typeName)
@@ -178,6 +178,6 @@ public static class Types
 
     public static GenericNameSyntax GenericType(GenericNameSyntax genericType, params TypeSyntax[] subTypes)
     {
-        return genericType.WithTypeArgumentList(SyntaxFactory.TypeArgumentList(SyntaxFactory.SeparatedList<TypeSyntax>(subTypes)));
+        return genericType.WithTypeArgumentList(SyntaxFactory.TypeArgumentList(SyntaxFactory.SeparatedList(subTypes)));
     }
 }

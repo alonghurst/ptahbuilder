@@ -8,7 +8,7 @@ public static class Statements
     public static UsingStatementSyntax Using(string variableName, ExpressionSyntax initializer, params StatementSyntax[] body)
     {
         var definition = SyntaxFactory.VariableDeclaration(SyntaxFactory.IdentifierName("var"))
-            .WithVariables(SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
+            .WithVariables(SyntaxFactory.SingletonSeparatedList(
                 SyntaxFactory.VariableDeclarator(SyntaxFactory.Identifier(variableName))
                     .WithInitializer(SyntaxFactory.EqualsValueClause(initializer))));
 
