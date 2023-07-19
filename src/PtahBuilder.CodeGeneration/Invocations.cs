@@ -177,7 +177,7 @@ public static class Invocations
     {
         return SyntaxFactory.ElementAccessExpression(previousExpression)
             .WithArgumentList(
-                SyntaxFactory.BracketedArgumentList(SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                SyntaxFactory.BracketedArgumentList(SyntaxFactory.SingletonSeparatedList(
                     SyntaxFactory.Argument(Literals.Integer(index)))));
     }
 

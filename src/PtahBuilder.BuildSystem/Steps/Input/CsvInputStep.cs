@@ -87,7 +87,7 @@ public class CsvInputStep<T> : IStep<T> where T : class
 
                 var value = columns[i];
 
-                _dynamicMappingService.Map<T>(entity, propertyName, value);
+                _dynamicMappingService.Map(entity, propertyName, value);
             }
 
             context.AddEntityFromFile(entity, file);

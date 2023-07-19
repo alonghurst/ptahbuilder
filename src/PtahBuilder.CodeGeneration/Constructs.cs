@@ -24,7 +24,7 @@ public static partial class Constructs
 
         return SyntaxFactory.EnumDeclaration(name)
             .WithModifiers(Tokens.PublicModifier)
-            .WithMembers(SyntaxFactory.SeparatedList<EnumMemberDeclarationSyntax>(
+            .WithMembers(SyntaxFactory.SeparatedList(
                 SyntaxFactory.SeparatedList<EnumMemberDeclarationSyntax>(valuesList))
             );
     }
@@ -271,7 +271,7 @@ public static partial class Constructs
 
     public static SyntaxList<T> AsSingletonSyntaxList<T>(this T contents) where T : SyntaxNode
     {
-        return SyntaxFactory.SingletonList<T>(contents);
+        return SyntaxFactory.SingletonList(contents);
     }
 
     public static SeparatedSyntaxList<T> AsSyntaxList<T>(this T lonesomeObject) where T : SyntaxNode

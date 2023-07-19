@@ -48,7 +48,7 @@ public static class Expressions
 
     public static BlockSyntax BlockFromStatements(IEnumerable<StatementSyntax> statements)
     {
-        var statementList = SyntaxFactory.List<StatementSyntax>(statements);
+        var statementList = SyntaxFactory.List(statements);
         return Block(statementList);
     }
 

@@ -149,10 +149,10 @@ public static class Properties
         
     public static PropertyDeclarationSyntax WithAttributes(this PropertyDeclarationSyntax property, params AttributeSyntax[] attributes)
     {
-        var attributeSingletons = attributes.Select(a => SyntaxFactory.AttributeList(SyntaxFactory.SingletonSeparatedList<AttributeSyntax>(a))).ToArray();
+        var attributeSingletons = attributes.Select(a => SyntaxFactory.AttributeList(SyntaxFactory.SingletonSeparatedList(a))).ToArray();
 
         return property.WithAttributeLists(
-            SyntaxFactory.List<AttributeListSyntax>
+            SyntaxFactory.List
             (
                 attributeSingletons
             ));

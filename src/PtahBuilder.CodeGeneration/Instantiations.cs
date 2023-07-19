@@ -10,7 +10,7 @@ public static class Instantiations
     {
         return SyntaxFactory.LocalDeclarationStatement(SyntaxFactory.VariableDeclaration(Types.Type(type))
             .WithVariables(
-                SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
+                SyntaxFactory.SingletonSeparatedList(
                     SyntaxFactory.VariableDeclarator(
                             SyntaxFactory.Identifier(name))
                         .WithInitializer(SyntaxFactory.EqualsValueClause(initialValue)))));

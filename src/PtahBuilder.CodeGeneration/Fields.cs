@@ -17,7 +17,7 @@ public static class Fields
         return SyntaxFactory.FieldDeclaration(
                 SyntaxFactory.VariableDeclaration(typeDefinition)
                     .WithVariables(
-                        SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
+                        SyntaxFactory.SingletonSeparatedList(
                             SyntaxFactory.VariableDeclarator(
                                     SyntaxFactory.Identifier(name))
                                 .WithInitializer(
