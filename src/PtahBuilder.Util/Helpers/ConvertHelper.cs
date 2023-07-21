@@ -28,4 +28,13 @@ public static class ConvertHelper
         }
         return 0;
     }
+
+    public static bool StringToBoolean(object input)
+    {
+        if (bool.TryParse(input.ToString(), out bool d))
+        {
+            return d;
+        }
+        return false;
+    }
 }
