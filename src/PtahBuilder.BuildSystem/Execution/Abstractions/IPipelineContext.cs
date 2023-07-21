@@ -17,4 +17,5 @@ public interface IPipelineContext<T> : IPipelineContext
 
     void AddValidationError(Entity<T> entity, IStep<T> step, string error);
     void RemoveEntity(Entity<T> entity);
+    Entity<T> GetEntity(string id);
 }

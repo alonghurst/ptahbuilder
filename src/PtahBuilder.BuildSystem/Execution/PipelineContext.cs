@@ -73,6 +73,8 @@ public class PipelineContext<T> : IPipelineContext<T>, IEntityProvider<T>
         Entities.Remove(entity.Id);
     }
 
+    public Entity<T> GetEntity(string id) => Entities[id];
+
     private string FindBackupId(Dictionary<string, object> metadata)
     {
         if (metadata.ContainsKey(MetadataKeys.SourceFile))
