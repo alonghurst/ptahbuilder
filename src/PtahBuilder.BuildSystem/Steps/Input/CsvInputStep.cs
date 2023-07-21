@@ -87,6 +87,8 @@ public class CsvInputStep<T> : IStep<T> where T : class
 
                 var value = columns[i];
 
+                _logger.Info(value);
+
                 _dynamicMappingService.Map(entity, propertyName, value);
             }
 

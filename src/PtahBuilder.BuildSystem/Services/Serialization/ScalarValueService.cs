@@ -30,7 +30,7 @@ public class ScalarValueService : IScalarValueService
             return result!;
         }
 
-        value = type.LazyConvertForValue(value, Convert.ToBoolean);
+        value = type.LazyConvertForValue(value, ConvertHelper.StringToBoolean);
         value = type.LazyConvertForValue(value, ConvertHelper.StringToInt);
         value = type.LazyConvertForValue(value, ConvertHelper.StringToDouble);
         value = type.LazyConvertForValue(value, ConvertHelper.StringToFloat);
