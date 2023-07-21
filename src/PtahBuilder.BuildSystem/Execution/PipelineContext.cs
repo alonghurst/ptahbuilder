@@ -47,6 +47,11 @@ public class PipelineContext<T> : IPipelineContext<T>, IEntityProvider<T>
                     throw new InvalidOperationException($"An entity with Id \"{id}\" has already been added");
                 case DuplicateIdBehaviour.Skip:
                     return Entities[id];
+                case DuplicateIdBehaviour.GenerateNewId:
+                    id = Guid.NewGuid().ToString();
+                    Config.SetId(entity,id);
+                    break;
+
             }
         }
         
