@@ -2,28 +2,27 @@
 using PtahBuilder.BuildSystem.Services.Serialization;
 using PtahBuilder.NewtonsoftJson.Config.Internal;
 
-namespace PtahBuilder.NewtonsoftJson.Services
+namespace PtahBuilder.NewtonsoftJson.Services;
+
+public class NewtonsoftJsonService : IJsonService
 {
-    public class NewtonsoftJsonService : IJsonService
+    public JsonSerializerSettings Settings { get; }
+
+    public NewtonsoftJsonService(NewtonsoftJsonConverterConfig config)
     {
-        public JsonSerializerSettings Settings { get; }
-
-        public NewtonsoftJsonService(NewtonsoftJsonConverterConfig config)
+        Settings = new()
         {
-            Settings = new()
-            {
-                Formatting = Formatting.Indented,
-                NullValueHandling = NullValueHandling.Ignore
-            };
+            Formatting = Formatting.Indented,
+            NullValueHandling = NullValueHandling.Ignore
+        };
 
-            foreach (var converter in config.Converters)
-            {
-                Settings.Converters.Add(converter);
-            }
+        foreach (var converter in config.Converters)
+        {
+            Settings.Converters.Add(converter);
         }
-
-        public T Deserialize<T>(string text) => JsonConvert.DeserializeObject<T>(text, Settings) ?? throw new InvalidOperationException("Unable to deserialize text");
-
-        public string Serialize<T>(T entity) => JsonConvert.SerializeObject(entity, Settings);
     }
+
+    public T Deserialize<T>(string text) => JsonConvert.DeserializeObject<T>(text, Settings) ?? throw new InvalidOperationException("Unable to deserialize text");
+
+    public string Serialize<T>(T entity) => JsonConvert.SerializeObject(entity, Settings);
 }
