@@ -55,7 +55,8 @@ public class EntityLiteralsOutputStep<T> : AdditionalOutputStepForAllEntities<T>
 
     private MemberDeclarationSyntax CreateConstant(Entity<T> entity)
     {
-        var name = entity.Id.Pascalize();
+        var name = entity.Id.Pascalize().Replace("-", "_");
+        
         var value = Literals.String(_config.Accessor(entity));
 
         return Fields.PublicConstField(name, typeof(string), value);
