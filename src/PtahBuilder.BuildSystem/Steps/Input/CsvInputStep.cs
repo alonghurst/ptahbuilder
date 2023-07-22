@@ -1,4 +1,5 @@
-﻿using PtahBuilder.BuildSystem.Config;
+﻿using System.Diagnostics;
+using PtahBuilder.BuildSystem.Config;
 using PtahBuilder.BuildSystem.Entities;
 using PtahBuilder.BuildSystem.Execution.Abstractions;
 using PtahBuilder.BuildSystem.Extensions;
@@ -89,7 +90,7 @@ public class CsvInputStep<T> : IStep<T> where T : class
                 
                 _dynamicMappingService.Map(entity, propertyName, value);
             }
-
+            
             context.AddEntityFromFile(entity, file);
         }
     }
