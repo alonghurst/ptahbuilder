@@ -29,9 +29,21 @@ public static class ConvertHelper
         return 0;
     }
 
-    public static bool StringToBoolean(object input)
+    public static bool StringToBoolean(object? input)
     {
-        if (bool.TryParse(input.ToString(), out bool d))
+        if (input is string s)
+        {
+            if (s.Trim() == "1")
+            {
+                return true;
+            }
+            if (s.Trim() == "0")
+            {
+                return false;
+            }
+        }
+
+        if (bool.TryParse(input?.ToString() ?? string.Empty, out bool d))
         {
             return d;
         }
