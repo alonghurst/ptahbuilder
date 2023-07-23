@@ -4,7 +4,7 @@ using PtahBuilder.Generators.ComponentModelDocumentation.Entities;
 
 namespace PtahBuilder.Generators.ComponentModelDocumentation.Steps
 {
-    public class TypeToDocumentationStep : IStep<TypeDocumentation>
+    internal class TypeToDocumentationStep : IStep<TypeDocumentation>
     {
         private readonly IEntityProvider<Type> _entityProvider;
 
