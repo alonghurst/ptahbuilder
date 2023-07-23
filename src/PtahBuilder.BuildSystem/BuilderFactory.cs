@@ -6,7 +6,6 @@ using PtahBuilder.BuildSystem.Config.Internal;
 using PtahBuilder.BuildSystem.Execution;
 using PtahBuilder.BuildSystem.Extensions;
 using PtahBuilder.Util.Extensions;
-using PtahBuilder.Util.Extensions.Reflection;
 using PtahBuilder.Util.Helpers;
 
 namespace PtahBuilder.BuildSystem;

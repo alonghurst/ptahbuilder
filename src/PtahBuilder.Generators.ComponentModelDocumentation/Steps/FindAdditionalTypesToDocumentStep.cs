@@ -1,48 +1,42 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using PtahBuilder.BuildSystem.Entities;
+﻿using PtahBuilder.BuildSystem.Entities;
 using PtahBuilder.BuildSystem.Execution.Abstractions;
 using PtahBuilder.Util.Extensions.Reflection;
 using PtahBuilder.Util.Services.Logging;
 
-namespace PtahBuilder.Generators.ComponentModelDocumentation.Steps
+namespace PtahBuilder.Generators.ComponentModelDocumentation.Steps;
+
+public class FindAdditionalTypesToDocumentStep : IStep<Type>
 {
-    public class FindAdditionalTypesToDocumentStep : IStep<Type>
+    private readonly ILogger _logger;
+
+    public FindAdditionalTypesToDocumentStep(ILogger logger)
     {
-        private readonly ILogger _logger;
+        _logger = logger;
+    }
 
-        public FindAdditionalTypesToDocumentStep(ILogger logger)
+    public Task Execute(IPipelineContext<Type> context, IReadOnlyCollection<Entity<Type>> entities)
+    {
+        foreach (var entity in entities)
         {
-            _logger = logger;
-        }
+            var type = entity.Value;
 
-        public Task Execute(IPipelineContext<Type> context, IReadOnlyCollection<Entity<Type>> entities)
-        {
-            foreach (var entity in entities)
+            var prefix = (type.Namespace ?? string.Empty).Split('.').FirstOrDefault() ?? "?";
+
+            var relevantProperties = type.GetWritableProperties();
+
+            foreach (var relevantProperty in relevantProperties)
             {
-                var type = entity.Value;
+                var relevantType = relevantProperty.PropertyType;
 
-                var prefix = (type.Namespace ?? string.Empty).Split('.').FirstOrDefault() ?? "?";
-
-                var relevantProperties = type.GetWritableProperties();
-
-                foreach (var relevantProperty in relevantProperties)
+                if ((relevantType.Namespace ?? string.Empty).StartsWith(prefix))
                 {
-                    var relevantType = relevantProperty.PropertyType;
+                    _logger.Info($"Discovered {relevantType.GetTypeName()} on {type.GetTypeName()}");
 
-                    if ((relevantType.Namespace ?? string.Empty).StartsWith(prefix))
-                    {
-                        _logger.Info($"Discovered {relevantType.GetTypeName()} on {type.GetTypeName()}");
-
-                        context.AddEntity(relevantType);
-                    }
+                    context.AddEntity(relevantType);
                 }
             }
-
-            return Task.CompletedTask;
         }
+
+        return Task.CompletedTask;
     }
 }

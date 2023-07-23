@@ -1,88 +1,82 @@
 ﻿using PtahBuilder.Util.Extensions.Reflection;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace PtahBuilder.Util.Helpers
+namespace PtahBuilder.Util.Helpers;
+
+public static class ReflectionHelper
 {
-    public static class ReflectionHelper
+    private static List<Type>? _allLoadedTypes = null;
+
+    public static IReadOnlyCollection<T> GetEnumValues<T>()
     {
-        private static List<Type>? _allLoadedTypes = null;
+        return (Enum.GetValues(typeof(T)) as T[])!;
+    }
 
-        public static IReadOnlyCollection<T> GetEnumValues<T>()
-        {
-            return (Enum.GetValues(typeof(T)) as T[])!;
-        }
+    public static IEnumerable<Assembly> GetLoadedAssemblies(string? assemblyFilter = null)
+    {
+        return AppDomain.CurrentDomain.GetAssemblies()
+            .Where(a => string.IsNullOrWhiteSpace(assemblyFilter) ||
+                        !string.IsNullOrWhiteSpace(a.FullName) && a.FullName.StartsWith(assemblyFilter));
+    }
 
-        public static IEnumerable<Assembly> GetLoadedAssemblies(string? assemblyFilter = null)
+    public static IEnumerable<Type> GetAllLoadedTypes(string? assemblyFilter = null)
+    {
+        if (_allLoadedTypes == null)
         {
-            return AppDomain.CurrentDomain.GetAssemblies()
-                .Where(a => string.IsNullOrWhiteSpace(assemblyFilter) ||
-                            !string.IsNullOrWhiteSpace(a.FullName) && a.FullName.StartsWith(assemblyFilter));
-        }
+            _allLoadedTypes = new();
 
-        public static IEnumerable<Type> GetAllLoadedTypes(string? assemblyFilter = null)
-        {
-            if (_allLoadedTypes == null)
+            var assemblies = GetLoadedAssemblies();
+
+            foreach (var assembly in assemblies)
             {
-                _allLoadedTypes = new();
-
-                var assemblies = GetLoadedAssemblies();
-
-                foreach (var assembly in assemblies)
+                try
                 {
-                    try
-                    {
-                        var types = assembly.GetTypes();
+                    var types = assembly.GetTypes();
 
-                        foreach (var type in types)
-                        {
-                            _allLoadedTypes.Add(type);
-                        }
-                    }
-                    catch
+                    foreach (var type in types)
                     {
-                        // ignored
+                        _allLoadedTypes.Add(type);
                     }
                 }
+                catch
+                {
+                    // ignored
+                }
             }
-
-            if (assemblyFilter != null)
-            {
-                return _allLoadedTypes.Where(x => !string.IsNullOrWhiteSpace(x.Assembly.FullName) && x.Assembly.FullName.StartsWith(assemblyFilter));
-            }
-
-            return _allLoadedTypes.ToArray();
         }
 
-        public static IEnumerable<Type> GetLoadedTypesWithAttribute<T>(string? namespaceFilter = null) where T : Attribute
+        if (assemblyFilter != null)
         {
-            return GetAllLoadedTypes(namespaceFilter).Where(t => t.GetAttributeOfType<T>() != null);
+            return _allLoadedTypes.Where(x => !string.IsNullOrWhiteSpace(x.Assembly.FullName) && x.Assembly.FullName.StartsWith(assemblyFilter));
         }
 
-        public static Type GetLoadedTypeByFullName(string fullTypeName, string? assemblyFilter = null)
+        return _allLoadedTypes.ToArray();
+    }
+
+    public static IEnumerable<Type> GetLoadedTypesWithAttribute<T>(string? namespaceFilter = null) where T : Attribute
+    {
+        return GetAllLoadedTypes(namespaceFilter).Where(t => t.GetAttributeOfType<T>() != null);
+    }
+
+    public static Type GetLoadedTypeByFullName(string fullTypeName, string? assemblyFilter = null)
+    {
+        return GetAllLoadedTypes(assemblyFilter).First(t => t.FullName == fullTypeName);
+    }
+
+    public static IEnumerable<Type> GetLoadedTypesThatAreAssignableTo(Type type, bool instantiableOnly = true, string? assemblyFilter = null)
+    {
+        return GetAllLoadedTypes(assemblyFilter).Where(t => type.IsAssignableFrom(t) && (!instantiableOnly || !t.IsAbstract && !t.IsInterface));
+    }
+
+    public static IEnumerable<Type> GetLoadedTypesThatImplementInterfaceWithGenericArgumentsOfType(Type interfaceType, string? namespaceFilter, params Type[] genericTypes)
+    {
+        if (!interfaceType.IsInterface || !interfaceType.IsGenericType)
         {
-            return GetAllLoadedTypes(assemblyFilter).First(t => t.FullName == fullTypeName);
+            throw new InvalidOperationException($"Type \"{interfaceType.Name}\" is not an interface or is not a generic type");
         }
 
-        public static IEnumerable<Type> GetLoadedTypesThatAreAssignableTo(Type type, bool instantiableOnly = true, string? assemblyFilter = null)
-        {
-            return GetAllLoadedTypes(assemblyFilter).Where(t => type.IsAssignableFrom(t) && (!instantiableOnly || !t.IsAbstract && !t.IsInterface));
-        }
+        var constructedType = interfaceType.MakeGenericType(genericTypes);
 
-        public static IEnumerable<Type> GetLoadedTypesThatImplementInterfaceWithGenericArgumentsOfType(Type interfaceType, string? namespaceFilter, params Type[] genericTypes)
-        {
-            if (!interfaceType.IsInterface || !interfaceType.IsGenericType)
-            {
-                throw new InvalidOperationException($"Type \"{interfaceType.Name}\" is not an interface or is not a generic type");
-            }
-
-            var constructedType = interfaceType.MakeGenericType(genericTypes);
-
-            return GetLoadedTypesThatAreAssignableTo(constructedType, assemblyFilter: namespaceFilter);
-        }
+        return GetLoadedTypesThatAreAssignableTo(constructedType, assemblyFilter: namespaceFilter);
     }
 }
