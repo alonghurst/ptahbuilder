@@ -13,4 +13,12 @@ public static class PipelineContextExtensions
 
         context.AddEntity(entity, metadata);
     }
+
+    public static void AddEntities<T>(this IPipelineContext<T> context, IEnumerable<T> entities)
+    {
+        foreach (var entity in entities)
+        {
+            context.AddEntity(entity);
+        }
+    }
 }
