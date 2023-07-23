@@ -6,7 +6,7 @@ using PtahBuilder.BuildSystem.Config.Internal;
 using PtahBuilder.BuildSystem.Execution;
 using PtahBuilder.BuildSystem.Extensions;
 using PtahBuilder.Util.Extensions;
-using PtahBuilder.Util.Helpers;
+using PtahBuilder.Util.Extensions.Reflection;
 
 namespace PtahBuilder.BuildSystem;
 
@@ -30,7 +30,7 @@ public class BuilderFactory
 
     public BuilderFactory AddJsonConverterTypes(Assembly assembly)
     {
-        var types = ReflectionHelper.GetLoadedTypesThatAreAssignableTo(typeof(JsonConverter), assemblyFilter: assembly.FullName!);
+        var types = ReflectionExtensions.GetLoadedTypesThatAreAssignableTo(typeof(JsonConverter), assemblyFilter: assembly.FullName!);
 
         foreach (var type in types)
         {

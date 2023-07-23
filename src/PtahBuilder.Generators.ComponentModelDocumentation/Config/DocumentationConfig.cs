@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using PtahBuilder.Util.Helpers;
+using PtahBuilder.Util.Extensions.Reflection;
 
 namespace PtahBuilder.Generators.ComponentModelDocumentation.Config
 {
@@ -19,7 +19,7 @@ namespace PtahBuilder.Generators.ComponentModelDocumentation.Config
 
         public DocumentationConfig AddTypesInheritedFrom(Type type, bool includeAbstract = false)
         {
-            var types = ReflectionHelper.GetLoadedTypesThatAreAssignableTo(type, !includeAbstract);
+            var types = ReflectionExtensions.GetLoadedTypesThatAreAssignableTo(type, !includeAbstract);
 
             foreach (var childType in types)
             {

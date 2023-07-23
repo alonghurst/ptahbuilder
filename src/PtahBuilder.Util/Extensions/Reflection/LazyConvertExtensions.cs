@@ -1,8 +1,13 @@
-﻿namespace PtahBuilder.Util.Helpers;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-public static class ReflectionExtensions
+namespace PtahBuilder.Util.Extensions.Reflection
 {
-    /// <summary>
+    public static class LazyConvertExtensions
+    {/// <summary>
     /// Converts the value using the convert function if the output type matches the property.
     /// Otherwise returns the value
     /// </summary>
@@ -42,16 +47,5 @@ public static class ReflectionExtensions
         return value;
     }
 
-    public static bool IsDictionaryType(this Type type)
-    {
-        return type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Dictionary<,>);
-    }
-
-    public static Type GetDictionaryKeyValuePairType(this Type dictionaryType)
-    {
-        Type keyType = dictionaryType.GetGenericArguments()[0];
-        Type valueType = dictionaryType.GetGenericArguments()[1];
-
-        return typeof(KeyValuePair<,>).MakeGenericType(keyType, valueType);
-    }
+}
 }
