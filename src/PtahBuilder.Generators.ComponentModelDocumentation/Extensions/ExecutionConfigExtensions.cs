@@ -31,7 +31,15 @@ public static class ExecutionConfigExtensions
                 p.AddInputStep<InsertEntitiesStep<TypeToDocument>>(types);
                 p.AddInputStep<FindAdditionalTypesToDocumentStep>();
             });
-            
+
+            phase.AddPipeline<TypeDocumentation>(p =>
+            {
+                p.AddProcessStep<TypeToDocumentationStep>();
+            });
+        });
+
+        config.AddPipelinePhase(phase =>
+        {
             phase.AddPipeline<SimpleTextOutput>(c =>
             {
                 c.AddProcessStep<CreateDocumentationStep>();
@@ -39,7 +47,7 @@ public static class ExecutionConfigExtensions
                 c.AddOutputStep<SimpleTextOutputStep>();
             });
         });
-        
+
         return config;
     }
 }
