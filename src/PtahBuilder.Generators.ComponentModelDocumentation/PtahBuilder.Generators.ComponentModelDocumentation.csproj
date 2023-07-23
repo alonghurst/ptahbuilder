@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\PtahBuilder.BuildSystem\PtahBuilder.BuildSystem.csproj" />
+    <ProjectReference Include="..\PtahBuilder.Plugins.Markdown\PtahBuilder.Plugins.Markdown.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,6 +1,5 @@
-﻿namespace PtahBuilder.Plugins.Markdown.Extensions
+﻿namespace PtahBuilder.Plugins.Markdown.Extensions;
+
+public static class MarkdownExtensions
 {
-    public static class MarkdownExtensions
-    {
-    }
 }
