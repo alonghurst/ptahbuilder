@@ -2,7 +2,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-namespace PtahBuilder.CodeGeneration;
+namespace PtahBuilder.Plugins.CodeGeneration.Syntax;
 
 public static class Arguments
 {
@@ -48,7 +48,7 @@ public static class Arguments
     {
         return expressions.Select(Wrap).AsArgumentList();
     }
-        
+
     public static ArgumentSyntax AsArgument(this ExpressionSyntax expression)
     {
         return SyntaxFactory.Argument(expression);

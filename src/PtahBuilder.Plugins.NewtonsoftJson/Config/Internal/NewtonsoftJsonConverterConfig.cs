@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace PtahBuilder.NewtonsoftJson.Config.Internal;
+namespace PtahBuilder.Plugins.NewtonsoftJson.Config.Internal;
 
 public class NewtonsoftJsonConverterConfig
 {

@@ -1,7 +1,7 @@
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-namespace PtahBuilder.CodeGeneration;
+namespace PtahBuilder.Plugins.CodeGeneration.Syntax;
 
 public static class Variables
 {
@@ -34,15 +34,15 @@ public static class Variables
     {
         return SyntaxFactory.AssignmentExpression(SyntaxKind.SimpleAssignmentExpression, SyntaxFactory.IdentifierName(name), expression);
     }
-        
+
     public static LocalDeclarationStatementSyntax DeclareVariableWithInitializer(string variableName, ExpressionSyntax initializer, string type = "var")
     {
-        var variable = Variables.DeclareVariable(variableName);
+        var variable = DeclareVariable(variableName);
         var initializerExpression = SyntaxFactory.EqualsValueClause(initializer).WithEqualsToken(Tokens.Equals);
 
         var variables = variable.WithInitializer(initializerExpression).AsSyntaxList();
 
-        var variableDeclaration = Variables.DeclareVariableType(type).WithVariables(variables);
+        var variableDeclaration = DeclareVariableType(type).WithVariables(variables);
 
         return SyntaxFactory.LocalDeclarationStatement(variableDeclaration);
     }

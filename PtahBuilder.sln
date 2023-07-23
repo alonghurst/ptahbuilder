@@ -15,15 +15,17 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{82C75FB5-D
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PtahBuilder.BuildSystem", "src\PtahBuilder.BuildSystem\PtahBuilder.BuildSystem.csproj", "{3F8AAA0F-0CDE-470E-857F-38FD56A6584B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PtahBuilder.CodeGeneration", "src\PtahBuilder.CodeGeneration\PtahBuilder.CodeGeneration.csproj", "{005CEEA4-E1E1-4EAD-94CC-FADAB76AFF9F}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PtahBuilder.Util", "src\PtahBuilder.Util\PtahBuilder.Util.csproj", "{D5FE6812-CA3E-4EB8-83B7-C6D5D5D3AF3D}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PtahBuilder.Tests.TestBuilder", "tests\PtahBuilder.Tests.TestBuilder\PtahBuilder.Tests.TestBuilder.csproj", "{8C9E4D88-B9E0-43C2-A1FD-92588F5AC938}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PtahBuilder.NewtonsoftJson", "src\PtahBuilder.NewtonsoftJson\PtahBuilder.NewtonsoftJson.csproj", "{3AB32C9A-C0F5-4B14-B047-984917BF3BC2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PtahBuilder.Generators.ComponentModelDocumentation", "src\PtahBuilder.Generators.ComponentModelDocumentation\PtahBuilder.Generators.ComponentModelDocumentation.csproj", "{9ED55063-DC63-4A65-87F3-5F0DAC671EFD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PtahBuilder.Generators.ComponentModelDocumentation", "src\PtahBuilder.Generators.ComponentModelDocumentation\PtahBuilder.Generators.ComponentModelDocumentation.csproj", "{9ED55063-DC63-4A65-87F3-5F0DAC671EFD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PtahBuilder.Plugins.Markdown", "src\PtahBuilder.Plugins.Markdown\PtahBuilder.Plugins.Markdown.csproj", "{218AEF05-B7F8-490F-B936-342567D367DA}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PtahBuilder.Plugins.CodeGeneration", "src\PtahBuilder.Plugins.CodeGeneration\PtahBuilder.Plugins.CodeGeneration.csproj", "{565C493C-152C-448A-AE72-17A16AF882B1}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PtahBuilder.Plugins.NewtonsoftJson", "src\PtahBuilder.Plugins.NewtonsoftJson\PtahBuilder.Plugins.NewtonsoftJson.csproj", "{606011A9-49E3-497A-A2D2-42D8A61969D8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -35,10 +37,6 @@ Global
 		{3F8AAA0F-0CDE-470E-857F-38FD56A6584B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3F8AAA0F-0CDE-470E-857F-38FD56A6584B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3F8AAA0F-0CDE-470E-857F-38FD56A6584B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{005CEEA4-E1E1-4EAD-94CC-FADAB76AFF9F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{005CEEA4-E1E1-4EAD-94CC-FADAB76AFF9F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{005CEEA4-E1E1-4EAD-94CC-FADAB76AFF9F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{005CEEA4-E1E1-4EAD-94CC-FADAB76AFF9F}.Release|Any CPU.Build.0 = Release|Any CPU
 		{D5FE6812-CA3E-4EB8-83B7-C6D5D5D3AF3D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{D5FE6812-CA3E-4EB8-83B7-C6D5D5D3AF3D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D5FE6812-CA3E-4EB8-83B7-C6D5D5D3AF3D}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -47,25 +45,34 @@ Global
 		{8C9E4D88-B9E0-43C2-A1FD-92588F5AC938}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8C9E4D88-B9E0-43C2-A1FD-92588F5AC938}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8C9E4D88-B9E0-43C2-A1FD-92588F5AC938}.Release|Any CPU.Build.0 = Release|Any CPU
-		{3AB32C9A-C0F5-4B14-B047-984917BF3BC2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3AB32C9A-C0F5-4B14-B047-984917BF3BC2}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3AB32C9A-C0F5-4B14-B047-984917BF3BC2}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3AB32C9A-C0F5-4B14-B047-984917BF3BC2}.Release|Any CPU.Build.0 = Release|Any CPU
 		{9ED55063-DC63-4A65-87F3-5F0DAC671EFD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{9ED55063-DC63-4A65-87F3-5F0DAC671EFD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9ED55063-DC63-4A65-87F3-5F0DAC671EFD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9ED55063-DC63-4A65-87F3-5F0DAC671EFD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{218AEF05-B7F8-490F-B936-342567D367DA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{218AEF05-B7F8-490F-B936-342567D367DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{218AEF05-B7F8-490F-B936-342567D367DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{218AEF05-B7F8-490F-B936-342567D367DA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{565C493C-152C-448A-AE72-17A16AF882B1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{565C493C-152C-448A-AE72-17A16AF882B1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{565C493C-152C-448A-AE72-17A16AF882B1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{565C493C-152C-448A-AE72-17A16AF882B1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{606011A9-49E3-497A-A2D2-42D8A61969D8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{606011A9-49E3-497A-A2D2-42D8A61969D8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{606011A9-49E3-497A-A2D2-42D8A61969D8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{606011A9-49E3-497A-A2D2-42D8A61969D8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{3F8AAA0F-0CDE-470E-857F-38FD56A6584B} = {C1EE98F3-ADB1-4F40-A3D9-9B9EE0D23F53}
-		{005CEEA4-E1E1-4EAD-94CC-FADAB76AFF9F} = {C1EE98F3-ADB1-4F40-A3D9-9B9EE0D23F53}
 		{D5FE6812-CA3E-4EB8-83B7-C6D5D5D3AF3D} = {C1EE98F3-ADB1-4F40-A3D9-9B9EE0D23F53}
 		{8C9E4D88-B9E0-43C2-A1FD-92588F5AC938} = {82C75FB5-D14D-4D42-B94F-0016E514A23A}
-		{3AB32C9A-C0F5-4B14-B047-984917BF3BC2} = {C1EE98F3-ADB1-4F40-A3D9-9B9EE0D23F53}
 		{9ED55063-DC63-4A65-87F3-5F0DAC671EFD} = {C1EE98F3-ADB1-4F40-A3D9-9B9EE0D23F53}
+		{218AEF05-B7F8-490F-B936-342567D367DA} = {C1EE98F3-ADB1-4F40-A3D9-9B9EE0D23F53}
+		{565C493C-152C-448A-AE72-17A16AF882B1} = {C1EE98F3-ADB1-4F40-A3D9-9B9EE0D23F53}
+		{606011A9-49E3-497A-A2D2-42D8A61969D8} = {C1EE98F3-ADB1-4F40-A3D9-9B9EE0D23F53}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {BDC82931-BAE5-4F2B-8064-D1697C570B37}

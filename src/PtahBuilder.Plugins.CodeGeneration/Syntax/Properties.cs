@@ -2,7 +2,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-namespace PtahBuilder.CodeGeneration;
+namespace PtahBuilder.Plugins.CodeGeneration.Syntax;
 
 public static class Properties
 {
@@ -146,7 +146,7 @@ public static class Properties
 
         return property;
     }
-        
+
     public static PropertyDeclarationSyntax WithAttributes(this PropertyDeclarationSyntax property, params AttributeSyntax[] attributes)
     {
         var attributeSingletons = attributes.Select(a => SyntaxFactory.AttributeList(SyntaxFactory.SingletonSeparatedList(a))).ToArray();

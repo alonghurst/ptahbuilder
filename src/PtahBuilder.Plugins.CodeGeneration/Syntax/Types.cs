@@ -1,7 +1,7 @@
 ﻿using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-namespace PtahBuilder.CodeGeneration;
+namespace PtahBuilder.Plugins.CodeGeneration.Syntax;
 
 public static class Types
 {
@@ -161,7 +161,7 @@ public static class Types
     }
     public static GenericNameSyntax GenericType(string genericType, params Type[] subTypes)
     {
-        return GenericType(SyntaxFactory.GenericName(genericType), subTypes.Select(Types.Type).ToArray());
+        return GenericType(SyntaxFactory.GenericName(genericType), subTypes.Select(Type).ToArray());
     }
 
     public static GenericNameSyntax GenericType(GenericNameSyntax genericType, params string[] subTypes)

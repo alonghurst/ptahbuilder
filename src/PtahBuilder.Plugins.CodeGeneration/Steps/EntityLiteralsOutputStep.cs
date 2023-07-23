@@ -5,9 +5,9 @@ using PtahBuilder.BuildSystem.Entities;
 using PtahBuilder.BuildSystem.Execution.Abstractions;
 using PtahBuilder.BuildSystem.Services;
 using PtahBuilder.BuildSystem.Steps.Output.AdditionalTextOutput;
-using PtahBuilder.CodeGeneration;
+using PtahBuilder.Plugins.CodeGeneration.Syntax;
 
-namespace PtahBuilder.BuildSystem.Steps.Output.Code;
+namespace PtahBuilder.Plugins.CodeGeneration.Steps;
 
 public class EntityLiteralsConfig<T>
 {

@@ -4,12 +4,11 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Newtonsoft.Json;
 using PtahBuilder.BuildSystem;
 using PtahBuilder.BuildSystem.Services.Serialization;
-using PtahBuilder.NewtonsoftJson.Config.Internal;
-using PtahBuilder.NewtonsoftJson.Services;
-using PtahBuilder.Util.Extensions.Reflection;
+using PtahBuilder.Plugins.NewtonsoftJson.Config.Internal;
+using PtahBuilder.Plugins.NewtonsoftJson.Services;
 using PtahBuilder.Util.Helpers;
 
-namespace PtahBuilder.NewtonsoftJson;
+namespace PtahBuilder.Plugins.NewtonsoftJson;
 
 public static class NewtonsoftJsonBuilderExtensions
 {
