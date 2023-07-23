@@ -7,6 +7,7 @@ using PtahBuilder.BuildSystem.Services.Serialization;
 using PtahBuilder.NewtonsoftJson.Config.Internal;
 using PtahBuilder.NewtonsoftJson.Services;
 using PtahBuilder.Util.Extensions.Reflection;
+using PtahBuilder.Util.Helpers;
 
 namespace PtahBuilder.NewtonsoftJson;
 
@@ -14,7 +15,7 @@ public static class NewtonsoftJsonBuilderExtensions
 {
     public static BuilderFactory UseNewtonsoftJson(this BuilderFactory builderFactory, Assembly jsonConvertersAssembly)
     {
-        var types = ReflectionExtensions.GetLoadedTypesThatAreAssignableTo(typeof(JsonConverter), assemblyFilter: jsonConvertersAssembly.FullName!);
+        var types = ReflectionHelper.GetLoadedTypesThatAreAssignableTo(typeof(JsonConverter), assemblyFilter: jsonConvertersAssembly.FullName!);
 
         var converters = new List<JsonConverter>();
 
