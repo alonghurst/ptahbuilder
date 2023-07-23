@@ -5,59 +5,58 @@ using PtahBuilder.BuildSystem.Execution.Abstractions;
 using PtahBuilder.Generators.ComponentModelDocumentation.Entities;
 using PtahBuilder.Util.Extensions.Reflection;
 
-namespace PtahBuilder.Generators.ComponentModelDocumentation.Steps
+namespace PtahBuilder.Generators.ComponentModelDocumentation.Steps;
+
+internal class TypeToDocumentationStep : IStep<TypeDocumentation>
 {
-    internal class TypeToDocumentationStep : IStep<TypeDocumentation>
+    private readonly IEntityProvider<TypeToDocument> _entityProvider;
+
+    public TypeToDocumentationStep(IEntityProvider<TypeToDocument> entityProvider)
     {
-        private readonly IEntityProvider<TypeToDocument> _entityProvider;
+        _entityProvider = entityProvider;
+    }
 
-        public TypeToDocumentationStep(IEntityProvider<TypeToDocument> entityProvider)
+    public Task Execute(IPipelineContext<TypeDocumentation> context, IReadOnlyCollection<Entity<TypeDocumentation>> entities)
+    {
+        foreach (var entity in _entityProvider.Entities)
         {
-            _entityProvider = entityProvider;
+            var type = entity.Value.Value.Type;
+
+            var properties = DocumentPropertiesForType(type);
+
+            var typeInfo = type.GetCustomAttribute(typeof(DisplayAttribute)) as DisplayAttribute;
+            var (name, description) = NameAndDescriptionFromDisplayAttribute(typeInfo, type.GetTypeName());
+
+            var typeDocumentation = new TypeDocumentation(type, name, description, properties);
+
+            context.AddEntity(typeDocumentation);
         }
 
-        public Task Execute(IPipelineContext<TypeDocumentation> context, IReadOnlyCollection<Entity<TypeDocumentation>> entities)
-        {
-            foreach (var entity in _entityProvider.Entities)
+        return Task.CompletedTask;
+    }
+
+    private PropertyDocumentation[] DocumentPropertiesForType(Type type)
+    {
+        var properties = type.GetWritableProperties()
+            .Select(x =>
             {
-                var type = entity.Value.Value.Type;
+                var propertyInfo = x.GetCustomAttribute(typeof(DisplayAttribute)) as DisplayAttribute;
 
-                var properties = DocumentPropertiesForType(type);
+                var (propertyName, propertyDescription) = NameAndDescriptionFromDisplayAttribute(propertyInfo, x.Name);
 
-                var typeInfo = type.GetCustomAttribute(typeof(DisplayAttribute)) as DisplayAttribute;
-                var (name, description) = NameAndDescriptionFromDisplayAttribute(typeInfo, type.GetTypeName());
+                return new PropertyDocumentation(x, propertyName, propertyDescription);
+            })
+            .ToArray();
+        return properties;
+    }
 
-                var typeDocumentation = new TypeDocumentation(type, name, description, properties);
-
-                context.AddEntity(typeDocumentation);
-            }
-
-            return Task.CompletedTask;
-        }
-
-        private PropertyDocumentation[] DocumentPropertiesForType(Type type)
+    private (string name, string description) NameAndDescriptionFromDisplayAttribute(DisplayAttribute? attribute, string name)
+    {
+        if (attribute?.Name is { } s)
         {
-            var properties = type.GetWritableProperties()
-                .Select(x =>
-                {
-                    var propertyInfo = x.GetCustomAttribute(typeof(DisplayAttribute)) as DisplayAttribute;
-
-                    var (propertyName, propertyDescription) = NameAndDescriptionFromDisplayAttribute(propertyInfo, x.Name);
-
-                    return new PropertyDocumentation(x, propertyName, propertyDescription);
-                })
-                .ToArray();
-            return properties;
+            name = s;
         }
 
-        private (string name, string description) NameAndDescriptionFromDisplayAttribute(DisplayAttribute? attribute, string name)
-        {
-            if (attribute?.Name is { } s)
-            {
-                name = s;
-            }
-
-            return (name, attribute?.Description ?? string.Empty);
-        }
+        return (name, attribute?.Description ?? string.Empty);
     }
 }

@@ -1,5 +1,6 @@
 ﻿using PtahBuilder.BuildSystem.Config;
 using PtahBuilder.BuildSystem.Steps.Input;
+using PtahBuilder.BuildSystem.Steps.Output.SimpleText;
 using PtahBuilder.Generators.ComponentModelDocumentation.Config;
 using PtahBuilder.Generators.ComponentModelDocumentation.Entities;
 using PtahBuilder.Generators.ComponentModelDocumentation.Steps;
@@ -28,13 +29,17 @@ public static class ExecutionConfigExtensions
                 p.GetId = t => t.Type.GetTypeName();
 
                 p.AddInputStep<InsertEntitiesStep<TypeToDocument>>(types);
-
                 p.AddInputStep<FindAdditionalTypesToDocumentStep>();
             });
+            
+            phase.AddPipeline<SimpleTextOutput>(c =>
+            {
+                c.AddProcessStep<CreateDocumentationStep>();
 
-
+                c.AddOutputStep<SimpleTextOutputStep>();
+            });
         });
-
+        
         return config;
     }
 }
