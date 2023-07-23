@@ -1,7 +1,7 @@
 ﻿using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-namespace PtahBuilder.CodeGeneration;
+namespace PtahBuilder.Plugins.CodeGeneration.Syntax;
 
 public static class Statements
 {
@@ -49,7 +49,7 @@ public static class Statements
     {
         return Block(statement);
     }
-        
+
     public static StatementSyntax Throw(string exceptionType)
     {
         return SyntaxFactory.ThrowStatement(Instantiations.NewUp(exceptionType));

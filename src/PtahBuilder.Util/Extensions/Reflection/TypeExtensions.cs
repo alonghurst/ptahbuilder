@@ -111,6 +111,9 @@ public static class TypeExtensions
                || type.GetInterfaces().Any(t => t.IsGenericType && t.GetGenericTypeDefinition() == typeof(IEnumerable<>));
     }
 
+    /// <summary>
+    /// If this is a collection type then returns the element type of the collection, otherwise just returns the type
+    /// </summary>
     public static Type GetTypeOrElementType(this Type type)
     {
         var interfaceType = type.IsGenericType && type.GetGenericTypeDefinition() == typeof(IEnumerable<>) ? type : type.GetInterfaces().FirstOrDefault(t => t.IsGenericType && t.GetGenericTypeDefinition() == typeof(IEnumerable<>));

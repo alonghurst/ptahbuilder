@@ -1,7 +1,7 @@
 ﻿using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-namespace PtahBuilder.CodeGeneration;
+namespace PtahBuilder.Plugins.CodeGeneration.Syntax;
 
 public static class Invocations
 {
@@ -10,7 +10,7 @@ public static class Invocations
         var arguments = parameterNames.Select(pn => SyntaxFactory.Argument(SyntaxFactory.IdentifierName(pn))).AsArgumentList();
         return Invoke(target, methodName, arguments);
     }
-        
+
     public static InvocationExpressionSyntax Invoke(string target, string methodName, params ArgumentSyntax[] arguments)
     {
         return Invoke(target, methodName, arguments.AsArgumentList());
@@ -195,7 +195,7 @@ public static class Invocations
         return SyntaxFactory.InvocationExpression(memberAccessExpression).WithArgumentList(arguments);
     }
 
-    public static InvocationExpressionSyntax InvokeMethodOnExpression(this ExpressionSyntax expression, string methodName, string[] genericTypes,  params ArgumentSyntax[] arguments)
+    public static InvocationExpressionSyntax InvokeMethodOnExpression(this ExpressionSyntax expression, string methodName, string[] genericTypes, params ArgumentSyntax[] arguments)
     {
         var argumentList = arguments.AsArgumentList();
         var generics = Arguments.GenericTypeArguments(genericTypes);
@@ -210,7 +210,7 @@ public static class Invocations
                     .WithOperatorToken(Tokens.Dot))
             .WithArgumentList(argumentList);
     }
-        
+
     public static IdentifierNameSyntax FromIdentifierName(string name)
     {
         return SyntaxFactory.IdentifierName(name);

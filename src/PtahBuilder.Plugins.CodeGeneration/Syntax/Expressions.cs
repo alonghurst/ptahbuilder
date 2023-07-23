@@ -1,7 +1,7 @@
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-namespace PtahBuilder.CodeGeneration;
+namespace PtahBuilder.Plugins.CodeGeneration.Syntax;
 
 public static class Expressions
 {
@@ -64,7 +64,7 @@ public static class Expressions
 
     public static BlockSyntax ReturnBlock(ExpressionSyntax expression)
     {
-        var returnExpression = Return(expression);
+        var returnExpression = expression.Return();
         var block = Block(returnExpression);
         return block;
     }
@@ -284,7 +284,7 @@ public static class Expressions
         return SyntaxFactory.TypeOfExpression(Types.Type(type));
     }
 
-    public static ConditionalExpressionSyntax ConditionalExpression(ExpressionSyntax condition, ExpressionSyntax ifTrueExpression,ExpressionSyntax ifFalseExpression)
+    public static ConditionalExpressionSyntax ConditionalExpression(ExpressionSyntax condition, ExpressionSyntax ifTrueExpression, ExpressionSyntax ifFalseExpression)
     {
         return ConditionalExpression(condition, ifTrueExpression, ifFalseExpression);
     }

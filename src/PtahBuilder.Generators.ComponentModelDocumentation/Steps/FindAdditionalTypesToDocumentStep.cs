@@ -27,7 +27,7 @@ internal class FindAdditionalTypesToDocumentStep : IStep<TypeToDocument>
 
             foreach (var relevantProperty in relevantProperties)
             {
-                var relevantType = relevantProperty.PropertyType;
+                var relevantType = relevantProperty.PropertyType.GetTypeOrElementType();
 
                 if ((relevantType.Namespace ?? string.Empty).StartsWith(prefix))
                 {

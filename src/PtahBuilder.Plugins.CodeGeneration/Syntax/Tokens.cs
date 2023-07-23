@@ -1,7 +1,7 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 
-namespace PtahBuilder.CodeGeneration;
+namespace PtahBuilder.Plugins.CodeGeneration.Syntax;
 
 public static class Tokens
 {

@@ -1,8 +1,8 @@
 ﻿using Newtonsoft.Json;
 using PtahBuilder.BuildSystem.Services.Serialization;
-using PtahBuilder.NewtonsoftJson.Config.Internal;
+using PtahBuilder.Plugins.NewtonsoftJson.Config.Internal;
 
-namespace PtahBuilder.NewtonsoftJson.Services;
+namespace PtahBuilder.Plugins.NewtonsoftJson.Services;
 
 public class NewtonsoftJsonService : IJsonService
 {

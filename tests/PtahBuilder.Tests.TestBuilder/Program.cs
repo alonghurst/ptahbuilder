@@ -1,9 +1,9 @@
 ﻿using PtahBuilder.BuildSystem;
 using PtahBuilder.BuildSystem.Steps.Input;
 using PtahBuilder.BuildSystem.Steps.Output;
-using PtahBuilder.BuildSystem.Steps.Output.Code;
 using PtahBuilder.BuildSystem.Steps.Process;
 using PtahBuilder.Generators.ComponentModelDocumentation.Extensions;
+using PtahBuilder.Plugins.CodeGeneration.Steps;
 using PtahBuilder.Tests.TestBuilder.Entities;
 using PtahBuilder.Util.Helpers;
 using Constants = PtahBuilder.Tests.TestBuilder.Constants;
