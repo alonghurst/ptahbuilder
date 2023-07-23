@@ -2,18 +2,34 @@
 
 *No documentation available.*
 
-## Name
+## Properties
+
+### Name
+
+Type: String
 
 *No documentation available.*
 
-## Colour
+### Colour
+
+Type: String
 
 *No documentation available.*
 
-## HasSeeds
+### HasSeeds
+
+Type: Boolean
 
 *No documentation available.*
 
-## TypeName
+### Fruitiness
+
+Type: FruityEnum ([FruityEnum](FruityEnum))
+
+*No documentation available.*
+
+### TypeName
+
+Type: String
 
 *No documentation available.*

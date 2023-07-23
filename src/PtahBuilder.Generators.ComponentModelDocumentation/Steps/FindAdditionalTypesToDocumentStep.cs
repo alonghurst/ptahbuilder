@@ -1,5 +1,6 @@
 ﻿using PtahBuilder.BuildSystem.Entities;
 using PtahBuilder.BuildSystem.Execution.Abstractions;
+using PtahBuilder.BuildSystem.Extensions;
 using PtahBuilder.Generators.ComponentModelDocumentation.Entities;
 using PtahBuilder.Util.Extensions.Reflection;
 using PtahBuilder.Util.Services.Logging;
@@ -17,6 +18,8 @@ internal class FindAdditionalTypesToDocumentStep : IStep<TypeToDocument>
 
     public Task Execute(IPipelineContext<TypeToDocument> context, IReadOnlyCollection<Entity<TypeToDocument>> entities)
     {
+        var discovered = new List<TypeToDocument>();
+
         foreach (var entity in entities)
         {
             var type = entity.Value.Type;
@@ -33,10 +36,12 @@ internal class FindAdditionalTypesToDocumentStep : IStep<TypeToDocument>
                 {
                     _logger.Info($"Discovered {relevantType.GetTypeName()} on {type.GetTypeName()}");
 
-                    context.AddEntity(new(relevantType));
+                    discovered.Add(new (relevantType));
                 }
             }
         }
+
+        context.AddEntities(discovered);
 
         return Task.CompletedTask;
     }
