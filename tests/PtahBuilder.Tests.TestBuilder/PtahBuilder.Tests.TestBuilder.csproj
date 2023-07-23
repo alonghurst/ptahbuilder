@@ -9,5 +9,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\PtahBuilder.BuildSystem\PtahBuilder.BuildSystem.csproj" />
+    <ProjectReference Include="..\..\src\PtahBuilder.Generators.ComponentModelDocumentation\PtahBuilder.Generators.ComponentModelDocumentation.csproj" />
   </ItemGroup>
 </Project>
