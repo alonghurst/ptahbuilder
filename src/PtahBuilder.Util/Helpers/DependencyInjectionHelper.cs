@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using PtahBuilder.Util.Extensions.Reflection;
 
 namespace PtahBuilder.Util.Helpers;
 
@@ -13,7 +14,7 @@ public static class DependencyInjectionHelper
 {
     public static IServiceCollection AddInterfaceImplementations(this IServiceCollection collection, string namespacePath, ScopeType scope, string? namespaceFilter = null)
     {
-        var interfaces = ReflectionHelper.GetAllLoadedTypes(namespaceFilter)
+        var interfaces = ReflectionExtensions.GetAllLoadedTypes(namespaceFilter)
             .Where(c => c.IsInterface &&
                         !string.IsNullOrWhiteSpace(c.Namespace) &&
                         c.Namespace.StartsWith(namespacePath));
@@ -28,7 +29,7 @@ public static class DependencyInjectionHelper
 
     public static IServiceCollection AddTypesThatImplement(this IServiceCollection collection, Type serviceType, ScopeType scope, string? namespaceFilter = null)
     {
-        var types = ReflectionHelper.GetLoadedTypesThatAreAssignableTo(serviceType, assemblyFilter: namespaceFilter).Where(x => x.IsClass);
+        var types = ReflectionExtensions.GetLoadedTypesThatAreAssignableTo(serviceType, assemblyFilter: namespaceFilter).Where(x => x.IsClass);
 
         foreach (var implementationType in types)
         {
@@ -55,7 +56,7 @@ public static class DependencyInjectionHelper
 
     public static IServiceCollection AddScopedTypesThatHaveAttribute<T>(this IServiceCollection collection, string? namespaceFilter = null) where T : Attribute
     {
-        var types = ReflectionHelper.GetLoadedTypesWithAttribute<T>(namespaceFilter);
+        var types = ReflectionExtensions.GetLoadedTypesWithAttribute<T>(namespaceFilter);
 
         foreach (var t in types.Where(t => !t.IsAbstract))
         {
@@ -72,7 +73,7 @@ public static class DependencyInjectionHelper
             throw new InvalidOperationException($"{typeof(T).FullName} must be a non-generic interface");
         }
 
-        var types = ReflectionHelper.GetLoadedTypesThatAreAssignableTo(typeof(T), assemblyFilter: namespaceFilter);
+        var types = ReflectionExtensions.GetLoadedTypesThatAreAssignableTo(typeof(T), assemblyFilter: namespaceFilter);
 
         foreach (var t in types)
         {

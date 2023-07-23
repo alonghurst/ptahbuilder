@@ -12,7 +12,12 @@ namespace PtahBuilder.Generators.ComponentModelDocumentation.Steps
     {
         public Task Execute(IPipelineContext<Type> context, IReadOnlyCollection<Entity<Type>> entities)
         {
-            throw new NotImplementedException();
+            foreach (var entity in entities)
+            {
+                var type = entity.Value;
+
+                var relevantProperties = type.get
+            }
         }
     }
 }

@@ -4,6 +4,34 @@ namespace PtahBuilder.Util.Extensions;
 
 public static class TypeExtensions
 {
+    public static bool IsDictionaryType(this Type type)
+    {
+        return type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Dictionary<,>);
+    }
+
+    public static Type GetDictionaryKeyValuePairType(this Type dictionaryType)
+    {
+        Type keyType = dictionaryType.GetGenericArguments()[0];
+        Type valueType = dictionaryType.GetGenericArguments()[1];
+
+        return typeof(KeyValuePair<,>).MakeGenericType(keyType, valueType);
+    }
+
+    public static Type? GetBaseGenericType(this Type type)
+    {
+        if (type.BaseType == null || type.BaseType == typeof(object))
+        {
+            return null;
+        }
+
+        if (type.BaseType.GenericTypeArguments.Any())
+        {
+            return type.BaseType.GenericTypeArguments[0];
+        }
+
+        return GetBaseGenericType(type.BaseType);
+    }
+
     public static string GetTypeName(this Type type)
     {
         if (type == null)
@@ -67,5 +95,33 @@ public static class TypeExtensions
     private static string GetTypeNameInner(Type type)
     {
         return type.Name.Split('`')[0];
+    }
+
+    public static bool IsEnumerable(this Type type)
+    {
+        return type.IsGenericType && type.GetGenericTypeDefinition() == typeof(IEnumerable<>)
+               || type.GetInterfaces().Any(t => t.IsGenericType && t.GetGenericTypeDefinition() == typeof(IEnumerable<>));
+    }
+
+    public static Type GetTypeOrElementType(this Type type)
+    {
+        var interfaceType = type.IsGenericType && type.GetGenericTypeDefinition() == typeof(IEnumerable<>) ? type : type.GetInterfaces().FirstOrDefault(t => t.IsGenericType && t.GetGenericTypeDefinition() == typeof(IEnumerable<>));
+        if (interfaceType != null && type != typeof(string))
+        {
+            return interfaceType.GetGenericArguments()[0];
+        }
+
+        return type;
+    }
+
+    public static bool ImplementInterface(this Type type, Type @interface)
+    {
+        return type.GetInterfaces().Any(i => i == @interface || i.IsGenericType && i.GetGenericTypeDefinition() == @interface);
+    }
+
+    public static Type GetTypeOrElementType(this object o)
+    {
+        var type = o.GetType();
+        return type.GetTypeOrElementType();
     }
 }
