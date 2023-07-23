@@ -1,5 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using PtahBuilder.Util.Helpers;
+using PtahBuilder.Util.Extensions.Reflection;
 
 namespace PtahBuilder.BuildSystem.Extensions;
 

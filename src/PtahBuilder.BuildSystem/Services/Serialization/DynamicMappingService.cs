@@ -1,5 +1,5 @@
 ﻿using System.Reflection;
-using PtahBuilder.Util.Extensions;
+using PtahBuilder.Util.Extensions.Reflection;
 
 namespace PtahBuilder.BuildSystem.Services.Serialization;
 

@@ -1,6 +1,6 @@
-﻿using PtahBuilder.Util.Helpers;
-using PtahBuilder.Util.Services.Logging;
+﻿using PtahBuilder.Util.Services.Logging;
 using System.Reflection;
+using PtahBuilder.Util.Extensions.Reflection;
 using YamlDotNet.RepresentationModel;
 
 namespace PtahBuilder.BuildSystem.Services.Serialization;
