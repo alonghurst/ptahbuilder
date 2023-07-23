@@ -125,6 +125,6 @@ public static class Tokens
             return SyntaxFactory.Token(SyntaxKind.EqualsEqualsToken);
         }
 
-        throw new System.Exception($"Unknown if comparision {comparison}");
+        throw new($"Unknown if comparision {comparison}");
     }
 }

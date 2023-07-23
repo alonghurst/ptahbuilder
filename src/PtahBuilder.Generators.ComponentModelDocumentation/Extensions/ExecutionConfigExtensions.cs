@@ -1,6 +1,7 @@
 ﻿using PtahBuilder.BuildSystem.Config;
 using PtahBuilder.BuildSystem.Steps.Input;
 using PtahBuilder.Generators.ComponentModelDocumentation.Config;
+using PtahBuilder.Generators.ComponentModelDocumentation.Entities;
 using PtahBuilder.Generators.ComponentModelDocumentation.Steps;
 using PtahBuilder.Util.Extensions.Reflection;
 
@@ -14,16 +15,19 @@ public static class ExecutionConfigExtensions
 
         configure.Invoke(documentationConfig);
 
-        var types = documentationConfig.GetTypesToDocument();
+        var types = documentationConfig
+            .GetTypesToDocument()
+            .Select(x => new TypeToDocument(x))
+            .ToList();
 
         config.AddPipelinePhase(phase =>
         {
-            phase.AddPipeline<Type>(p =>
+            phase.AddPipeline<TypeToDocument>(p =>
             {
                 p.DuplicateIdBehaviour = DuplicateIdBehaviour.Skip;
-                p.GetId = t => t.GetTypeName();
+                p.GetId = t => t.Type.GetTypeName();
 
-                p.AddInputStep<InsertEntitiesStep<Type>>(types);
+                p.AddInputStep<InsertEntitiesStep<TypeToDocument>>(types);
 
                 p.AddInputStep<FindAdditionalTypesToDocumentStep>();
             });

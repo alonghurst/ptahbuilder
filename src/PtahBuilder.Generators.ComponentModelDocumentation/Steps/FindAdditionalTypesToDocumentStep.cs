@@ -1,11 +1,12 @@
 ﻿using PtahBuilder.BuildSystem.Entities;
 using PtahBuilder.BuildSystem.Execution.Abstractions;
+using PtahBuilder.Generators.ComponentModelDocumentation.Entities;
 using PtahBuilder.Util.Extensions.Reflection;
 using PtahBuilder.Util.Services.Logging;
 
 namespace PtahBuilder.Generators.ComponentModelDocumentation.Steps;
 
-public class FindAdditionalTypesToDocumentStep : IStep<Type>
+internal class FindAdditionalTypesToDocumentStep : IStep<TypeToDocument>
 {
     private readonly ILogger _logger;
 
@@ -14,11 +15,11 @@ public class FindAdditionalTypesToDocumentStep : IStep<Type>
         _logger = logger;
     }
 
-    public Task Execute(IPipelineContext<Type> context, IReadOnlyCollection<Entity<Type>> entities)
+    public Task Execute(IPipelineContext<TypeToDocument> context, IReadOnlyCollection<Entity<TypeToDocument>> entities)
     {
         foreach (var entity in entities)
         {
-            var type = entity.Value;
+            var type = entity.Value.Type;
 
             var prefix = (type.Namespace ?? string.Empty).Split('.').FirstOrDefault() ?? "?";
 
@@ -32,7 +33,7 @@ public class FindAdditionalTypesToDocumentStep : IStep<Type>
                 {
                     _logger.Info($"Discovered {relevantType.GetTypeName()} on {type.GetTypeName()}");
 
-                    context.AddEntity(relevantType);
+                    context.AddEntity(new(relevantType));
                 }
             }
         }
