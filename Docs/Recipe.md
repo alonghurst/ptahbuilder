@@ -4,22 +4,34 @@ A piece of data about a recipe
 
 Could be useful.
 
-## Name
+## Properties
+
+### Name
+
+Type: String
 
 *No documentation available.*
 
-## ValidFruits
+### ValidFruits
+
+Type: String\[\]
 
 *No documentation available.*
 
-## CustomFruit ([Fruit](Fruit))
+### CustomFruit
+
+Type: Fruit ([Fruit](Fruit))
 
 *No documentation available.*
 
-## PrimaryFruitTypeName
+### PrimaryFruitTypeName
+
+Type: String
 
 An Id reference to the [Fruit](Fruit) which is considered primary
 
-## TypeName
+### TypeName
+
+Type: String
 
 *No documentation available.*

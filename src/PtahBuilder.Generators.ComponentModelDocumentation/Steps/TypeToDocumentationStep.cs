@@ -4,6 +4,7 @@ using PtahBuilder.BuildSystem.Entities;
 using PtahBuilder.BuildSystem.Execution.Abstractions;
 using PtahBuilder.Generators.ComponentModelDocumentation.Entities;
 using PtahBuilder.Util.Extensions.Reflection;
+using PtahBuilder.Util.Helpers;
 
 namespace PtahBuilder.Generators.ComponentModelDocumentation.Steps;
 
@@ -23,16 +24,36 @@ internal class TypeToDocumentationStep : IStep<TypeDocumentation>
             var type = entity.Value.Value.Type;
 
             var properties = DocumentPropertiesForType(type);
+            var enumValues = DocumentEnumValuesForType(type);
 
             var typeInfo = type.GetCustomAttribute(typeof(DisplayAttribute)) as DisplayAttribute;
             var (name, description) = NameAndDescriptionFromDisplayAttribute(typeInfo, type.GetTypeName());
 
-            var typeDocumentation = new TypeDocumentation(type, name, description, properties);
+            var typeDocumentation = new TypeDocumentation(type, name, description, properties, enumValues);
 
             context.AddEntity(typeDocumentation);
         }
 
         return Task.CompletedTask;
+    }
+
+    private IReadOnlyCollection<EnumValueDocumentation> DocumentEnumValuesForType(Type type)
+    {
+        if (!type.IsEnum)
+        {
+            return Array.Empty<EnumValueDocumentation>();
+        }
+
+        var valuesWithAttribute = type.GetEnumValuesWithOptionalAttribute<DisplayAttribute>().ToArray();
+
+        return valuesWithAttribute.Select(x =>
+            {
+                var value = x.value.ToString() ?? "";
+                var (name, description) = NameAndDescriptionFromDisplayAttribute(x.attribute, value);
+
+                return new EnumValueDocumentation(value, name, description);
+            })
+            .ToArray();
     }
 
     private PropertyDocumentation[] DocumentPropertiesForType(Type type)

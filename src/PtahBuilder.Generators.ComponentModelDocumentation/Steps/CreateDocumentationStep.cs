@@ -5,6 +5,7 @@ using PtahBuilder.BuildSystem.Entities;
 using PtahBuilder.BuildSystem.Execution.Abstractions;
 using PtahBuilder.BuildSystem.Steps.Output.SimpleText;
 using PtahBuilder.Generators.ComponentModelDocumentation.Entities;
+using PtahBuilder.Util.Extensions.Reflection;
 
 namespace PtahBuilder.Generators.ComponentModelDocumentation.Steps;
 
@@ -89,20 +90,39 @@ internal class CreateDocumentationStep : IStep<SimpleTextOutput>
 
         markdown.Root.Add(Describe(documentation.Description));
 
-        foreach (var property in documentation.Properties)
+        if (documentation.Properties.Any())
         {
-            MdSpan head = property.DisplayName;
+            markdown.Root.Add(new MdHeading(2, "Properties"));
 
-            var type = documentationTypes.Values.FirstOrDefault(x => x.Value.Type == property.PropertyInfo.PropertyType);
-
-            if (type != null)
+            foreach (var property in documentation.Properties)
             {
-                head = new MdCompositeSpan(head, " (", new MdLinkSpan(type.Value.DisplayName, type.Id), ")");
+                markdown.Root.Add(new MdHeading(3, property.DisplayName));
+
+                MdSpan typeDescription = $"Type: {property.PropertyInfo.PropertyType.GetTypeName()}";
+
+                var type = documentationTypes.Values.FirstOrDefault(x => x.Value.Type == property.PropertyInfo.PropertyType);
+
+                if (type != null)
+                {
+                    typeDescription = new MdCompositeSpan(typeDescription, " (", new MdLinkSpan(type.Value.DisplayName, type.Id), ")");
+                }
+
+                markdown.Root.Add(new MdParagraph(typeDescription));
+
+                markdown.Root.Add(Describe(property.Description));
             }
+        }
 
-            markdown.Root.Add(new MdHeading(2, head));
+        if (documentation.EnumValues.Any())
+        {
+            markdown.Root.Add(new MdHeading(2, "Values"));
 
-            markdown.Root.Add(Describe(property.Description));
+            foreach (var enumValue in documentation.EnumValues)
+            {
+                markdown.Root.Add(new MdHeading(3, enumValue.DisplayName));
+                
+                markdown.Root.Add(Describe(enumValue.Description));
+            }
         }
 
         return markdown.ToString();
