@@ -1,4 +1,5 @@
-﻿using Grynwald.MarkdownGenerator;
+﻿using System.Text.RegularExpressions;
+using Grynwald.MarkdownGenerator;
 using PtahBuilder.BuildSystem.Config;
 using PtahBuilder.BuildSystem.Entities;
 using PtahBuilder.BuildSystem.Execution.Abstractions;
@@ -23,10 +24,12 @@ internal class CreateDocumentationStep : IStep<SimpleTextOutput>
 
     public Task Execute(IPipelineContext<SimpleTextOutput> context, IReadOnlyCollection<Entity<SimpleTextOutput>> entities)
     {
-        foreach (var entity in _entityProvider.Entities)
+        var documentationTypes = _entityProvider.Entities;
+
+        foreach (var entity in documentationTypes)
         {
             var file = entity.Value.Id;
-            var contents = MakeContents(entity.Value.Value);
+            var contents = MakeContents(entity.Value.Value, documentationTypes);
 
             var simpleText = new SimpleTextOutput(file, "md", Directory(), contents);
 
@@ -58,7 +61,7 @@ internal class CreateDocumentationStep : IStep<SimpleTextOutput>
         return new("Index", "md", Directory(), markdown.ToString());
     }
 
-    private string MakeContents(TypeDocumentation documentation)
+    private string MakeContents(TypeDocumentation documentation, Dictionary<string, Entity<TypeDocumentation>> documentationTypes)
     {
         IEnumerable<MdBlock> ProcessTextBlock(string text)
         {
@@ -88,7 +91,16 @@ internal class CreateDocumentationStep : IStep<SimpleTextOutput>
 
         foreach (var property in documentation.Properties)
         {
-            markdown.Root.Add(new MdHeading(property.DisplayName, 2));
+            MdSpan head = property.DisplayName;
+
+            var type = documentationTypes.Values.FirstOrDefault(x => x.Value.Type == property.PropertyInfo.PropertyType);
+
+            if (type != null)
+            {
+                head = new MdCompositeSpan(head, " (", new MdLinkSpan(type.Value.DisplayName, type.Id), ")");
+            }
+
+            markdown.Root.Add(new MdHeading(2, head));
 
             markdown.Root.Add(Describe(property.Description));
         }
@@ -98,7 +110,7 @@ internal class CreateDocumentationStep : IStep<SimpleTextOutput>
 
     private IEnumerable<MdSpan> ProcessText(string text)
     {
-        var parts = text.Split(' ', StringSplitOptions.None);
+        var parts = Regex.Split(text, ("( )"));
 
         foreach (var part in parts)
         {

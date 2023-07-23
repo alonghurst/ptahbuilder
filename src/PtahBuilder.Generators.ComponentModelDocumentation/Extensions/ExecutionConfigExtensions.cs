@@ -34,6 +34,8 @@ public static class ExecutionConfigExtensions
 
             phase.AddPipeline<TypeDocumentation>(p =>
             {
+                p.GetId = t => t.Type.Name;
+
                 p.AddProcessStep<TypeToDocumentationStep>();
             });
         });
