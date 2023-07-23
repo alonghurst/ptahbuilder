@@ -10,4 +10,8 @@
     <ProjectReference Include="..\PtahBuilder.BuildSystem\PtahBuilder.BuildSystem.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Entities\" />
+  </ItemGroup>
+
 </Project>
