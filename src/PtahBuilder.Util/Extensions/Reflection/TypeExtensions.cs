@@ -7,7 +7,7 @@ public static class TypeExtensions
 {
     public static IReadOnlyCollection<PropertyInfo> GetWritableProperties(this Type type)
     {
-        return type.GetProperties(BindingFlags.Public)
+        return type.GetProperties()
             .Where(x => x.CanWrite)
             .ToArray();
     }
