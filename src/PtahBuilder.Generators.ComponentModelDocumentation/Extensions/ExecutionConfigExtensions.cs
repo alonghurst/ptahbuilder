@@ -8,6 +8,7 @@ using PtahBuilder.BuildSystem.Steps.Input;
 using PtahBuilder.Generators.ComponentModelDocumentation.Config;
 using PtahBuilder.Generators.ComponentModelDocumentation.Steps;
 using PtahBuilder.Util.Extensions;
+using PtahBuilder.Util.Extensions.Reflection;
 
 namespace PtahBuilder.Generators.ComponentModelDocumentation.Extensions
 {
