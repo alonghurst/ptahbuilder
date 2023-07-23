@@ -1,5 +1,4 @@
-﻿using PtahBuilder.Util.Helpers;
-using PtahBuilder.Util.Services.Logging;
+﻿using PtahBuilder.Util.Services.Logging;
 using System.Reflection;
 using YamlDotNet.RepresentationModel;
 

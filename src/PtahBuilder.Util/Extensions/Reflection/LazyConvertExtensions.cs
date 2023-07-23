@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace PtahBuilder.Util.Extensions.Reflection;
 
-namespace PtahBuilder.Util.Extensions.Reflection
-{
-    public static class LazyConvertExtensions
-    {/// <summary>
+public static class LazyConvertExtensions
+{/// <summary>
     /// Converts the value using the convert function if the output type matches the property.
     /// Otherwise returns the value
     /// </summary>
@@ -47,5 +41,4 @@ namespace PtahBuilder.Util.Extensions.Reflection
         return value;
     }
 
-}
 }
