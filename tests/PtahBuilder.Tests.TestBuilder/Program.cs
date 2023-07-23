@@ -1,8 +1,9 @@
 ﻿using PtahBuilder.BuildSystem;
 using PtahBuilder.BuildSystem.Steps.Input;
 using PtahBuilder.BuildSystem.Steps.Output;
-using PtahBuilder.BuildSystem.Steps.Output.Code;
 using PtahBuilder.BuildSystem.Steps.Process;
+using PtahBuilder.Generators.ComponentModelDocumentation.Extensions;
+using PtahBuilder.Plugins.CodeGeneration.Steps;
 using PtahBuilder.Tests.TestBuilder.Entities;
 using PtahBuilder.Util.Helpers;
 using Constants = PtahBuilder.Tests.TestBuilder.Constants;
@@ -26,6 +27,7 @@ await new BuilderFactory()
             return null!;
         }
     })
+    .AddComponentModelDocumentation()
     .ConfigureExecution(x =>
     {
         x.AddPipeline<Fruit>(p =>
@@ -47,6 +49,11 @@ await new BuilderFactory()
             {
                 OutputDirectory = x.Files.AdditionalDirectories[Constants.DirectoryKeys.CodeOutput]
             });
+        });
+        
+        x.AddComponentModelDocumentationPipeline(p =>
+        {
+            p.AddTypesInheritedFrom(typeof(TypeData));
         });
     })
     .Run();

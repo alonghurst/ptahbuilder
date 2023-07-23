@@ -34,7 +34,7 @@ public readonly struct Range : IEquatable<Range>
             max = Convert.ToSingle(split[1]);
         }
 
-        return new Range(min, max);
+        return new(min, max);
     }
 
     public override string ToString() => $"{Min} {Max}";

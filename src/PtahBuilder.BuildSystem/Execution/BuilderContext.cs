@@ -5,6 +5,7 @@ using PtahBuilder.BuildSystem.Entities;
 using PtahBuilder.BuildSystem.Execution.Abstractions;
 using PtahBuilder.BuildSystem.Services.Serialization;
 using PtahBuilder.Util.Extensions;
+using PtahBuilder.Util.Extensions.Reflection;
 using PtahBuilder.Util.Services;
 using PtahBuilder.Util.Services.Logging;
 
