@@ -1,9 +1,17 @@
-﻿using System.Text;
+﻿using System.Reflection;
+using System.Text;
 
-namespace PtahBuilder.Util.Extensions;
+namespace PtahBuilder.Util.Extensions.Reflection;
 
 public static class TypeExtensions
 {
+    public static IReadOnlyCollection<PropertyInfo> GetWritableProperties(this Type type)
+    {
+        return type.GetProperties(BindingFlags.Public)
+            .Where(x => x.CanWrite)
+            .ToArray();
+    }
+
     public static bool IsDictionaryType(this Type type)
     {
         return type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Dictionary<,>);
