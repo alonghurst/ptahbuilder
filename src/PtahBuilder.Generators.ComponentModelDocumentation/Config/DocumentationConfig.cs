@@ -4,7 +4,7 @@ namespace PtahBuilder.Generators.ComponentModelDocumentation.Config;
 
 public class DocumentationConfig
 {
-    private readonly List<Type> _typesToDocument  = new List<Type>();
+    private readonly List<Type> _typesToDocument  = new();
 
     public DocumentationConfig AddType(Type type)
     {
