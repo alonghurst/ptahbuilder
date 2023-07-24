@@ -54,7 +54,7 @@ internal class CreateDocumentationStep : IStep<SimpleTextOutput>
         markdown.Root.Add(new MdHeading("Index", 1));
 
         var links = entities
-            .Select(x => new MdLinkSpan(x.DisplayName, x.DisplayName))
+            .Select(x => new MdLinkSpan(x.DisplayName, x.DisplayName.MakeUri()))
             .Select(x => new MdListItem(x));
 
         markdown.Root.Add(new MdBulletList(links));
@@ -104,7 +104,7 @@ internal class CreateDocumentationStep : IStep<SimpleTextOutput>
 
                 if (type != null)
                 {
-                    typeDescription = new MdCompositeSpan(typeDescription, " (", new MdLinkSpan(type.Value.DisplayName, type.Id), ")");
+                    typeDescription = new MdCompositeSpan(typeDescription, " (", new MdLinkSpan(type.Value.DisplayName, type.Id.MakeUri()), ")");
                 }
 
                 markdown.Root.Add(new MdParagraph(typeDescription));
@@ -120,7 +120,7 @@ internal class CreateDocumentationStep : IStep<SimpleTextOutput>
             foreach (var enumValue in documentation.EnumValues)
             {
                 markdown.Root.Add(new MdHeading(3, enumValue.DisplayName));
-                
+
                 markdown.Root.Add(Describe(enumValue.Description));
             }
         }
@@ -137,7 +137,7 @@ internal class CreateDocumentationStep : IStep<SimpleTextOutput>
             if (part.StartsWith("#"))
             {
                 var l = part.Substring(1);
-                yield return new MdLinkSpan(l, l);
+                yield return new MdLinkSpan(l, l.MakeUri());
             }
             else
             {
@@ -145,4 +145,9 @@ internal class CreateDocumentationStep : IStep<SimpleTextOutput>
             }
         }
     }
+}
+
+internal static class Extensions
+{
+    internal static string MakeUri(this string uri) => $"{uri}.md";
 }
