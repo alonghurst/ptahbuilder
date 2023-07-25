@@ -2,6 +2,7 @@
 using System.Reflection;
 using PtahBuilder.Util.Extensions.Reflection;
 using YamlDotNet.RepresentationModel;
+using YamlDotNet.Serialization;
 
 namespace PtahBuilder.BuildSystem.Services.Serialization;
 
@@ -10,11 +11,13 @@ public class YamlService : IYamlService
     private readonly ILogger _logger;
     private readonly IScalarValueService _scalarValueService;
     private readonly Dictionary<Type, Dictionary<string, PropertyInfo>> _properties = new();
+    private readonly ISerializer _serializer;
 
     public YamlService(ILogger logger, IScalarValueService scalarValueService)
     {
         _logger = logger;
         _scalarValueService = scalarValueService;
+        _serializer  = new SerializerBuilder().Build();
     }
 
     public T Deserialize<T>(string text)
@@ -32,6 +35,8 @@ public class YamlService : IYamlService
 
         return entity;
     }
+
+    public string Serialize<T>(T entity) => entity == null ? string.Empty : _serializer.Serialize(entity);
 
     private void SetValuesFromYamlMapping(YamlMappingNode mapping, Type type, object entity)
     {
