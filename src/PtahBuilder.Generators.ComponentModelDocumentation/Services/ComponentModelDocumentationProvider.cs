@@ -34,7 +34,7 @@ internal class ComponentModelDocumentationProvider : IDocumentationProvider
 
     private (string name, string description) NameAndDescriptionFromDisplayAttribute(DisplayAttribute? attribute, string name)
     {
-        if (attribute?.Name is { } s)
+        if (attribute?.Name is { } s && !string.IsNullOrWhiteSpace(s))
         {
             name = s;
         }
