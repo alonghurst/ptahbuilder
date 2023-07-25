@@ -56,7 +56,7 @@ public class YamlService : IYamlService
                 }
                 catch
                 {
-                    _logger.Error($"Error mapping on {property.Name} value {entry.Value}");
+                  _logger.Error($"Error mapping on {property.Name} value {entry.Value}");
                     throw;
                 }
             }
@@ -84,7 +84,7 @@ public class YamlService : IYamlService
 
                 var array = ValuesToArray(elementType, values);
 
-                property.SetValue(entity, array);
+                TrySetProperty(property, entity, array);
             }
             else if (property.PropertyType.IsDictionaryType())
             {
@@ -98,7 +98,7 @@ public class YamlService : IYamlService
 
                 var dictionary = Activator.CreateInstance(property.PropertyType, array);
 
-                property.SetValue(entity, dictionary);
+                TrySetProperty(property, entity, dictionary);
             }
             else
             {
@@ -112,7 +112,7 @@ public class YamlService : IYamlService
 
             SetValuesFromYamlMapping(mappingNode, type, subEntity);
 
-            property.SetValue(entity, subEntity);
+            TrySetProperty(property, entity, subEntity);
         }
         else
         {
@@ -120,7 +120,19 @@ public class YamlService : IYamlService
 
             value = _scalarValueService.ConvertScalarValue(property.PropertyType, value);
 
+            TrySetProperty(property, entity, value);
+        }
+    }
+
+    private void TrySetProperty(PropertyInfo property, object entity, object? value)
+    {
+        if (property.CanWrite)
+        {
             property.SetValue(entity, value);
+        }
+        else
+        {
+            _logger.Warning($"{property.Name} is readonly");
         }
     }
 
