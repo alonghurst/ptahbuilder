@@ -1,20 +1,20 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Reflection;
-using PtahBuilder.BuildSystem.Entities;
+﻿using PtahBuilder.BuildSystem.Entities;
 using PtahBuilder.BuildSystem.Execution.Abstractions;
+using PtahBuilder.Generators.ComponentModelDocumentation.Abstractions;
 using PtahBuilder.Generators.ComponentModelDocumentation.Entities;
 using PtahBuilder.Util.Extensions.Reflection;
-using PtahBuilder.Util.Helpers;
 
 namespace PtahBuilder.Generators.ComponentModelDocumentation.Steps;
 
 internal class TypeToDocumentationStep : IStep<TypeDocumentation>
 {
     private readonly IEntityProvider<TypeToDocument> _entityProvider;
+    private readonly IDocumentationProvider _documentationProvider;
 
-    public TypeToDocumentationStep(IEntityProvider<TypeToDocument> entityProvider)
+    public TypeToDocumentationStep(IEntityProvider<TypeToDocument> entityProvider, IDocumentationProvider documentationProvider)
     {
         _entityProvider = entityProvider;
+        _documentationProvider = documentationProvider;
     }
 
     public Task Execute(IPipelineContext<TypeDocumentation> context, IReadOnlyCollection<Entity<TypeDocumentation>> entities)
@@ -25,9 +25,8 @@ internal class TypeToDocumentationStep : IStep<TypeDocumentation>
 
             var properties = DocumentPropertiesForType(type);
             var enumValues = DocumentEnumValuesForType(type);
-
-            var typeInfo = type.GetCustomAttribute(typeof(DisplayAttribute)) as DisplayAttribute;
-            var (name, description) = NameAndDescriptionFromDisplayAttribute(typeInfo, type.GetTypeName());
+            
+            var (name, description) = _documentationProvider.DocumentType(type);
 
             var typeDocumentation = new TypeDocumentation(type, name, description, properties, enumValues);
 
@@ -44,40 +43,23 @@ internal class TypeToDocumentationStep : IStep<TypeDocumentation>
             return Array.Empty<EnumValueDocumentation>();
         }
 
-        var valuesWithAttribute = type.GetEnumValuesWithOptionalAttribute<DisplayAttribute>().ToArray();
+        var documentedValues = new List<EnumValueDocumentation>();
 
-        return valuesWithAttribute.Select(x =>
-            {
-                var value = x.value.ToString() ?? "";
-                var (name, description) = NameAndDescriptionFromDisplayAttribute(x.attribute, value);
+        foreach (var value in Enum.GetValues(type))
+        {
+            var documentation = _documentationProvider.DocumentEnumValue(type, value);
 
-                return new EnumValueDocumentation(value, name, description);
-            })
-            .ToArray();
+            documentedValues.Add(documentation);
+        }
+
+        return documentedValues;
     }
 
     private PropertyDocumentation[] DocumentPropertiesForType(Type type)
     {
         var properties = type.GetWritableProperties()
-            .Select(x =>
-            {
-                var propertyInfo = x.GetCustomAttribute(typeof(DisplayAttribute)) as DisplayAttribute;
-
-                var (propertyName, propertyDescription) = NameAndDescriptionFromDisplayAttribute(propertyInfo, x.Name);
-
-                return new PropertyDocumentation(x, propertyName, propertyDescription);
-            })
+            .Select(x => _documentationProvider.DocumentProperty(type, x))
             .ToArray();
         return properties;
-    }
-
-    private (string name, string description) NameAndDescriptionFromDisplayAttribute(DisplayAttribute? attribute, string name)
-    {
-        if (attribute?.Name is { } s)
-        {
-            name = s;
-        }
-
-        return (name, attribute?.Description ?? string.Empty);
     }
 }
