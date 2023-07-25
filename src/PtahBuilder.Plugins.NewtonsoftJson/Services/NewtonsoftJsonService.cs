@@ -13,7 +13,8 @@ public class NewtonsoftJsonService : IJsonService
         Settings = new()
         {
             Formatting = Formatting.Indented,
-            NullValueHandling = NullValueHandling.Ignore
+            NullValueHandling = NullValueHandling.Ignore,
+            DefaultValueHandling = DefaultValueHandling.Ignore
         };
 
         foreach (var converter in config.Converters)
