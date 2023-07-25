@@ -17,7 +17,9 @@ public class YamlService : IYamlService
     {
         _logger = logger;
         _scalarValueService = scalarValueService;
-        _serializer  = new SerializerBuilder().Build();
+        _serializer = new SerializerBuilder()
+            .ConfigureDefaultValuesHandling(DefaultValuesHandling.OmitNull | DefaultValuesHandling.OmitDefaults | DefaultValuesHandling.OmitEmptyCollections)
+            .Build();
     }
 
     public T Deserialize<T>(string text)
@@ -134,7 +136,7 @@ public class YamlService : IYamlService
         return array;
     }
 
-    
+
 
     private IEnumerable<dynamic?> GetSequenceValuesForArray(Type type, YamlSequenceNode sequenceNode)
     {
