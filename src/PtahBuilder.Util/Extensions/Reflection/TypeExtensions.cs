@@ -1,5 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Reflection;
+﻿using System.Reflection;
 using System.Text;
 
 namespace PtahBuilder.Util.Extensions.Reflection;
@@ -25,6 +24,16 @@ public static class TypeExtensions
 
             yield return (value, attribute);
         }
+    }
+
+    public static T? GetCustomAttributeForEnumValue<T>(this Type type, object value) where T : Attribute
+    {
+        return type
+                 .GetMember(value.ToString() ?? string.Empty)
+                 .FirstOrDefault(member => member.MemberType == MemberTypes.Field)?
+                 .GetCustomAttributes(typeof(T), false)
+                 .Cast<T>()
+                 .FirstOrDefault();
     }
 
     public static IReadOnlyCollection<PropertyInfo> GetWritableProperties(this Type type)
