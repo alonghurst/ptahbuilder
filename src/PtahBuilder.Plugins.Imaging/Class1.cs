@@ -1,7 +1,6 @@
-﻿namespace PtahBuilder.Plugins.Imaging
-{
-    public class Class1
-    {
+﻿namespace PtahBuilder.Plugins.Imaging;
 
-    }
+public class Class1
+{
+
 }
