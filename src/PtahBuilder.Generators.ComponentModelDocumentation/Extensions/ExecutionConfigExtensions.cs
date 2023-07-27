@@ -44,7 +44,7 @@ public static class ExecutionConfigExtensions
         {
             phase.AddPipeline<SimpleTextOutput>(c =>
             {
-                c.AddProcessStep<CreateDocumentationStep>();
+                c.AddProcessStep<WriteDocumentationStep>();
 
                 c.AddOutputStep<SimpleTextOutputStep>();
             });

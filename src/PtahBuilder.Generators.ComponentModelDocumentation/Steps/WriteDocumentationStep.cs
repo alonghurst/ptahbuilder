@@ -1,4 +1,5 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.ComponentModel;
+using System.Text.RegularExpressions;
 using Grynwald.MarkdownGenerator;
 using PtahBuilder.BuildSystem.Config;
 using PtahBuilder.BuildSystem.Entities;
@@ -9,12 +10,12 @@ using PtahBuilder.Util.Extensions.Reflection;
 
 namespace PtahBuilder.Generators.ComponentModelDocumentation.Steps;
 
-internal class CreateDocumentationStep : IStep<SimpleTextOutput>
+internal class WriteDocumentationStep : IStep<SimpleTextOutput>
 {
     private readonly IEntityProvider<TypeDocumentation> _entityProvider;
     private readonly IFilesConfig _files;
 
-    public CreateDocumentationStep(IEntityProvider<TypeDocumentation> entityProvider, IFilesConfig files)
+    public WriteDocumentationStep(IEntityProvider<TypeDocumentation> entityProvider, IFilesConfig files)
     {
         _entityProvider = entityProvider;
         _files = files;
@@ -53,8 +54,16 @@ internal class CreateDocumentationStep : IStep<SimpleTextOutput>
 
         markdown.Root.Add(new MdHeading("Index", 1));
 
+        string DisplayName(TypeDocumentation x)
+        {
+            var obsolete = x.Obsolete != null ? " (Obsolete)" : string.Empty;
+            var display = $"{x.DisplayName}{obsolete}";
+
+            return display;
+        }
+
         var links = entities
-            .Select(x => new MdLinkSpan(x.DisplayName, x.DisplayName.MakeUri()))
+            .Select(x => new MdLinkSpan(DisplayName(x), x.DisplayName.MakeUri()))
             .Select(x => new MdListItem(x));
 
         markdown.Root.Add(new MdBulletList(links));
@@ -84,10 +93,23 @@ internal class CreateDocumentationStep : IStep<SimpleTextOutput>
             return ProcessTextBlock(str).ToArray();
         }
 
+        MdBlock[] DescribeObsolete(ObsoleteDocumentation? obsoleteDocumentation)
+        {
+            if (obsoleteDocumentation != null)
+            {
+                return new[]
+                {
+                    new MdParagraph(new MdStrongEmphasisSpan("Obsolete:"), new MdTextSpan(" This entity has been marked as obsolete and should not be used. "), new MdTextSpan(obsoleteDocumentation.Description))
+                };
+            }
+
+            return Array.Empty<MdBlock>();
+        }
+
         var markdown = new MdDocument();
 
         markdown.Root.Add(new MdHeading(documentation.DisplayName, 1));
-
+        markdown.Root.Add(DescribeObsolete(documentation.Obsolete));
         markdown.Root.Add(Describe(documentation.Description));
 
         if (documentation.Properties.Any())
@@ -108,7 +130,7 @@ internal class CreateDocumentationStep : IStep<SimpleTextOutput>
                 }
 
                 markdown.Root.Add(new MdParagraph(typeDescription));
-
+                markdown.Root.Add(DescribeObsolete(property.Obsolete));
                 markdown.Root.Add(Describe(property.Description));
             }
         }
@@ -120,7 +142,7 @@ internal class CreateDocumentationStep : IStep<SimpleTextOutput>
             foreach (var enumValue in documentation.EnumValues)
             {
                 markdown.Root.Add(new MdHeading(3, enumValue.DisplayName));
-
+                markdown.Root.Add(DescribeObsolete(enumValue.Obsolete));
                 markdown.Root.Add(Describe(enumValue.Description));
             }
         }
