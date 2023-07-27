@@ -6,5 +6,6 @@ internal record TypeDocumentation
     string DisplayName,
     string Description,
     IReadOnlyCollection<PropertyDocumentation> Properties,
-    IReadOnlyCollection<EnumValueDocumentation> EnumValues
+    IReadOnlyCollection<EnumValueDocumentation> EnumValues,
+    ObsoleteDocumentation? Obsolete = null
 );
