@@ -11,6 +11,7 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddPtahComponentModelDocumentationServices(this IServiceCollection services)
     {
         services.AddSingleton<IDocumentationProvider, ComponentModelDocumentationProvider>();
+        services.AddSingleton<IObsoleteDocumentationService, ObsoleteDocumentationService>();
 
         return services;
     }

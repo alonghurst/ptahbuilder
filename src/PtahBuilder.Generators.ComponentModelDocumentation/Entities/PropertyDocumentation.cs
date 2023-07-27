@@ -2,4 +2,4 @@
 
 namespace PtahBuilder.Generators.ComponentModelDocumentation.Entities;
 
-public record PropertyDocumentation(PropertyInfo PropertyInfo, string DisplayName, string Description);
+public record PropertyDocumentation(PropertyInfo PropertyInfo, string DisplayName, string Description, ObsoleteDocumentation? Obsolete = null);
