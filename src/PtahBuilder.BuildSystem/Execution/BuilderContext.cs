@@ -63,6 +63,8 @@ public class BuilderContext : IDisposable
                     var descriptor = new ServiceDescriptor(providerType, pipeline);
 
                     _services.Replace(descriptor);
+                    
+                    _logger.Info($"Added {pipeline.GetType().GetTypeName()} as {providerType.GetTypeName()}");
                 }
                 else
                 {
@@ -148,7 +150,7 @@ public class BuilderContext : IDisposable
 
         foreach (var entityPipeline in _config.EntityPipelines)
         {
-            _logger.Info($"{entityPipeline.Name}: {entityPipeline.GetType().GetTypeName()}");
+            _logger.Info($"Phase {entityPipeline.Phase}: {entityPipeline.Name}: {entityPipeline.GetType().GetTypeName()}");
 
             foreach (var stage in stages)
             {

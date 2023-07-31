@@ -30,8 +30,7 @@ public class ValidateEntityReferenceStep<TFrom, TTo> : IStep<TFrom>
         var getter = _accessor ?? 
                      CreatePropertyGetters() ?? 
                      throw new InvalidOperationException($"Unable to create a getter for validating {typeof(TFrom).Name} to {typeof(TTo).Name}");
-
-       
+        
         foreach (var entity in entities)
         {
             var reference = getter(entity.Value);
