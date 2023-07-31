@@ -3,7 +3,6 @@ using System.Reflection;
 using PtahBuilder.Generators.ComponentModelDocumentation.Abstractions;
 using PtahBuilder.Generators.ComponentModelDocumentation.Entities;
 using PtahBuilder.Util.Extensions.Reflection;
-using YamlDotNet.Core.Tokens;
 
 namespace PtahBuilder.Generators.ComponentModelDocumentation.Services;
 
