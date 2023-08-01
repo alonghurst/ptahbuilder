@@ -1,6 +1,7 @@
 ﻿using System.Text.RegularExpressions;
 using PtahBuilder.BuildSystem.Entities;
 using PtahBuilder.BuildSystem.Execution.Abstractions;
+using PtahBuilder.BuildSystem.Steps.Input.SimpleText;
 using PtahBuilder.BuildSystem.Steps.Output.SimpleText;
 
 namespace PtahBuilder.BuildSystem.Steps.Process.SimpleText;

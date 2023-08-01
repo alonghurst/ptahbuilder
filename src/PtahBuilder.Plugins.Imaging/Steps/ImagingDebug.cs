@@ -1,7 +1,7 @@
 ﻿using System.Drawing;
 
 #pragma warning disable CA1416 // Validate platform compatibility
-namespace PtahBuilder.BuildSystem.Steps.Output.Imaging;
+namespace PtahBuilder.Plugins.Imaging.Steps;
 
 public static class ImagingDebug
 {
