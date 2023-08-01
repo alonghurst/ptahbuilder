@@ -39,6 +39,13 @@ public class PipelineContext<T> : IPipelineContext<T>, IEntityProvider<T>
             id = Config.GetId(entity);
         }
 
+        return AddEntityWithId(entity, id, metadata);
+    }
+
+    public Entity<T> AddEntityWithId(T entity, string id, Dictionary<string, object>? metadata = null)
+    {
+        metadata ??= new();
+
         if (Entities.ContainsKey(id))
         {
             switch (Config.DuplicateIdBehaviour)
@@ -49,12 +56,11 @@ public class PipelineContext<T> : IPipelineContext<T>, IEntityProvider<T>
                     return Entities[id];
                 case DuplicateIdBehaviour.GenerateNewId:
                     id = Guid.NewGuid().ToString();
-                    Config.SetId(entity,id);
+                    Config.SetId(entity, id);
                     break;
-
             }
         }
-        
+
         var val = new Entity<T>(id, entity, new(metadata));
 
         Entities[val.Id] = val;

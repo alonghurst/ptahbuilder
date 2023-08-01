@@ -77,7 +77,6 @@ public class ValidateEntityReferenceStep<TFrom, TTo> : IStep<TFrom>
             return;
         }
 
-
         if (!string.IsNullOrWhiteSpace(id) && !_referencing.Entities.ContainsKey(id))
         {
             var error = $"Unable to find a \"{typeof(TTo).Name}\" with Id \"{id}\" ";
