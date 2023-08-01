@@ -1,5 +1,6 @@
 ﻿using PtahBuilder.BuildSystem.Entities;
 using PtahBuilder.BuildSystem.Execution.Abstractions;
+using PtahBuilder.Util.Extensions;
 
 namespace PtahBuilder.BuildSystem.Steps.Output.SimpleText;
 
@@ -9,7 +10,7 @@ public class SimpleTextOutputStep:IStep<SimpleTextOutput>
     {
         foreach (var entity in entities)
         {
-            var filename = Path.Combine(entity.Value.Path, $"{entity.Value.Name}.{entity.Value.Extension}");
+            var filename = Path.Combine(entity.Value.Path, $"{entity.Value.Name}{entity.Value.Extension.WithDot()}");
 
             if (!Directory.Exists(Path.GetDirectoryName(filename)))
             {
