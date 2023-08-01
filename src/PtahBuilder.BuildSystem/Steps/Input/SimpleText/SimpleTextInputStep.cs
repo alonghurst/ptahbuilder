@@ -1,7 +1,6 @@
 ﻿using PtahBuilder.BuildSystem.Config;
 using PtahBuilder.BuildSystem.Entities;
 using PtahBuilder.BuildSystem.Execution.Abstractions;
-using PtahBuilder.BuildSystem.Steps.Output.SimpleText;
 using PtahBuilder.Util.Extensions;
 
 namespace PtahBuilder.BuildSystem.Steps.Input.SimpleText;
