@@ -11,4 +11,14 @@ public static class StringExtensions
 
         return fileType;
     }
+
+    public static string WithDot(this string extension)
+    {
+        if (!extension.StartsWith("."))
+        {
+            return $".{extension}";
+        }
+
+        return extension;
+    }
 }
