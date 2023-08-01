@@ -61,6 +61,11 @@ public abstract class CreateTiledImageStep<T> : CreateImageStep<T>
 
             var cols = config.Columns < filteredEntities.Count ? config.Columns : filteredEntities.Count;
 
+            if (cols == 0)
+            {
+                continue;
+            }
+
             var rows = (int)Math.Ceiling((decimal)filteredEntities.Count / cols);
 
             var width = config.EntityWidth * cols;
