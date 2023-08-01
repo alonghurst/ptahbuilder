@@ -5,12 +5,12 @@ using PtahBuilder.BuildSystem.Services.Files;
 
 namespace PtahBuilder.BuildSystem.Steps.Process;
 
-public class MoveInputFileStep<T>:IStep<T>
+public class MoveInputFileStep<T> : IStep<T>
 {
     private readonly string _propertyName;
     private readonly IInputFileService _inputFileService;
 
-    public MoveInputFileStep( IInputFileService inputFileService, string propertyName)
+    public MoveInputFileStep(IInputFileService inputFileService, string propertyName)
     {
         _propertyName = propertyName;
         _inputFileService = inputFileService;
@@ -33,7 +33,7 @@ public class MoveInputFileStep<T>:IStep<T>
                     if (currentDirectory != desiredCategory)
                     {
                         var desiredDirectory = Path.Combine(_inputFileService.GetInputDirectoryForEntityType<T>(), desiredCategory);
-                            
+
                         if (!Directory.Exists(desiredDirectory))
                         {
                             Directory.CreateDirectory(desiredDirectory);
