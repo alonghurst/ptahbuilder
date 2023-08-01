@@ -2,7 +2,7 @@
 using System.Text;
 
 #pragma warning disable CA1416 // Validate platform compatibility
-namespace PtahBuilder.BuildSystem.Extensions;
+namespace PtahBuilder.Plugins.Imaging.Extensions;
 
 public static class GraphicsExtensions
 {
