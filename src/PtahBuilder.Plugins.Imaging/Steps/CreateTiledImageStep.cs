@@ -5,7 +5,7 @@ using PtahBuilder.BuildSystem.Entities;
 using PtahBuilder.BuildSystem.Execution.Abstractions;
 
 #pragma warning disable CA1416 // Validate platform compatibility
-namespace PtahBuilder.BuildSystem.Steps.Output.Imaging;
+namespace PtahBuilder.Plugins.Imaging.Steps;
 
 public record EntityImageConfig<T>(string Filename, int EntityWidth, int EntityHeight, int Columns, ImageFormat? ImageFormat = null, Func<Entity<T>, bool>? EntityFilter = null);
 
