@@ -2,9 +2,9 @@
 
 public static class LazyConvertExtensions
 {/// <summary>
-    /// Converts the value using the convert function if the output type matches the property.
-    /// Otherwise returns the value
-    /// </summary>
+ /// Converts the value using the convert function if the output type matches the property.
+ /// Otherwise returns the value
+ /// </summary>
     public static object LazyConvertForReferenceType<T>(this Type type, object value, Func<object, T> convert) where T : class
     {
         if (type == typeof(T))
@@ -32,10 +32,12 @@ public static class LazyConvertExtensions
         if (type.IsEnum)
         {
             var valueToString = value.ToString();
-            if (valueToString != null)
+            if (!string.IsNullOrWhiteSpace(valueToString))
             {
                 return Convert.ChangeType(Enum.Parse(type, valueToString), type);
             }
+
+            return Activator.CreateInstance(type)!;
         }
 
         return value;
