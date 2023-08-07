@@ -42,6 +42,13 @@ public class ScalarValueService : IScalarValueService
         {
             var elementType = type.GetElementType();
 
+            // If value is empty string then return empty array
+            if (value is string s && string.IsNullOrWhiteSpace(s))
+            {
+                value = Array.CreateInstance(elementType ?? throw new InvalidOperationException(), 0);
+                return value;
+            }
+
             // If the target property is an array but a scalar value was passed then simple wrap the result in array
             var arrValue = Array.CreateInstance(elementType ?? throw new InvalidOperationException(), 1);
             // ReSharper disable once RedundantCast

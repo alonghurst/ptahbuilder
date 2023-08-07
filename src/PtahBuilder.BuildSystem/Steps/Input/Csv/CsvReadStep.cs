@@ -5,7 +5,7 @@ using PtahBuilder.BuildSystem.Extensions;
 using PtahBuilder.BuildSystem.Services.Serialization;
 using PtahBuilder.Util.Services.Logging;
 
-namespace PtahBuilder.BuildSystem.Steps.Input;
+namespace PtahBuilder.BuildSystem.Steps.Input.Csv;
 
 public class CsvReadOptions
 {
@@ -13,36 +13,19 @@ public class CsvReadOptions
     public string ColumnSeparator { get; set; } = ",";
 }
 
-public class CsvMapping<T>
-{
-    public CsvMapping(Func<T> instantiate, params string[] columnPropertyNames)
-    {
-        Instantiate = instantiate;
-        ColumnPropertyNames = columnPropertyNames;
-    }
-
-    public Func<T> Instantiate { get; }
-    public string[] ColumnPropertyNames { get; }
-}
-
-
-public class CsvInputStep<T> : IStep<T> where T : class
+public abstract class CsvReadStep<T> : IStep<T> where T : class
 {
     private readonly ILogger _logger;
     private readonly IFilesConfig _filesConfig;
     private readonly string _fileName;
     private readonly CsvReadOptions _options;
-    private readonly CsvMapping<T> _mapping;
-    private readonly IDynamicMappingService _dynamicMappingService;
 
-    public CsvInputStep(IFilesConfig filesConfig, ILogger logger, string fileName, CsvMapping<T> mapping, IDynamicMappingService dynamicMappingService, CsvReadOptions? options = null)
+    public CsvReadStep(IFilesConfig filesConfig, ILogger logger, string fileName, CsvReadOptions? options = null)
     {
         _filesConfig = filesConfig;
         _logger = logger;
         _fileName = fileName;
         _options = options ?? new CsvReadOptions();
-        _mapping = mapping;
-        _dynamicMappingService = dynamicMappingService;
     }
 
     public async Task Execute(IPipelineContext<T> context, IReadOnlyCollection<Entity<T>> entities)
@@ -74,23 +57,11 @@ public class CsvInputStep<T> : IStep<T> where T : class
                 continue;
             }
 
-            var entity = _mapping.Instantiate();
-            
-            for (int i = 0; i < columns.Length && i < _mapping.ColumnPropertyNames.Length; i++)
-            {
-                var propertyName = _mapping.ColumnPropertyNames[i];
-
-                if (string.IsNullOrWhiteSpace(propertyName))
-                {
-                    continue;
-                }
-
-                var value = columns[i];
-                
-                _dynamicMappingService.Map(entity, propertyName, value);
-            }
-            
-            context.AddEntityFromFile(entity, file);
+            RowReadFromFile(context, new ReadRow(file, line, columns));
         }
     }
+
+    protected abstract void RowReadFromFile(IPipelineContext<T> context, ReadRow readRow);
+
+    public record ReadRow(string Filename, string Row, string[] Columns);
 }
