@@ -2,7 +2,7 @@
 using PtahBuilder.BuildSystem.Services.Serialization;
 using PtahBuilder.Util.Services.Logging;
 
-namespace PtahBuilder.BuildSystem.Steps.Input;
+namespace PtahBuilder.BuildSystem.Steps.Input.Csv;
 
 public class TsvInputStep<T> : CsvInputStep<T> where T : class
 {
