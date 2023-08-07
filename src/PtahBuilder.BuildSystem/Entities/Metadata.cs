@@ -32,4 +32,16 @@ public class Metadata
     }
 
     public bool TryGetValue(string key, out object? o) => Values.TryGetValue(key, out o);
+
+    public bool TryGetString(string key, out string s)
+    {
+        if (Values.TryGetValue(key, out var o) && o is string so)
+        {
+            s = so;
+            return true;
+        }
+
+        s = string.Empty;
+        return false;
+    }
 }
