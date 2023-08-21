@@ -21,6 +21,8 @@ public interface IPipelineContext<T> : IPipelineContext
     Entity<T> AddEntityWithId(T entity, string id, Dictionary<string, object>? metadata = null);
 
     void AddValidationError(Entity<T> entity, IStep<T> step, string error);
+    void AddPipelineValidationError(IStep<T> step, string error);
+
     void RemoveEntity(Entity<T> entity);
     Entity<T> GetEntity(string id);
 }
