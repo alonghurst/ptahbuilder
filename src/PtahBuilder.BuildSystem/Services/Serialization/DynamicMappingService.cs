@@ -17,10 +17,7 @@ public class DynamicMappingService : IDynamicMappingService
     {
         var entityType = entity.GetType();
 
-        if (!_entityPropertyies.ContainsKey(entityType))
-        {
-            _entityPropertyies.Add(entityType, entityType.GetProperties().ToDictionary(x => x.Name, x => x));
-        }
+        _entityPropertyies.TryAdd(entityType, entityType.GetProperties().ToDictionary(x => x.Name, x => x));
 
         if (_entityPropertyies[entityType].TryGetValue(propertyName, out var property))
         {

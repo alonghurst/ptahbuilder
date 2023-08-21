@@ -23,6 +23,11 @@ public class ScalarValueService : IScalarValueService
         {
             var argument = type.GetGenericArguments()[0];
 
+            if (value is string str && string.IsNullOrWhiteSpace(str))
+            {
+                return null;
+            }
+
             return ConvertScalarValue(argument, value);
         }
 
