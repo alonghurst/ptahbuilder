@@ -14,6 +14,8 @@ public class PipelineContext<T> : IPipelineContext<T>, IEntityProvider<T>
     public PipelineConfig<T> Config { get; }
     public Dictionary<string, Entity<T>> Entities { get; } = new();
 
+    private readonly List<ValidationError> _validationErrors = new List<ValidationError>();
+
     private readonly ILogger _logger;
     private readonly IDiagnostics _diagnostics;
 
@@ -79,6 +81,15 @@ public class PipelineContext<T> : IPipelineContext<T>, IEntityProvider<T>
         entity.Validation.Errors.Add(new(name, error));
     }
 
+    public void AddPipelineValidationError(IStep<T> step, string error)
+    {
+        var name = step.GetType().GetTypeName();
+
+        _logger.Warning($"Validation Error - {name}: {error}");
+
+        _validationErrors.Add(new(name, error));
+    }
+
     public void RemoveEntity(Entity<T> entity)
     {
         Entities.Remove(entity.Id);
@@ -132,6 +143,13 @@ public class PipelineContext<T> : IPipelineContext<T>, IEntityProvider<T>
 
     public IEnumerable<(Type, string, ValidationError[])> ValidationErrors()
     {
+        if (_validationErrors.Any())
+        {
+            var name = this.GetType().GetTypeName();
+
+            yield return (typeof(T), name, _validationErrors.ToArray());
+        }
+
         foreach (var entity in Entities.Values)
         {
             if (!entity.Validation.IsValid)
