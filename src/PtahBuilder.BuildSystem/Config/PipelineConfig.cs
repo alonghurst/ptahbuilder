@@ -144,6 +144,6 @@ public enum DuplicateIdBehaviour
 {
     Throw,
     Replace,
-    Skip,
+    ReturnExistingEntity,
     GenerateNewId
 }
