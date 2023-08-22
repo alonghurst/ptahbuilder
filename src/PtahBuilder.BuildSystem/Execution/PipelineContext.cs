@@ -46,15 +46,13 @@ public class PipelineContext<T> : IPipelineContext<T>, IEntityProvider<T>
 
     public Entity<T> AddEntityWithId(T entity, string id, Dictionary<string, object>? metadata = null)
     {
-        metadata ??= new();
-
         if (Entities.ContainsKey(id))
         {
             switch (Config.DuplicateIdBehaviour)
             {
                 case DuplicateIdBehaviour.Throw:
                     throw new InvalidOperationException($"An entity with Id \"{id}\" has already been added");
-                case DuplicateIdBehaviour.Skip:
+                case DuplicateIdBehaviour.ReturnExistingEntity:
                     return Entities[id];
                 case DuplicateIdBehaviour.GenerateNewId:
                     id = Guid.NewGuid().ToString();
@@ -62,6 +60,8 @@ public class PipelineContext<T> : IPipelineContext<T>, IEntityProvider<T>
                     break;
             }
         }
+
+        metadata ??= new();
 
         var val = new Entity<T>(id, entity, new(metadata));
 

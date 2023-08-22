@@ -25,7 +25,7 @@ public static class ExecutionConfigExtensions
         {
             phase.AddPipeline<TypeToDocument>(p =>
             {
-                p.DuplicateIdBehaviour = DuplicateIdBehaviour.Skip;
+                p.DuplicateIdBehaviour = DuplicateIdBehaviour.ReturnExistingEntity;
                 p.GetId = t => t.Type.GetTypeName();
 
                 p.AddInputStep<InsertEntitiesStep<TypeToDocument>>(types);
