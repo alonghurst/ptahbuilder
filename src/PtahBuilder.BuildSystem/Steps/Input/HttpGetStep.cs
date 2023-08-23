@@ -5,28 +5,41 @@ namespace PtahBuilder.BuildSystem.Steps.Input
 {
     public class HttpGetStep : IStep<string>
     {
-        private readonly string _url;
+        private readonly string[] _urls;
 
-        public HttpGetStep(string url)
+        public HttpGetStep(string[] urls)
         {
-            _url = url;
+            _urls = urls;
+        }
+
+        public HttpGetStep(string url) : this(new string[] { url })
+        {
+
         }
 
         public async Task Execute(IPipelineContext<string> context, IReadOnlyCollection<Entity<string>> entities)
         {
-            using var httpClient = new HttpClient();
-
-            var response = await httpClient.GetAsync(_url);
-
-            if (response.IsSuccessStatusCode)
+            // ReSharper disable once ConvertToUsingDeclaration
+            using (var httpClient = new HttpClient())
             {
-                var data = await response.Content.ReadAsStringAsync();
+                var tasks = _urls.Select(async url =>
+                {
+                    // ReSharper disable once AccessToDisposedClosure
+                    var response = await httpClient.GetAsync(url);
 
-                context.AddEntityWithId(data, _url);
-            }
-            else
-            {
-                throw new HttpRequestException($"Failed to GET ({response.StatusCode})", null, response.StatusCode);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var data = await response.Content.ReadAsStringAsync();
+
+                        context.AddEntityWithId(data, url);
+                    }
+                    else
+                    {
+                        throw new HttpRequestException($"Failed to GET ({response.StatusCode})", null, response.StatusCode);
+                    }
+                });
+
+                await Task.WhenAll(tasks);
             }
         }
     }
