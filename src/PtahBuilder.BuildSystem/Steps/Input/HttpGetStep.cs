@@ -5,18 +5,18 @@ namespace PtahBuilder.BuildSystem.Steps.Input
 {
     public class HttpGetStep : IStep<string>
     {
-        private readonly HttpClient _httpClient;
         private readonly string _url;
 
-        public HttpGetStep(HttpClient httpClient, string url)
+        public HttpGetStep(string url)
         {
-            _httpClient = httpClient;
             _url = url;
         }
 
         public async Task Execute(IPipelineContext<string> context, IReadOnlyCollection<Entity<string>> entities)
         {
-            var response = await _httpClient.GetAsync(_url);
+            using var httpClient = new HttpClient();
+
+            var response = await httpClient.GetAsync(_url);
 
             if (response.IsSuccessStatusCode)
             {
