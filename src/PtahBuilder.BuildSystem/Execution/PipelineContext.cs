@@ -95,6 +95,18 @@ public class PipelineContext<T> : IPipelineContext<T>, IEntityProvider<T>
         Entities.Remove(entity.Id);
     }
 
+    public bool TryGetEntity(string id, out Entity<T> entity)
+    {
+        if (Entities.TryGetValue(id, out var e))
+        {
+            entity = e;
+            return true;
+        }
+
+        entity = null!;
+        return false;
+    } 
+    
     public Entity<T> GetEntity(string id) => Entities[id];
 
     private string FindBackupId(Dictionary<string, object> metadata)

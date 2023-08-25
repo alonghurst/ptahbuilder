@@ -25,4 +25,5 @@ public interface IPipelineContext<T> : IPipelineContext
 
     void RemoveEntity(Entity<T> entity);
     Entity<T> GetEntity(string id);
+    bool TryGetEntity(string id, out Entity<T> entity);
 }

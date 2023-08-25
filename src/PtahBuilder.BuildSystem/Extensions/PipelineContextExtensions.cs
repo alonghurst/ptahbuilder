@@ -22,4 +22,14 @@ public static class PipelineContextExtensions
             context.AddEntity(entity);
         }
     }
+
+    public static Entity<T> GetOrAddEntityWithId<T>(this IPipelineContext<T> context, string id) where T : new()
+    {
+        if (context.TryGetEntity(id, out var entity))
+        {
+            return entity;
+        }
+
+        return context.AddEntityWithId(new(), id);
+    }
 }
