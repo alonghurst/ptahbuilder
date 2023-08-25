@@ -55,10 +55,9 @@ public abstract class CsvReadStep<T> : IStep<T> where T : class
                 continue;
             }
 
-            RowReadFromFile(context, new ReadRow(file, line, columns));
+            RowReadFromFile(context, new(file, line, columns));
         }
     }
-
     protected abstract void RowReadFromFile(IPipelineContext<T> context, ReadRow readRow);
 
     public record ReadRow(string Filename, string Row, string[] Columns);

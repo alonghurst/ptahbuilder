@@ -14,7 +14,7 @@ public class PipelineContext<T> : IPipelineContext<T>, IEntityProvider<T>
     public PipelineConfig<T> Config { get; }
     public Dictionary<string, Entity<T>> Entities { get; } = new();
 
-    private readonly List<ValidationError> _validationErrors = new List<ValidationError>();
+    private readonly List<ValidationError> _validationErrors = new();
 
     private readonly ILogger _logger;
     private readonly IDiagnostics _diagnostics;
