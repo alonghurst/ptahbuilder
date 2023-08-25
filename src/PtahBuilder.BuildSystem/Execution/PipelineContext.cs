@@ -56,10 +56,12 @@ public class PipelineContext<T> : IPipelineContext<T>, IEntityProvider<T>
                     return Entities[id];
                 case DuplicateIdBehaviour.GenerateNewId:
                     id = Guid.NewGuid().ToString();
-                    Config.SetId(entity, id);
+
                     break;
             }
         }
+
+        Config.SetId(entity, id);
 
         metadata ??= new();
 
@@ -105,8 +107,8 @@ public class PipelineContext<T> : IPipelineContext<T>, IEntityProvider<T>
 
         entity = null!;
         return false;
-    } 
-    
+    }
+
     public Entity<T> GetEntity(string id) => Entities[id];
 
     private string FindBackupId(Dictionary<string, object> metadata)
