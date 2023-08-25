@@ -19,6 +19,11 @@ namespace PtahBuilder.BuildSystem.Extensions
         {
             var propertyValues = propertyList.Split(propertyList, StringSplitOptions.RemoveEmptyEntries);
 
+            if (!string.IsNullOrWhiteSpace(propertyList) && propertyValues.Length == 0)
+            {
+                propertyValues = new[] { propertyList };
+            }
+
             foreach (var property in propertyValues)
             {
                 var split = property.Split(valueSeparator, StringSplitOptions.RemoveEmptyEntries);
