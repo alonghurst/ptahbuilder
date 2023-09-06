@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using System.Text;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using PtahBuilder.BuildSystem.Config;
 using PtahBuilder.BuildSystem.Entities;
@@ -87,29 +88,41 @@ public class BuilderContext : IDisposable
             }
         }
 
-        var errorEntities = pipelines.SelectMany(x => x.pipeline.ValidationErrors()).ToArray();
+        var validationFilePath = Path.Combine(_config.Files.DataDirectory, "validation.txt");
+        var validationErrors = pipelines.SelectMany(x => x.pipeline.ValidationErrors()).ToArray();
 
-        if (errorEntities.Any())
+        if (validationErrors.Any())
         {
-            var grouped = errorEntities.GroupBy(x => x.type);
+            var sb = new StringBuilder();
+
+            void OutputError(string message)
+            {
+                _logger.Warning(message);
+                sb!.AppendLine(message);
+            }
+
+            var grouped = validationErrors.GroupBy(x => x.type);
 
             foreach (var group in grouped)
             {
-                _logger.Warning($"{group.Key.Name} Validation Errors");
+                OutputError($"{group.Key.Name} Validation Errors");
                 foreach (var entity in group)
                 {
-                    _logger.Warning($"  {entity.id}");
+                    OutputError($"  {entity.id}");
                     foreach (var error in entity.errors)
                     {
-                        _logger.Warning($"    {error.Source}: {error.Error}");
+                        OutputError($"    {error.Source}: {error.Error}");
                     }
                 }
             }
 
             _logger.Warning("Execution completed with validation errors.");
+
+            await File.WriteAllTextAsync(validationFilePath, sb.ToString());
         }
         else
         {
+            File.Delete(validationFilePath);
             _logger.Success("Execution completed with no validation errors.");
         }
     }
