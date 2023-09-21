@@ -64,7 +64,7 @@ public class BuilderContext : IDisposable
                     var descriptor = new ServiceDescriptor(providerType, pipeline);
 
                     _services.Replace(descriptor);
-                    
+
                     _logger.Info($"Added {pipeline.GetType().GetTypeName()} as {providerType.GetTypeName()}");
                 }
                 else
@@ -118,7 +118,10 @@ public class BuilderContext : IDisposable
 
             _logger.Warning("Execution completed with validation errors.");
 
-            await File.WriteAllTextAsync(validationFilePath, sb.ToString());
+            if (_config.WriteValidationToTextFile)
+            {
+                await File.WriteAllTextAsync(validationFilePath, sb.ToString());
+            }
         }
         else
         {

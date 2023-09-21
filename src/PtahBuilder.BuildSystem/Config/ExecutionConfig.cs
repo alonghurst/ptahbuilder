@@ -10,9 +10,10 @@ public class ExecutionConfig
     public FilesConfig Files { get; }
 
     public bool DeleteOutputDirectory { get; set; } = true;
+    public bool WriteValidationToTextFile { get; set; } = true;
 
     public List<PipelineConfig> EntityPipelines { get; } = new();
-
+    
     public ExecutionConfig AddPipeline<T>(Action<PipelineConfig<T>> configure, string? name = null)
     {
         name = string.IsNullOrWhiteSpace(name) ? $"{typeof(T).Name}_Pipeline" : name;
