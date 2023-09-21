@@ -27,6 +27,7 @@ public class ConsoleLogger : ILogger
 
     public void Verbose(string message)
     {
+        Info(message);
     }
 
     private void LogWithColour(ConsoleColor colour, string message)
