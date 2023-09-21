@@ -125,7 +125,11 @@ public class BuilderContext : IDisposable
         }
         else
         {
-            File.Delete(validationFilePath);
+            if (_config.WriteValidationToTextFile)
+            {
+                File.Delete(validationFilePath);
+            }
+
             _logger.Success("Execution completed with no validation errors.");
         }
     }
