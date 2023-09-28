@@ -25,4 +25,9 @@ public static class IntegerExtensions
         if (number.EndsWith("3")) return number + "rd";
         return number + "th";
     }
+    
+    public static int CenturyFromYear(this int year)
+    {
+        return (int)(year / 100) + ((year % 100 == 0) ? 0 : 1);
+    }
 }
