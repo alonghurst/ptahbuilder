@@ -2,7 +2,7 @@
 using PtahBuilder.BuildSystem.Entities;
 using PtahBuilder.BuildSystem.Execution.Abstractions;
 
-namespace MarcoYolo.DataGenerator.Steps.DownloadDataSheets;
+namespace PtahBuilder.BuildSystem.Steps.Output;
 
 public class GoogleSheetStringToTsvFileStep : IStep<string>
 {
