@@ -97,6 +97,11 @@ public class BuilderFactory
 
         _configureExecutionConfig?.Invoke(executionConfig);
 
+        if (!Directory.Exists(executionConfig.Files.DataDirectory))
+        {
+            Directory.CreateDirectory(executionConfig.Files.DataDirectory);
+        }
+
         return executionConfig;
     }
 
