@@ -12,7 +12,7 @@ public class HttpGetStep : IStep<string>
         _urls = urls;
     }
 
-    public HttpGetStep(string url) : this(new string[] { url })
+    public HttpGetStep(string url) : this(new[] { url })
     {
 
     }
