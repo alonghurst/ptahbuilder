@@ -13,7 +13,7 @@ public class JsonService : IJsonService
         Options = new()
         {
             WriteIndented = true,
-            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
+            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault
         };
 
         foreach (var converter in config.Converters)
