@@ -63,7 +63,7 @@ public class PipelineConfig<T> : PipelineConfig
 
     private const string DefaultIdPrefix = $"DFID_";
 
-    private IEnumerable<PropertyInfo> GetIdProperties()
+    internal IEnumerable<PropertyInfo> GetIdProperties()
     {
         var properties = typeof(T).GetProperties();
 

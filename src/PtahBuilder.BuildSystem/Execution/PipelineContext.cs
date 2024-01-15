@@ -2,6 +2,7 @@
 using PtahBuilder.BuildSystem.Config;
 using PtahBuilder.BuildSystem.Entities;
 using PtahBuilder.BuildSystem.Execution.Abstractions;
+using PtahBuilder.Util.Extensions;
 using PtahBuilder.Util.Extensions.Reflection;
 using PtahBuilder.Util.Services;
 using PtahBuilder.Util.Services.Logging;
@@ -35,7 +36,7 @@ public class PipelineContext<T> : IPipelineContext<T>, IEntityProvider<T>
 
         if (string.IsNullOrWhiteSpace(id))
         {
-            var newId = FindBackupId(metadata);
+            var newId = FindBackupId(entity, metadata);
 
             Config.SetId(entity, newId);
             id = Config.GetId(entity);
@@ -111,8 +112,23 @@ public class PipelineContext<T> : IPipelineContext<T>, IEntityProvider<T>
 
     public Entity<T> GetEntity(string id) => Entities[id];
 
-    private string FindBackupId(Dictionary<string, object> metadata)
+    private string FindBackupId(T entity, Dictionary<string, object> metadata)
     {
+        foreach (var property in Config.GetIdProperties())
+        {
+            var value = property?.GetValue(entity)?.ToString() ?? string.Empty;
+
+            if (!string.IsNullOrWhiteSpace(value))
+            {
+                value = value.ToSlug();
+
+                if (!string.IsNullOrWhiteSpace(value))
+                {
+                    return value;
+                }
+            }
+        }
+
         if (metadata.ContainsKey(MetadataKeys.SourceFile))
         {
             var file = metadata[MetadataKeys.SourceFile].ToString();
