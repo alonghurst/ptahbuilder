@@ -32,6 +32,6 @@ public class ConsoleLogger : ILogger
 
     private void LogWithColour(ConsoleColor colour, string message)
     {
-        AnsiConsole.MarkupLine(message.Colour(colour));
+        AnsiConsole.MarkupLine(message.Escape().Colour(colour));
     }
 }
