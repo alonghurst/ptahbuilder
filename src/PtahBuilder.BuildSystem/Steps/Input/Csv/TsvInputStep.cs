@@ -6,7 +6,8 @@ namespace PtahBuilder.BuildSystem.Steps.Input.Csv;
 
 public class TsvInputStep<T> : CsvInputStep<T> where T : class
 {
-    public TsvInputStep(IFilesConfig filesConfig, ILogger logger, string fileName, CsvMapping<T> mapping, IDynamicMappingService dynamicMappingService, CsvReadOptions? options = null) : base(filesConfig, logger, fileName, mapping, dynamicMappingService, FixOptions(options))
+    public TsvInputStep(IFilesConfig filesConfig, ILogger logger, string fileName, CsvMapping<T> mapping, IDynamicMappingService dynamicMappingService, CsvReadOptions? options = null, Action<T>? postEntityRead = null)
+        : base(filesConfig, logger, fileName, mapping, dynamicMappingService, FixOptions(options), postEntityRead)
     {
     }
 

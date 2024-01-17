@@ -23,12 +23,14 @@ public class CsvInputStep<T> : CsvReadStep<T> where T : class
 {
     private readonly CsvMapping<T> _mapping;
     private readonly IDynamicMappingService _dynamicMappingService;
+    private readonly Action<T>? _postEntityRead;
 
-    public CsvInputStep(IFilesConfig filesConfig, ILogger logger, string fileName, CsvMapping<T> mapping, IDynamicMappingService dynamicMappingService, CsvReadOptions? options = null)
+    public CsvInputStep(IFilesConfig filesConfig, ILogger logger, string fileName, CsvMapping<T> mapping, IDynamicMappingService dynamicMappingService,  CsvReadOptions? options = null, Action<T>? postEntityRead = null)
     : base(filesConfig, logger, fileName, options)
     {
         _mapping = mapping;
         _dynamicMappingService = dynamicMappingService;
+        _postEntityRead = postEntityRead;
     }
 
     protected override void RowReadFromFile(IPipelineContext<T> context, ReadRow readRow)
@@ -49,7 +51,9 @@ public class CsvInputStep<T> : CsvReadStep<T> where T : class
 
             _dynamicMappingService.Map(entity, propertyName, value);
         }
-
+        
         context.AddEntityFromFile(entity, readRow.Filename);
+
+        _postEntityRead?.Invoke(entity);
     }
 }
