@@ -28,9 +28,15 @@ public class YamlInputStep<T> : IStep<T>
 
             var text = await File.ReadAllTextAsync(file);
 
-            var entity = string.IsNullOrWhiteSpace(text) ? Activator.CreateInstance<T>() : _yamlService.Deserialize<T>(text);
+            if (string.IsNullOrWhiteSpace(text))
+            {
+                context.AddEntityFromFile(Activator.CreateInstance<T>(), file);
+                continue;
+            }
 
-            context.AddEntityFromFile(entity, file);
+            var (entity, metadata) = _yamlService.DeserializeAndGetMetadata<T>(text);
+
+            context.AddEntityFromFile(entity, file, metadata);
         }
     }
 }
