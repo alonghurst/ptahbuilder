@@ -3,6 +3,7 @@ using System.Reflection;
 using PtahBuilder.Util.Extensions.Reflection;
 using YamlDotNet.RepresentationModel;
 using YamlDotNet.Serialization;
+using System.Xml;
 
 namespace PtahBuilder.BuildSystem.Services.Serialization;
 
@@ -40,7 +41,7 @@ public class YamlService : IYamlService
     }
 
     public T Deserialize<T>(string text) => DeserializeAndGetMetadata<T>(text).entity;
-    
+
     public string Serialize<T>(T entity) => entity == null ? string.Empty : _serializer.Serialize(entity);
 
     private Dictionary<string, object>? SetValuesFromYamlMapping(YamlMappingNode mapping, Type type, object entity)
@@ -53,7 +54,13 @@ public class YamlService : IYamlService
 
             if (key == "Meta")
             {
-                meta = CreateDictionaryFromSequenceNode(typeof(Dictionary<string, object>), typeof(KeyValuePair<string, object>), (YamlSequenceNode)entry.Value);
+                meta ??= new();
+
+                foreach (var node in (YamlMappingNode)entry.Value)
+                {
+                    meta[((YamlScalarNode)node.Key).Value!] = ((YamlScalarNode)node.Value).Value ?? string.Empty;
+                }
+
                 continue;
             }
 

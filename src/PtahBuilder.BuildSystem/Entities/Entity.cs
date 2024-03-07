@@ -2,7 +2,7 @@
 
 namespace PtahBuilder.BuildSystem.Entities;
 
-[DebuggerDisplay(("{Id}: {Value}"))]
+[DebuggerDisplay("{Id}: {Value}")]
 public class Entity<T>
 {
     public string Id { get; }
