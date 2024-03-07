@@ -114,6 +114,13 @@ public class PipelineContext<T> : IPipelineContext<T>, IEntityProvider<T>
 
     private string FindBackupId(T entity, Dictionary<string, object> metadata)
     {
+        if (Config.MissingIdPreference == MissingIdPreference.SourceFile && metadata.ContainsKey(MetadataKeys.SourceFile))
+        {
+            var file = metadata[MetadataKeys.SourceFile].ToString();
+
+            return Path.GetFileNameWithoutExtension(file)!;
+        }
+
         foreach (var property in Config.GetIdProperties())
         {
             var value = property?.GetValue(entity)?.ToString() ?? string.Empty;

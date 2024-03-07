@@ -46,7 +46,8 @@ public class PipelineConfig<T> : PipelineConfig
     public string[] IdProperties { get; set; } = Array.Empty<string>();
 
     public Func<T, string> GetId { get; set; }
-
+    public MissingIdPreference MissingIdPreference { get; set; } = MissingIdPreference.FallbackIdProperty;
+    
     public Func<string, string> GenerateId { get; set; } = x => x.ToSlug();
 
     public PipelineConfig(string name) : base(name)
@@ -149,4 +150,9 @@ public enum DuplicateIdBehaviour
     Replace,
     ReturnExistingEntity,
     GenerateNewId
+}
+
+public enum MissingIdPreference
+{
+    SourceFile, FallbackIdProperty
 }
