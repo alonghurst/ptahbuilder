@@ -33,18 +33,26 @@ public class YamlService : IYamlService
 
         var entity = Activator.CreateInstance<T>()!;
 
-        SetValuesFromYamlMapping(mapping, typeof(T), entity);
+        var metadata = SetValuesFromYamlMapping(mapping, typeof(T), entity);
 
         return entity;
     }
 
     public string Serialize<T>(T entity) => entity == null ? string.Empty : _serializer.Serialize(entity);
 
-    private void SetValuesFromYamlMapping(YamlMappingNode mapping, Type type, object entity)
+    private IDictionary<string, object>? SetValuesFromYamlMapping(YamlMappingNode mapping, Type type, object entity)
     {
+        IDictionary<string, object>? meta = null;
+
         foreach (var entry in mapping.Children)
         {
             var key = ((YamlScalarNode)entry.Key).Value!;
+
+            if (key == "Meta")
+            {
+                meta = CreateDictionaryFromSequenceNode(typeof(Dictionary<string, object>), typeof(KeyValuePair<string, object>), (YamlSequenceNode)entry.Value);
+                continue;
+            }
 
             var property = FindProperty(type, key);
 
@@ -56,11 +64,13 @@ public class YamlService : IYamlService
                 }
                 catch
                 {
-                  _logger.Error($"Error mapping on {property.Name} value {entry.Value}");
+                    _logger.Error($"Error mapping on {property.Name} value {entry.Value}");
                     throw;
                 }
             }
         }
+
+        return meta;
     }
 
     private void SetValueFromYamlNode(object entity, PropertyInfo property, YamlNode yamlNode)
@@ -90,13 +100,7 @@ public class YamlService : IYamlService
             {
                 var kvpType = property.PropertyType.GetDictionaryKeyValuePairType();
 
-                dynamic kvpValues = GetSequenceValuesForDictionary(kvpType, sequenceNode)
-                    .Select(e => Convert.ChangeType(e, kvpType))
-                    .ToArray();
-
-                var array = ValuesToArray(kvpType, kvpValues);
-
-                var dictionary = Activator.CreateInstance(property.PropertyType, array);
+                var dictionary = CreateDictionaryFromSequenceNode(property.PropertyType, kvpType, sequenceNode);
 
                 TrySetProperty(property, entity, dictionary);
             }
@@ -122,6 +126,19 @@ public class YamlService : IYamlService
 
             TrySetProperty(property, entity, value);
         }
+    }
+
+    private dynamic CreateDictionaryFromSequenceNode(Type dictionaryType, Type kvpType, YamlSequenceNode sequenceNode)
+    {
+        dynamic kvpValues = GetSequenceValuesForDictionary(kvpType, sequenceNode)
+            .Select(e => Convert.ChangeType(e, kvpType))
+            .ToArray();
+
+        var array = ValuesToArray(kvpType, kvpValues);
+
+        var dictionary = Activator.CreateInstance(dictionaryType, array);
+
+        return dictionary;
     }
 
     private void TrySetProperty(PropertyInfo property, object entity, object? value)
