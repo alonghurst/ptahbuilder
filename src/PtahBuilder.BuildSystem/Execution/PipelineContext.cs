@@ -120,7 +120,7 @@ public class PipelineContext<T> : IPipelineContext<T>, IEntityProvider<T>
 
             if (!string.IsNullOrWhiteSpace(value))
             {
-                value = value.ToSlug();
+                value = Config.GenerateId(value);
 
                 if (!string.IsNullOrWhiteSpace(value))
                 {
