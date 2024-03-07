@@ -15,13 +15,8 @@ public class PhaseAddContext
     {
         name = string.IsNullOrWhiteSpace(name) ? $"{typeof(T).Name}_Pipeline" : name;
 
-        var pipeline = new PipelineConfig<T>(name);
-
-        if (_executionConfig.DefaultIdGenerator != null)
-        {
-            pipeline.GenerateId = _executionConfig.DefaultIdGenerator;
-        }
-
+        var pipeline = _executionConfig.CreatePipelineConfig<T>(name);
+            
         configure(pipeline);
 
         EntityPipelines.Add(pipeline);
