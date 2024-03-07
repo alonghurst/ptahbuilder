@@ -22,7 +22,8 @@ public class YamlService : IYamlService
             .Build();
     }
 
-    public T Deserialize<T>(string text)
+
+    public (T entity, Dictionary<string, object>? metadata) DeserializeAndGetMetadata<T>(string text)
     {
         using var input = new StringReader(text);
 
@@ -35,14 +36,16 @@ public class YamlService : IYamlService
 
         var metadata = SetValuesFromYamlMapping(mapping, typeof(T), entity);
 
-        return entity;
+        return (entity, metadata);
     }
 
+    public T Deserialize<T>(string text) => DeserializeAndGetMetadata<T>(text).entity;
+    
     public string Serialize<T>(T entity) => entity == null ? string.Empty : _serializer.Serialize(entity);
 
-    private IDictionary<string, object>? SetValuesFromYamlMapping(YamlMappingNode mapping, Type type, object entity)
+    private Dictionary<string, object>? SetValuesFromYamlMapping(YamlMappingNode mapping, Type type, object entity)
     {
-        IDictionary<string, object>? meta = null;
+        Dictionary<string, object>? meta = null;
 
         foreach (var entry in mapping.Children)
         {
