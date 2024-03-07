@@ -12,6 +12,8 @@ public class ExecutionConfig
     public bool DeleteOutputDirectory { get; set; } = true;
     public bool WriteValidationToTextFile { get; set; } = true;
 
+    public Func<string,string>? DefaultIdGenerator { get; set; }
+
     public List<PipelineConfig> EntityPipelines { get; } = new();
     
     public ExecutionConfig AddPipeline<T>(Action<PipelineConfig<T>> configure, string? name = null)
@@ -19,6 +21,11 @@ public class ExecutionConfig
         name = string.IsNullOrWhiteSpace(name) ? $"{typeof(T).Name}_Pipeline" : name;
 
         var pipeline = new PipelineConfig<T>(name);
+
+        if (DefaultIdGenerator != null)
+        {
+            pipeline.GenerateId = DefaultIdGenerator;
+        }
 
         configure(pipeline);
 
@@ -29,8 +36,8 @@ public class ExecutionConfig
 
     public ExecutionConfig AddPipelinePhase(Action<PhaseAddContext> phase)
     {
-        var config = new PhaseAddContext();
-
+        var config = new PhaseAddContext(this);
+        
         phase(config);
 
         var phaseNumber = EntityPipelines.Any() ? EntityPipelines.Max(x => x.Phase + 1) : 0;

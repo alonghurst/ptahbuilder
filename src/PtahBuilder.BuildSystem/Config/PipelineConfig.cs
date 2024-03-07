@@ -1,6 +1,7 @@
 ﻿using System.Reflection;
 using PtahBuilder.BuildSystem.Entities;
 using PtahBuilder.BuildSystem.Execution.Abstractions;
+using PtahBuilder.Util.Extensions;
 
 namespace PtahBuilder.BuildSystem.Config;
 
@@ -45,6 +46,8 @@ public class PipelineConfig<T> : PipelineConfig
     public string[] IdProperties { get; set; } = Array.Empty<string>();
 
     public Func<T, string> GetId { get; set; }
+
+    public Func<string, string> GenerateId { get; set; } = x => x.ToSlug();
 
     public PipelineConfig(string name) : base(name)
     {
