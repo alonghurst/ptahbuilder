@@ -7,7 +7,7 @@ public class DefaultValueService : IDefaultValueService
 {
     private readonly Dictionary<Type, object> _blankInstances = new Dictionary<Type, object>();
 
-    public IEnumerable<KeyValuePair<PropertyInfo, object>> GetNonDefaultPropertyAndTheNewValue(object instance)
+    public IEnumerable<KeyValuePair<PropertyInfo, object?>> GetNonDefaultPropertyAndTheNewValue(object instance)
     {
         var type = instance.GetType();
         if (!_blankInstances.ContainsKey(type))
@@ -36,7 +36,7 @@ public class DefaultValueService : IDefaultValueService
 
             if (a != null && b == null)
             {
-                yield return new KeyValuePair<PropertyInfo, object>(property, a);
+                yield return new KeyValuePair<PropertyInfo, object?>(property, a);
                 continue;
             }
 
@@ -75,7 +75,7 @@ public class DefaultValueService : IDefaultValueService
 
             if (a == null || !a.Equals(b))
             {
-                yield return new KeyValuePair<PropertyInfo, object>(property, a);
+                yield return new KeyValuePair<PropertyInfo, object?>(property, a);
             }
         }
     }

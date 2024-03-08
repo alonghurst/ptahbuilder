@@ -9,5 +9,5 @@ public interface IDefaultValueService
     /// </summary>
     /// <param name="instance"></param>
     /// <returns></returns>
-    IEnumerable<KeyValuePair<PropertyInfo, object>> GetNonDefaultPropertyAndTheNewValue(object instance);
+    IEnumerable<KeyValuePair<PropertyInfo, object?>> GetNonDefaultPropertyAndTheNewValue(object instance);
 }
