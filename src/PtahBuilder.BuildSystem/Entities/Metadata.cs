@@ -1,4 +1,6 @@
-﻿namespace PtahBuilder.BuildSystem.Entities;
+﻿using PtahBuilder.BuildSystem.Config;
+
+namespace PtahBuilder.BuildSystem.Entities;
 
 public class Metadata
 {
@@ -43,5 +45,16 @@ public class Metadata
 
         s = string.Empty;
         return false;
+    }
+
+    public void TakeUnsetValuesFrom(Metadata other)
+    {
+        foreach (var kvp in other.Values)
+        {
+            if (!Values.ContainsKey(kvp.Key) && kvp.Key != MetadataKeys.BuildOnly)
+            {
+                Add(kvp.Key, kvp.Value);
+            }
+        }
     }
 }
