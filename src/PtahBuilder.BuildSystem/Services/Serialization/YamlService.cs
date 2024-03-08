@@ -3,7 +3,6 @@ using System.Reflection;
 using PtahBuilder.Util.Extensions.Reflection;
 using YamlDotNet.RepresentationModel;
 using YamlDotNet.Serialization;
-using System.Xml;
 
 namespace PtahBuilder.BuildSystem.Services.Serialization;
 
