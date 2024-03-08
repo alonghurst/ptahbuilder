@@ -71,6 +71,11 @@ public class FixPunctuationStep<T> : IStep<T>
 
     private string Fix(string text)
     {
+        if (string.IsNullOrWhiteSpace(text))
+        {
+            return text;
+        }
+
         //text = text.Trim();
 
         foreach (var validEnding in _validEndings)
