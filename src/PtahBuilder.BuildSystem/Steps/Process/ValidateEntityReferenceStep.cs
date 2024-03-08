@@ -1,4 +1,5 @@
-﻿using PtahBuilder.BuildSystem.Entities;
+﻿using System.Collections;
+using PtahBuilder.BuildSystem.Entities;
 using PtahBuilder.BuildSystem.Execution.Abstractions;
 using PtahBuilder.Util.Services.Logging;
 
@@ -20,7 +21,7 @@ public class ValidateEntityReferenceStep<TFrom, TTo> : IStep<TFrom>
         _shouldBeIgnored = shouldBeIgnored;
     }
 
-    public ValidateEntityReferenceStep(IEntityProvider<TTo> referencing, ILogger logger, Func<TFrom, object?> accessor, Func<string?, bool>?  shouldBeIgnored = null)
+    public ValidateEntityReferenceStep(IEntityProvider<TTo> referencing, ILogger logger, Func<TFrom, object?> accessor, Func<string?, bool>? shouldBeIgnored = null)
     {
         _referencing = referencing;
         _logger = logger;
@@ -30,10 +31,10 @@ public class ValidateEntityReferenceStep<TFrom, TTo> : IStep<TFrom>
 
     public Task Execute(IPipelineContext<TFrom> context, IReadOnlyCollection<Entity<TFrom>> entities)
     {
-        var getter = _accessor ?? 
-                     CreatePropertyGetters() ?? 
+        var getter = _accessor ??
+                     CreatePropertyGetters() ??
                      throw new InvalidOperationException($"Unable to create a getter for validating {typeof(TFrom).Name} to {typeof(TTo).Name}");
-        
+
         foreach (var entity in entities)
         {
             var reference = getter(entity.Value);
@@ -42,12 +43,19 @@ public class ValidateEntityReferenceStep<TFrom, TTo> : IStep<TFrom>
             {
                 foreach (var s in strings)
                 {
-                    Validate(context,entity, s);
+                    Validate(context, entity, s);
+                }
+            }
+            else if (TryGetDictionaryKeys(reference, out var keys))
+            {
+                foreach (var s in keys)
+                {
+                    Validate(context, entity, s);
                 }
             }
             else if (reference is string s)
             {
-                Validate(context,entity, s);
+                Validate(context, entity, s);
             }
             else if (reference != null)
             {
@@ -56,6 +64,24 @@ public class ValidateEntityReferenceStep<TFrom, TTo> : IStep<TFrom>
         }
 
         return Task.CompletedTask;
+    }
+
+    private bool TryGetDictionaryKeys(object? reference, out IEnumerable<string> keys)
+    {
+        if (reference is IDictionary)
+        {
+            var type = reference.GetType();
+            if (type.GetGenericArguments()[0] == typeof(string))
+            {
+                dynamic dictionary = reference;
+
+                keys = dictionary.Keys;
+                return true;
+            }
+        }
+
+        keys = Enumerable.Empty<string>();
+        return false;
     }
 
     private Func<TFrom, object?>? CreatePropertyGetters()

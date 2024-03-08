@@ -55,7 +55,7 @@ public class FixPunctuationStep<T> : IStep<T>
 
     private string Fix(string text)
     {
-        text = text.Trim();
+        //text = text.Trim();
         if (!text.EndsWith(".") && !text.EndsWith("?") && !text.EndsWith("!"))
         {
             text = $"{text}.";
