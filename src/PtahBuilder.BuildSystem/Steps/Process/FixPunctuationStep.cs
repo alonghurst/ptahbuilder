@@ -7,6 +7,11 @@ public class FixPunctuationStep<T> : IStep<T>
 {
     private readonly string[] _propertyNames;
 
+    private readonly string[] _validEndings =
+    {
+        ".", "!", "?", ">", "]", "}"
+    };
+
     public FixPunctuationStep(string[] propertyNames)
     {
         _propertyNames = propertyNames;
@@ -56,11 +61,15 @@ public class FixPunctuationStep<T> : IStep<T>
     private string Fix(string text)
     {
         //text = text.Trim();
-        if (!text.EndsWith(".") && !text.EndsWith("?") && !text.EndsWith("!"))
+
+        foreach (var validEnding in _validEndings)
         {
-            text = $"{text}.";
+            if (text.EndsWith(validEnding))
+            {
+                return text;
+            }
         }
 
-        return text;
+        return $"{text}.";
     }
 }
