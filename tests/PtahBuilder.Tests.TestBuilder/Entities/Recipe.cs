@@ -13,4 +13,6 @@ public class Recipe : TypeData
 
     [Display(Description = "An Id reference to the #Fruit which is considered primary")]
     public string PrimaryFruitTypeName { get; set; }=string.Empty;
+
+    public string Description { get; set; } = string.Empty;
 }

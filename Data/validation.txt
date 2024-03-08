@@ -1,0 +1,4 @@
+Recipe Validation Errors
+  pie
+    ValidateEntityReferenceStep<Recipe, Fruit>: Unable to find a Fruit with Id "Apple" 
+    ValidateEntityReferenceStep<Recipe, Fruit>: Unable to find a Fruit with Id "Cherry" 

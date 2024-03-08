@@ -20,7 +20,7 @@ Type: String\[\]
 
 ### CustomFruit
 
-Type: Fruit ([Fruit](Fruit))
+Type: Fruit ([Fruit](Fruit.md))
 
 *No documentation available.*
 
@@ -28,7 +28,13 @@ Type: Fruit ([Fruit](Fruit))
 
 Type: String
 
-An Id reference to the [Fruit](Fruit) which is considered primary
+An Id reference to the [Fruit](Fruit.md) which is considered primary
+
+### Description
+
+Type: String
+
+*No documentation available.*
 
 ### TypeName
 

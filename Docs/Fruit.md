@@ -24,7 +24,7 @@ Type: Boolean
 
 ### Fruitiness
 
-Type: FruityEnum ([FruityEnum](FruityEnum))
+Type: FruityEnum ([FruityEnum](FruityEnum.md))
 
 *No documentation available.*
 
