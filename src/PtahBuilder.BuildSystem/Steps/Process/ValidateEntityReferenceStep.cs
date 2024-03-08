@@ -13,18 +13,22 @@ public class ValidateEntityReferenceStep<TFrom, TTo> : IStep<TFrom>
     private readonly Func<TFrom, object?>? _accessor;
     private readonly Func<string?, bool>? _shouldBeIgnored;
 
-    public ValidateEntityReferenceStep(IEntityProvider<TTo> referencing, ILogger logger, string propertyName, Func<string?, bool>? shouldBeIgnored = null)
+    protected ValidateEntityReferenceStep(IEntityProvider<TTo> referencing, ILogger logger)
     {
         _referencing = referencing;
         _logger = logger;
+    }
+
+    public ValidateEntityReferenceStep(IEntityProvider<TTo> referencing, ILogger logger, string propertyName, Func<string?, bool>? shouldBeIgnored = null)
+        : this(referencing, logger)
+    {
         _propertyName = propertyName;
         _shouldBeIgnored = shouldBeIgnored;
     }
 
     public ValidateEntityReferenceStep(IEntityProvider<TTo> referencing, ILogger logger, Func<TFrom, object?> accessor, Func<string?, bool>? shouldBeIgnored = null)
+        : this(referencing, logger)
     {
-        _referencing = referencing;
-        _logger = logger;
         _accessor = accessor;
         _shouldBeIgnored = shouldBeIgnored;
     }
@@ -84,7 +88,7 @@ public class ValidateEntityReferenceStep<TFrom, TTo> : IStep<TFrom>
         return false;
     }
 
-    private Func<TFrom, object?>? CreatePropertyGetters()
+    protected virtual Func<TFrom, object?>? CreatePropertyGetters()
     {
         if (string.IsNullOrWhiteSpace(_propertyName))
         {
