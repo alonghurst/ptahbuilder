@@ -1,5 +1,5 @@
 # Index
 
-- [Fruit](Fruit)
-- [FruityEnum](FruityEnum)
-- [Recipe](Recipe)
+- [Fruit](Fruit.md)
+- [FruityEnum](FruityEnum.md)
+- [Recipe](Recipe.md)

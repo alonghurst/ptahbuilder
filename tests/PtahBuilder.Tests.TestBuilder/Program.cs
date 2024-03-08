@@ -43,7 +43,11 @@ await new BuilderFactory()
         x.AddPipeline<Recipe>(p =>
         {
             p.AddInputStep<JsonInputStep<Recipe>>();
+            
+            p.AddProcessStep<FixPunctuationStep<Recipe>>(nameof(Recipe.Description));
+
             p.AddProcessStep<ValidateEntityReferenceStep<Recipe, Fruit>>(nameof(Recipe.ValidFruits));
+
             p.AddOutputStep<JsonOutputStep<Recipe>>();
             p.AddOutputStep<EntityLiteralsOutputStep<Recipe>>(new EntityLiteralsConfig<Recipe>
             {
