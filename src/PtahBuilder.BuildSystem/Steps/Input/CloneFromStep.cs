@@ -36,7 +36,7 @@ public class CloneFromStep<TTarget, TSource> : IStep<TTarget>
 
             foreach (var matchedProperty in matchedProperties)
             {
-                var value = matchedProperty.sourceProperty!.GetValue(sourceEntity.Value);
+                var value = matchedProperty.sourceProperty!.GetValue(sourceEntity.Value.Value);
 
                 matchedProperty.targetProperty.SetValue(targetEntity, value);
             }
