@@ -76,7 +76,7 @@ public class FixPunctuationStep<T> : IStep<T>
             return text;
         }
 
-        //text = text.Trim();
+        text = text.Trim();
 
         foreach (var validEnding in _validEndings)
         {
