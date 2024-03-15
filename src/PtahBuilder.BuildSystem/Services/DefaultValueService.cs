@@ -5,7 +5,7 @@ namespace PtahBuilder.BuildSystem.Services;
 
 public class DefaultValueService : IDefaultValueService
 {
-    private readonly Dictionary<Type, object> _blankInstances = new Dictionary<Type, object>();
+    private readonly Dictionary<Type, object> _blankInstances = new();
 
     public IEnumerable<KeyValuePair<PropertyInfo, object?>> GetNonDefaultPropertyAndTheNewValue(object instance)
     {
@@ -36,7 +36,7 @@ public class DefaultValueService : IDefaultValueService
 
             if (a != null && b == null)
             {
-                yield return new KeyValuePair<PropertyInfo, object?>(property, a);
+                yield return new(property, a);
                 continue;
             }
 
@@ -75,7 +75,7 @@ public class DefaultValueService : IDefaultValueService
 
             if (a == null || !a.Equals(b))
             {
-                yield return new KeyValuePair<PropertyInfo, object?>(property, a);
+                yield return new(property, a);
             }
         }
     }
