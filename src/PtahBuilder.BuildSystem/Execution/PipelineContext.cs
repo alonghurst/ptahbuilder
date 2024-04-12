@@ -2,6 +2,7 @@
 using PtahBuilder.BuildSystem.Config;
 using PtahBuilder.BuildSystem.Entities;
 using PtahBuilder.BuildSystem.Execution.Abstractions;
+using PtahBuilder.Util.Extensions;
 using PtahBuilder.Util.Extensions.Reflection;
 using PtahBuilder.Util.Services;
 using PtahBuilder.Util.Services.Logging;
@@ -117,7 +118,7 @@ public class PipelineContext<T> : IPipelineContext<T>, IEntityProvider<T>
         {
             var file = metadata[MetadataKeys.SourceFile].ToString();
 
-            return Path.GetFileNameWithoutExtension(file)!;
+            return Path.GetFileNameWithoutExtension(file)!.ToSlug();
         }
 
         foreach (var property in Config.GetIdProperties())
