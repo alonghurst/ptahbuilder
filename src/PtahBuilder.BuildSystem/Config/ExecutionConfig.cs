@@ -1,4 +1,6 @@
-﻿namespace PtahBuilder.BuildSystem.Config;
+﻿using PtahBuilder.BuildSystem.Execution;
+
+namespace PtahBuilder.BuildSystem.Config;
 
 public class ExecutionConfig
 {
@@ -17,6 +19,8 @@ public class ExecutionConfig
 
     public List<PipelineConfig> EntityPipelines { get; } = new();
     
+    public Action<BuilderContext>? PreExecution { get; set; }
+
     public ExecutionConfig AddPipeline<T>(Action<PipelineConfig<T>> configure, string? name = null)
     {
         name = string.IsNullOrWhiteSpace(name) ? $"{typeof(T).Name}_Pipeline" : name;
