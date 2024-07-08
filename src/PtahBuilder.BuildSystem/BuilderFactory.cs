@@ -83,6 +83,11 @@ public class BuilderFactory
 
         try
         {
+            if (config.PreExecution != null)
+            {
+                config.PreExecution(context);
+            }
+
             await context.Run();
         }
         finally
