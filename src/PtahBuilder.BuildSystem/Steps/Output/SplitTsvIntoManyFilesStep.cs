@@ -35,7 +35,7 @@ public class SplitTsvIntoManyFilesStep : IStep<string>
                 }
             }
 
-            foreach (var line in content.Split(Environment.NewLine))
+            foreach (var line in content.Split('\n'))
             {
                 if (line.StartsWith("###Sheet: "))
                 {
