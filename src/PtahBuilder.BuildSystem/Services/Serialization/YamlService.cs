@@ -23,7 +23,7 @@ public class YamlService : IYamlService
     }
 
 
-    public (T entity, Dictionary<string, object>? metadata) DeserializeAndGetMetadata<T>(string text)
+    public (T entity, Dictionary<string, object>? metadata) DeserializeAndGetMetadata<T>(string text, Dictionary<string, string>? nodeNameToPropertyMappings = null)
     {
         using var input = new StringReader(text);
 
@@ -34,16 +34,16 @@ public class YamlService : IYamlService
 
         var entity = Activator.CreateInstance<T>()!;
 
-        var metadata = SetValuesFromYamlMapping(mapping, typeof(T), entity);
+        var metadata = SetValuesFromYamlMapping(mapping, typeof(T), entity, nodeNameToPropertyMappings);
 
         return (entity, metadata);
     }
 
-    public T Deserialize<T>(string text) => DeserializeAndGetMetadata<T>(text).entity;
+    public T Deserialize<T>(string text, Dictionary<string, string>? nodeNameToPropertyMappings = null) => DeserializeAndGetMetadata<T>(text, nodeNameToPropertyMappings).entity;
 
     public string Serialize<T>(T entity) => entity == null ? string.Empty : _serializer.Serialize(entity);
 
-    private Dictionary<string, object>? SetValuesFromYamlMapping(YamlMappingNode mapping, Type type, object entity)
+    private Dictionary<string, object>? SetValuesFromYamlMapping(YamlMappingNode mapping, Type type, object entity, Dictionary<string, string>? nodeNameToPropertyMappings)
     {
         Dictionary<string, object>? meta = null;
 
@@ -63,7 +63,7 @@ public class YamlService : IYamlService
                 continue;
             }
 
-            var property = FindProperty(type, key);
+            var property = FindProperty(type, nodeNameToPropertyMappings, key);
 
             if (property != null)
             {
@@ -113,6 +113,10 @@ public class YamlService : IYamlService
 
                 TrySetProperty(property, entity, dictionary);
             }
+            else if (sequenceNode.Count() == 1)
+            {
+                SetValueFromYamlNode(entity, property, sequenceNode.First());
+            }
             else
             {
                 throw new NotImplementedException($"Unable to parse yaml \"{yamlNode}\" for property \"{property.Name}\"");
@@ -123,7 +127,7 @@ public class YamlService : IYamlService
             var type = property.PropertyType;
             var subEntity = Activator.CreateInstance(type)!;
 
-            SetValuesFromYamlMapping(mappingNode, type, subEntity);
+            SetValuesFromYamlMapping(mappingNode, type, subEntity, null);
 
             TrySetProperty(property, entity, subEntity);
         }
@@ -192,7 +196,7 @@ public class YamlService : IYamlService
                 {
                     var entity = Activator.CreateInstance(type)!;
 
-                    SetValuesFromYamlMapping(mappingNode, type, entity);
+                    SetValuesFromYamlMapping(mappingNode, type, entity, null);
 
                     yield return entity;
                 }
@@ -238,7 +242,7 @@ public class YamlService : IYamlService
                     {
                         var entity = Activator.CreateInstance(type.GetGenericArguments()[1])!;
 
-                        SetValuesFromYamlMapping(mapping, type.GetGenericArguments()[1], entity);
+                        SetValuesFromYamlMapping(mapping, type.GetGenericArguments()[1], entity, null);
                         valueValue = entity;
                     }
                     else
@@ -252,11 +256,16 @@ public class YamlService : IYamlService
         }
     }
 
-    private PropertyInfo FindProperty(Type onType, string propertyName)
+    private PropertyInfo FindProperty(Type onType, Dictionary<string, string>? nodeNameToPropertyMappings, string propertyName)
     {
         if (!_properties.ContainsKey(onType))
         {
             _properties.Add(onType, onType.GetProperties().ToDictionary(p => p.Name, p => p, StringComparer.OrdinalIgnoreCase));
+        }
+
+        if (nodeNameToPropertyMappings != null && nodeNameToPropertyMappings.TryGetValue(propertyName, out var mappedPropertyName))
+        {
+            propertyName = mappedPropertyName;
         }
 
         if (!_properties[onType].ContainsKey(propertyName))

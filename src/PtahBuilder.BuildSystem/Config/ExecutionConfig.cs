@@ -1,4 +1,6 @@
-﻿namespace PtahBuilder.BuildSystem.Config;
+﻿using PtahBuilder.BuildSystem.Execution;
+
+namespace PtahBuilder.BuildSystem.Config;
 
 public class ExecutionConfig
 {
@@ -12,11 +14,13 @@ public class ExecutionConfig
     public bool DeleteOutputDirectory { get; set; } = true;
     public bool WriteValidationToTextFile { get; set; } = true;
 
-    public Func<string,string>? DefaultIdGenerator { get; set; }
-    public MissingIdPreference? MissingIdPreference { get; set; } 
+    public Func<string, string>? DefaultIdGenerator { get; set; }
+    public MissingIdPreference? MissingIdPreference { get; set; }
 
     public List<PipelineConfig> EntityPipelines { get; } = new();
-    
+
+    public Action<BuilderContext>? PreExecution { get; set; }
+
     public ExecutionConfig AddPipeline<T>(Action<PipelineConfig<T>> configure, string? name = null)
     {
         name = string.IsNullOrWhiteSpace(name) ? $"{typeof(T).Name}_Pipeline" : name;
@@ -25,7 +29,7 @@ public class ExecutionConfig
 
         configure(pipeline);
 
-        EntityPipelines.Add( pipeline);
+        EntityPipelines.Add(pipeline);
 
         return this;
     }
@@ -50,18 +54,17 @@ public class ExecutionConfig
     public ExecutionConfig AddPipelinePhase(Action<PhaseAddContext> phase)
     {
         var config = new PhaseAddContext(this);
-        
+
         phase(config);
 
         var phaseNumber = EntityPipelines.Any() ? EntityPipelines.Max(x => x.Phase + 1) : 0;
-        
+
         foreach (var pipelineConfig in config.EntityPipelines)
         {
             pipelineConfig.Phase = phaseNumber;
 
             EntityPipelines.Add(pipelineConfig);
         }
-
 
         return this;
     }

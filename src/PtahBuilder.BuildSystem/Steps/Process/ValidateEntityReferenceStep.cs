@@ -5,37 +5,50 @@ using PtahBuilder.Util.Services.Logging;
 
 namespace PtahBuilder.BuildSystem.Steps.Process;
 
+
+public class ValidationConfig<TFrom>
+{
+    public bool IsRequired { get; init; }
+    public string? PropertyName { get; init; }
+    public Func<TFrom, object?>? Accessor { get; init; }
+    public Func<string?, bool>? ShouldBeIgnored { get; init; }
+}
+
 public class ValidateEntityReferenceStep<TFrom, TTo> : IStep<TFrom>
 {
     private readonly IEntityProvider<TTo> _referencing;
     private readonly ILogger _logger;
-    private readonly string? _propertyName;
-    private readonly Func<TFrom, object?>? _accessor;
-    private readonly Func<string?, bool>? _shouldBeIgnored;
+    private readonly ValidationConfig<TFrom> _config;
 
-    protected ValidateEntityReferenceStep(IEntityProvider<TTo> referencing, ILogger logger)
+    public ValidateEntityReferenceStep(IEntityProvider<TTo> referencing, ILogger logger, ValidationConfig<TFrom> config)
     {
         _referencing = referencing;
         _logger = logger;
+        _config = config;
     }
 
     public ValidateEntityReferenceStep(IEntityProvider<TTo> referencing, ILogger logger, string propertyName, Func<string?, bool>? shouldBeIgnored = null)
-        : this(referencing, logger)
+        : this(referencing, logger, new ValidationConfig<TFrom>
+        {
+            PropertyName = propertyName,
+            ShouldBeIgnored = shouldBeIgnored
+        })
     {
-        _propertyName = propertyName;
-        _shouldBeIgnored = shouldBeIgnored;
+
     }
 
     public ValidateEntityReferenceStep(IEntityProvider<TTo> referencing, ILogger logger, Func<TFrom, object?> accessor, Func<string?, bool>? shouldBeIgnored = null)
-        : this(referencing, logger)
+        : this(referencing, logger, new ValidationConfig<TFrom>
+        {
+            Accessor = accessor,
+            ShouldBeIgnored = shouldBeIgnored
+        })
     {
-        _accessor = accessor;
-        _shouldBeIgnored = shouldBeIgnored;
     }
 
     public Task Execute(IPipelineContext<TFrom> context, IReadOnlyCollection<Entity<TFrom>> entities)
     {
-        var getter = _accessor ??
+        var getter = _config.Accessor ??
                      CreatePropertyGetters() ??
                      throw new InvalidOperationException($"Unable to create a getter for validating {typeof(TFrom).Name} to {typeof(TTo).Name}");
 
@@ -90,21 +103,28 @@ public class ValidateEntityReferenceStep<TFrom, TTo> : IStep<TFrom>
 
     protected virtual Func<TFrom, object?>? CreatePropertyGetters()
     {
-        if (string.IsNullOrWhiteSpace(_propertyName))
+        if (string.IsNullOrWhiteSpace(_config.PropertyName))
         {
             return null;
         }
 
-        var property = typeof(TFrom).GetProperty(_propertyName) ?? throw new InvalidOperationException($"Unable to find a property named {_propertyName}");
+        var property = typeof(TFrom).GetProperty(_config.PropertyName) ?? throw new InvalidOperationException($"Unable to find a property named {_config.PropertyName}");
 
         return x => property.GetValue(x);
     }
 
     private void Validate(IPipelineContext<TFrom> context, Entity<TFrom> entity, string id)
     {
-        if (_shouldBeIgnored != null && _shouldBeIgnored.Invoke(id))
+        if (_config.ShouldBeIgnored != null && _config.ShouldBeIgnored.Invoke(id))
         {
             return;
+        }
+
+        if (_config.IsRequired && string.IsNullOrWhiteSpace(id))
+        {
+            var error = "Reference is unset but marked as required in configuration";
+
+            context.AddValidationError(entity, this, error);
         }
 
         if (!string.IsNullOrWhiteSpace(id) && !_referencing.Entities.ContainsKey(id))

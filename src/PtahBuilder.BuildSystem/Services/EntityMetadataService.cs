@@ -4,15 +4,24 @@ namespace PtahBuilder.BuildSystem.Services;
 
 public class EntityMetadataService : IEntityMetadataService
 {
+    private readonly string[] _suffixes =
+    {
+        "TypeLoad",
+        "Type"
+    };
+
     public string GetSimpleName<T>() => GetSimpleName(typeof(T));
 
     public string GetSimpleName(Type type)
     {
         var name = type.Name;
 
-        if (name.EndsWith("Type"))
+        foreach (var suffix in _suffixes)
         {
-            name = name.Substring(0, name.Length - "Type".Length);
+            if (name.EndsWith(suffix))
+            {
+                name = name.Substring(0, name.Length - suffix.Length);
+            }
         }
 
         return name;
