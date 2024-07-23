@@ -6,7 +6,7 @@ namespace PtahBuilder.BuildSystem.Services.Serialization;
 public class DynamicMappingService : IDynamicMappingService
 {
     private readonly IScalarValueService _scalarValueService;
-    private readonly Dictionary<Type, Dictionary<string, PropertyInfo>> _entityPropertyies = new();
+    private readonly Dictionary<Type, Dictionary<string, PropertyInfo>> _entityProperties = new();
 
     public DynamicMappingService(IScalarValueService scalarValueService)
     {
@@ -15,15 +15,57 @@ public class DynamicMappingService : IDynamicMappingService
 
     public void Map<T>(T entity, string propertyName, object? rawValue) where T : class
     {
+        object instance = entity;
+
+        while (propertyName.Contains("."))
+        {
+            (instance, propertyName) = HandleSubObject(instance, propertyName);
+        }
+
+        MapToInstance(instance, propertyName, rawValue);
+    }
+
+    private (object instance, string propertyName) HandleSubObject(object instance, string propertyName)
+    {
+        var index = propertyName.IndexOf('.');
+
+        var instancePropertyName = propertyName.Substring(0, index - 1);
+        var remainingPropertyName = propertyName.Substring(index+ 1);
+
+        var property = GetProperty(instance, instancePropertyName);
+
+        var subObject = property.GetValue(instance);
+
+        if (subObject == null)
+        {
+            subObject = Activator.CreateInstance(property.PropertyType) ?? throw new InvalidOperationException($"Unable to activate an instance of {property.PropertyType.Name}");
+            property.SetValue(instance, subObject);
+        }
+
+        return (subObject, remainingPropertyName);
+    }
+
+    private void MapToInstance(object entity, string propertyName, object? rawValue)
+    {
+        var property = GetProperty(entity, propertyName);
+        var value = _scalarValueService.ConvertScalarValue(property.PropertyType, rawValue);
+
+        property.SetValue(entity, value);
+    }
+
+
+    private PropertyInfo GetProperty(object entity, string propertyName)
+    {
         var entityType = entity.GetType();
 
-        _entityPropertyies.TryAdd(entityType, entityType.GetProperties().ToDictionary(x => x.Name, x => x));
-
-        if (_entityPropertyies[entityType].TryGetValue(propertyName, out var property))
+        if (!_entityProperties.ContainsKey(entityType))
         {
-            var value = _scalarValueService.ConvertScalarValue(property.PropertyType, rawValue);
+            _entityProperties.Add(entityType, entityType.GetProperties().ToDictionary(x => x.Name, x => x));
+        }
 
-            property.SetValue(entity, value);
+        if (_entityProperties[entityType].TryGetValue(propertyName, out var property))
+        {
+            return property;
         }
         else
         {
