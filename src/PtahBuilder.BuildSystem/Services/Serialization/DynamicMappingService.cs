@@ -56,6 +56,8 @@ public class DynamicMappingService : IDynamicMappingService
 
     private PropertyInfo GetProperty(object entity, string propertyName)
     {
+        propertyName = propertyName.Trim();
+
         var entityType = entity.GetType();
 
         if (!_entityProperties.ContainsKey(entityType))
