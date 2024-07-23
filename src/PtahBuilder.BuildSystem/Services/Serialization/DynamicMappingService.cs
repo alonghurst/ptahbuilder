@@ -29,8 +29,8 @@ public class DynamicMappingService : IDynamicMappingService
     {
         var index = propertyName.IndexOf('.');
 
-        var instancePropertyName = propertyName.Substring(0, index - 1);
-        var remainingPropertyName = propertyName.Substring(index+ 1);
+        var instancePropertyName = propertyName.Substring(0, index);
+        var remainingPropertyName = propertyName.Substring(index + 1);
 
         var property = GetProperty(instance, instancePropertyName);
 
