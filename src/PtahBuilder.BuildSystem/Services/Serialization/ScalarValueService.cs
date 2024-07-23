@@ -62,6 +62,11 @@ public class ScalarValueService : IScalarValueService
             value = arrValue;
         }
 
+        if (value is string text)
+        {
+            value = text.Trim();
+        }
+
         return value;
     }
 

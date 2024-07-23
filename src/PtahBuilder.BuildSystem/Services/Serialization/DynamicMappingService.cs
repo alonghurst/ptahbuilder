@@ -53,7 +53,6 @@ public class DynamicMappingService : IDynamicMappingService
         property.SetValue(entity, value);
     }
 
-
     private PropertyInfo GetProperty(object entity, string propertyName)
     {
         propertyName = propertyName.Trim();
