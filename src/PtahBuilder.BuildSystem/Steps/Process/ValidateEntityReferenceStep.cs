@@ -28,7 +28,7 @@ public class ValidateEntityReferenceStep<TFrom, TTo> : IStep<TFrom>
     }
 
     public ValidateEntityReferenceStep(IEntityProvider<TTo> referencing, ILogger logger, string propertyName, Func<string?, bool>? shouldBeIgnored = null)
-        : this(referencing, logger, new ValidationConfig<TFrom>
+        : this(referencing, logger, new()
         {
             PropertyName = propertyName,
             ShouldBeIgnored = shouldBeIgnored
@@ -38,7 +38,7 @@ public class ValidateEntityReferenceStep<TFrom, TTo> : IStep<TFrom>
     }
 
     public ValidateEntityReferenceStep(IEntityProvider<TTo> referencing, ILogger logger, Func<TFrom, object?> accessor, Func<string?, bool>? shouldBeIgnored = null)
-        : this(referencing, logger, new ValidationConfig<TFrom>
+        : this(referencing, logger, new()
         {
             Accessor = accessor,
             ShouldBeIgnored = shouldBeIgnored
