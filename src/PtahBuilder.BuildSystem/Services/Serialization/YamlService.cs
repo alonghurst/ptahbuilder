@@ -63,13 +63,13 @@ public class YamlService : IYamlService
                 continue;
             }
 
-            var property = FindProperty(type, settings, key);
+            var (property, propertySettings) = FindProperty(type, settings, key) ?? (null, null);
 
             if (property != null)
             {
                 try
                 {
-                    SetValueFromYamlNode(entity, property, entry.Value);
+                    SetValueFromYamlNode(entity, property, entry.Value, propertySettings);
                 }
                 catch
                 {
@@ -82,7 +82,7 @@ public class YamlService : IYamlService
         return meta;
     }
 
-    private void SetValueFromYamlNode(object entity, PropertyInfo property, YamlNode yamlNode)
+    private void SetValueFromYamlNode(object entity, PropertyInfo property, YamlNode yamlNode, YamlDeserializationPropertySettings? settings)
     {
         property = property.DeclaringType?.GetProperty(property.Name) ?? property;
 
@@ -115,7 +115,7 @@ public class YamlService : IYamlService
             }
             else if (sequenceNode.Count() == 1)
             {
-                SetValueFromYamlNode(entity, property, sequenceNode.First());
+                SetValueFromYamlNode(entity, property, sequenceNode.First(), settings);
             }
             else
             {
@@ -256,25 +256,27 @@ public class YamlService : IYamlService
         }
     }
 
-    private PropertyInfo? FindProperty(Type onType, YamlDeserializationSettings? settings, string propertyName)
+    private (PropertyInfo? property, YamlDeserializationPropertySettings? propertySettings)? FindProperty(Type onType, YamlDeserializationSettings? settings, string propertyName)
     {
         if (!_properties.ContainsKey(onType))
         {
             _properties.Add(onType, onType.GetProperties().ToDictionary(p => p.Name, p => p, StringComparer.OrdinalIgnoreCase));
         }
-        
-        if (settings?.PropertySettings != null &&
-            settings.PropertySettings.TryGetValue(propertyName, out var propertySettings))
-        {
-            if (propertySettings.IsIgnored)
-            {
-                return null;
-            }
 
-            if (!string.IsNullOrWhiteSpace(propertySettings.MapToPropertyName))
-            {
-                propertyName = propertySettings.MapToPropertyName;
-            }
+        YamlDeserializationPropertySettings? propertySettings = null;
+        if (settings != null && settings.PropertySettings.TryGetValue(propertyName, out var s))
+        {
+            propertySettings = s;
+        }
+
+        if (propertySettings?.IsIgnored ?? false)
+        {
+            return null;
+        }
+
+        if (!string.IsNullOrWhiteSpace(propertySettings?.MapToPropertyName))
+        {
+            propertyName = propertySettings!.Value.MapToPropertyName;
         }
 
         if (!_properties[onType].ContainsKey(propertyName))
@@ -287,6 +289,6 @@ public class YamlService : IYamlService
             }
         }
 
-        return _properties[onType][propertyName];
+        return (_properties[onType][propertyName], propertySettings);
     }
 }
