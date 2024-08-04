@@ -23,7 +23,7 @@ public class YamlService : IYamlService
     }
 
 
-    public (T entity, Dictionary<string, object>? metadata) DeserializeAndGetMetadata<T>(string text, Dictionary<string, string>? nodeNameToPropertyMappings = null)
+    public (T entity, Dictionary<string, object>? metadata) DeserializeAndGetMetadata<T>(string text, YamlDeserializationSettings? settings = null)
     {
         using var input = new StringReader(text);
 
@@ -34,16 +34,16 @@ public class YamlService : IYamlService
 
         var entity = Activator.CreateInstance<T>()!;
 
-        var metadata = SetValuesFromYamlMapping(mapping, typeof(T), entity, nodeNameToPropertyMappings);
+        var metadata = SetValuesFromYamlMapping(mapping, typeof(T), entity, settings);
 
         return (entity, metadata);
     }
 
-    public T Deserialize<T>(string text, Dictionary<string, string>? nodeNameToPropertyMappings = null) => DeserializeAndGetMetadata<T>(text, nodeNameToPropertyMappings).entity;
+    public T Deserialize<T>(string text, YamlDeserializationSettings? settings = null) => DeserializeAndGetMetadata<T>(text, settings).entity;
 
     public string Serialize<T>(T entity) => entity == null ? string.Empty : _serializer.Serialize(entity);
 
-    private Dictionary<string, object>? SetValuesFromYamlMapping(YamlMappingNode mapping, Type type, object entity, Dictionary<string, string>? nodeNameToPropertyMappings)
+    private Dictionary<string, object>? SetValuesFromYamlMapping(YamlMappingNode mapping, Type type, object entity, YamlDeserializationSettings? settings)
     {
         Dictionary<string, object>? meta = null;
 
@@ -63,7 +63,7 @@ public class YamlService : IYamlService
                 continue;
             }
 
-            var property = FindProperty(type, nodeNameToPropertyMappings, key);
+            var property = FindProperty(type, settings, key);
 
             if (property != null)
             {
@@ -256,14 +256,14 @@ public class YamlService : IYamlService
         }
     }
 
-    private PropertyInfo FindProperty(Type onType, Dictionary<string, string>? nodeNameToPropertyMappings, string propertyName)
+    private PropertyInfo FindProperty(Type onType, YamlDeserializationSettings? settings, string propertyName)
     {
         if (!_properties.ContainsKey(onType))
         {
             _properties.Add(onType, onType.GetProperties().ToDictionary(p => p.Name, p => p, StringComparer.OrdinalIgnoreCase));
         }
 
-        if (nodeNameToPropertyMappings != null && nodeNameToPropertyMappings.TryGetValue(propertyName, out var mappedPropertyName))
+        if (settings?.NodeNameToPropertyMappings != null && settings.NodeNameToPropertyMappings.TryGetValue(propertyName, out var mappedPropertyName))
         {
             propertyName = mappedPropertyName;
         }
