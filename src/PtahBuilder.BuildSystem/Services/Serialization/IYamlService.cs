@@ -11,8 +11,7 @@ public class YamlDeserializationSettings
 {
     public UnmatchedPropertyAction UnmatchedPropertyAction { get; set; } = UnmatchedPropertyAction.Throw;
 
-    public Dictionary<string, string> NodeNameToPropertyMappings { get; set; } = new();
-
+    // Key should be yaml node name
     public Dictionary<string, YamlDeserializationPropertySettings> PropertySettings { get; set; } = new();
 }
 
@@ -21,6 +20,8 @@ public struct YamlDeserializationPropertySettings
     public bool IsIgnored { get; set; }
 
     public Func<string,string>? PreProcess { get; set; }
+
+    public string? MapToPropertyName { get; set; }
 }
 
 public enum UnmatchedPropertyAction

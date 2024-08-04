@@ -262,18 +262,19 @@ public class YamlService : IYamlService
         {
             _properties.Add(onType, onType.GetProperties().ToDictionary(p => p.Name, p => p, StringComparer.OrdinalIgnoreCase));
         }
-
-        if (settings?.NodeNameToPropertyMappings != null &&
-            settings.NodeNameToPropertyMappings.TryGetValue(propertyName, out var mappedPropertyName))
-        {
-            propertyName = mappedPropertyName;
-        }
-
+        
         if (settings?.PropertySettings != null &&
-            settings.PropertySettings.TryGetValue(propertyName, out var propertySettings) &&
-            propertySettings.IsIgnored)
+            settings.PropertySettings.TryGetValue(propertyName, out var propertySettings))
         {
-            return null;
+            if (propertySettings.IsIgnored)
+            {
+                return null;
+            }
+
+            if (!string.IsNullOrWhiteSpace(propertySettings.MapToPropertyName))
+            {
+                propertyName = propertySettings.MapToPropertyName;
+            }
         }
 
         if (!_properties[onType].ContainsKey(propertyName))
