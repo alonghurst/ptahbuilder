@@ -97,7 +97,7 @@ public class YamlService : IYamlService
             {
                 var elementType = property.PropertyType.GetElementType()!;
 
-                dynamic values = GetSequenceValuesForArray(elementType, sequenceNode)
+                dynamic values = GetSequenceValuesForArray(elementType, sequenceNode, settings)
                     .Select(e => Convert.ChangeType(e, elementType))
                     .ToArray();
 
@@ -109,7 +109,7 @@ public class YamlService : IYamlService
             {
                 var kvpType = property.PropertyType.GetDictionaryKeyValuePairType();
 
-                var dictionary = CreateDictionaryFromSequenceNode(property.PropertyType, kvpType, sequenceNode);
+                var dictionary = CreateDictionaryFromSequenceNode(property.PropertyType, kvpType, sequenceNode, settings);
 
                 TrySetProperty(property, entity, dictionary);
             }
@@ -133,7 +133,7 @@ public class YamlService : IYamlService
         }
         else
         {
-            object? value = ((YamlScalarNode)yamlNode).Value;
+            object? value = GetValueFromScalarNode((YamlScalarNode)yamlNode, settings);
 
             value = _scalarValueService.ConvertScalarValue(property.PropertyType, value);
 
@@ -141,9 +141,9 @@ public class YamlService : IYamlService
         }
     }
 
-    private dynamic CreateDictionaryFromSequenceNode(Type dictionaryType, Type kvpType, YamlSequenceNode sequenceNode)
+    private dynamic CreateDictionaryFromSequenceNode(Type dictionaryType, Type kvpType, YamlSequenceNode sequenceNode, YamlDeserializationPropertySettings? settings)
     {
-        dynamic kvpValues = GetSequenceValuesForDictionary(kvpType, sequenceNode)
+        dynamic kvpValues = GetSequenceValuesForDictionary(kvpType, sequenceNode, settings)
             .Select(e => Convert.ChangeType(e, kvpType))
             .ToArray();
 
@@ -180,7 +180,7 @@ public class YamlService : IYamlService
 
 
 
-    private IEnumerable<dynamic?> GetSequenceValuesForArray(Type type, YamlSequenceNode sequenceNode)
+    private IEnumerable<dynamic?> GetSequenceValuesForArray(Type type, YamlSequenceNode sequenceNode, YamlDeserializationPropertySettings? settings)
     {
         foreach (var node in sequenceNode.Children)
         {
@@ -190,7 +190,7 @@ public class YamlService : IYamlService
                 {
                     var scalar = (YamlScalarNode)mappingNode.Children.First().Value;
 
-                    yield return scalar.Value!;
+                    yield return GetValueFromScalarNode(scalar!, settings);
                 }
                 else
                 {
@@ -203,23 +203,27 @@ public class YamlService : IYamlService
             }
             else if (node is YamlScalarNode scalar)
             {
-                yield return _scalarValueService.ConvertScalarValue(type, scalar.Value);
+                var value = GetValueFromScalarNode(scalar, settings);
+
+                yield return _scalarValueService.ConvertScalarValue(type, value);
             }
         }
     }
 
-    private IEnumerable<dynamic?> GetSequenceValuesForDictionary(Type type, YamlSequenceNode sequenceNode)
+    private IEnumerable<dynamic?> GetSequenceValuesForDictionary(Type type, YamlSequenceNode sequenceNode, YamlDeserializationPropertySettings? settings)
     {
         foreach (var node in sequenceNode.Children)
         {
             if (node is YamlMappingNode mappingNode)
             {
                 if (mappingNode.Children.First().Key is YamlScalarNode keyNode && keyNode.Value!.ToUpper() == "KVP"
-                                                                               && mappingNode.Children.First().Value is YamlScalarNode valueNode)
+                                                                               && mappingNode.Children.First().Value is YamlScalarNode scalarNode)
                 {
-                    var stringyValues = valueNode.Value!.Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries);
+                    var nodeValue = GetValueFromScalarNode(scalarNode, settings);
 
-                    var value = valueNode.Value.Substring(stringyValues[0].Length + 1);
+                    var stringyValues = nodeValue!.Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries);
+
+                    var value = nodeValue.Substring(stringyValues[0].Length + 1);
 
                     var keyValue = _scalarValueService.ConvertScalarValue(type.GetGenericArguments()[0], stringyValues[0].Trim());
                     var valueValue = _scalarValueService.ConvertScalarValue(type.GetGenericArguments()[1], value.Trim());
@@ -231,12 +235,16 @@ public class YamlService : IYamlService
                     var key = mappingNode.Children[new YamlScalarNode("Key")];
                     var value = mappingNode.Children[new YamlScalarNode("Value")];
 
-                    var keyValue = _scalarValueService.ConvertScalarValue(type.GetGenericArguments()[0], ((YamlScalarNode)key).Value);
+                    var scalarKeyValue = GetValueFromScalarNode((YamlScalarNode)key, settings);
+
+                    var keyValue = _scalarValueService.ConvertScalarValue(type.GetGenericArguments()[0], scalarKeyValue);
                     object? valueValue;
 
                     if (value is YamlScalarNode scalar)
                     {
-                        valueValue = _scalarValueService.ConvertScalarValue(type.GetGenericArguments()[1], scalar.Value);
+                        var scalarValueValue = GetValueFromScalarNode(scalar, settings);
+
+                        valueValue = _scalarValueService.ConvertScalarValue(type.GetGenericArguments()[1], scalarValueValue);
                     }
                     else if (value is YamlMappingNode mapping)
                     {
@@ -254,6 +262,16 @@ public class YamlService : IYamlService
                 }
             }
         }
+    }
+
+    private string? GetValueFromScalarNode(YamlScalarNode node, YamlDeserializationPropertySettings? settings)
+    {
+        if (settings?.PreProcess != null)
+        {
+            return settings.Value.PreProcess(node.Value);
+        }
+
+        return node.Value;
     }
 
     private (PropertyInfo? property, YamlDeserializationPropertySettings? propertySettings)? FindProperty(Type onType, YamlDeserializationSettings? settings, string propertyName)
