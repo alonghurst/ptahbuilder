@@ -19,7 +19,7 @@ public struct YamlDeserializationPropertySettings
 {
     public bool IsIgnored { get; set; }
 
-    public Func<string,string>? PreProcess { get; set; }
+    public Func<string?, string?>? PreProcess { get; set; }
 
     public string? MapToPropertyName { get; set; }
 }
