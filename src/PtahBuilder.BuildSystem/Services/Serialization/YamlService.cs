@@ -256,21 +256,34 @@ public class YamlService : IYamlService
         }
     }
 
-    private PropertyInfo FindProperty(Type onType, YamlDeserializationSettings? settings, string propertyName)
+    private PropertyInfo? FindProperty(Type onType, YamlDeserializationSettings? settings, string propertyName)
     {
         if (!_properties.ContainsKey(onType))
         {
             _properties.Add(onType, onType.GetProperties().ToDictionary(p => p.Name, p => p, StringComparer.OrdinalIgnoreCase));
         }
 
-        if (settings?.NodeNameToPropertyMappings != null && settings.NodeNameToPropertyMappings.TryGetValue(propertyName, out var mappedPropertyName))
+        if (settings?.NodeNameToPropertyMappings != null &&
+            settings.NodeNameToPropertyMappings.TryGetValue(propertyName, out var mappedPropertyName))
         {
             propertyName = mappedPropertyName;
+        }
+
+        if (settings?.PropertySettings != null &&
+            settings.PropertySettings.TryGetValue(propertyName, out var propertySettings) &&
+            propertySettings.IsIgnored)
+        {
+            return null;
         }
 
         if (!_properties[onType].ContainsKey(propertyName))
         {
             _logger.Warning($"Unable to find property {propertyName} for Type {onType}");
+
+            if (settings?.UnmatchedPropertyAction == UnmatchedPropertyAction.Warn)
+            {
+                return null;
+            }
         }
 
         return _properties[onType][propertyName];
