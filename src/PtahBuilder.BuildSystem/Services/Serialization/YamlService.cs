@@ -190,7 +190,7 @@ public class YamlService : IYamlService
                 {
                     var scalar = (YamlScalarNode)mappingNode.Children.First().Value;
 
-                    yield return GetValueFromScalarNode(scalar!, settings);
+                    yield return GetValueFromScalarNode(scalar, settings);
                 }
                 else
                 {
@@ -294,7 +294,7 @@ public class YamlService : IYamlService
 
         if (!string.IsNullOrWhiteSpace(propertySettings?.MapToPropertyName))
         {
-            propertyName = propertySettings!.Value.MapToPropertyName;
+            propertyName = propertySettings.Value.MapToPropertyName;
         }
 
         if (!_properties[onType].ContainsKey(propertyName))
