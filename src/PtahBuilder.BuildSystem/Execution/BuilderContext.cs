@@ -98,7 +98,7 @@ public class BuilderContext : IDisposable
             void OutputError(string message)
             {
                 _logger.Warning(message);
-                sb!.AppendLine(message);
+                sb.AppendLine(message);
             }
 
             var grouped = validationErrors.GroupBy(x => x.type);

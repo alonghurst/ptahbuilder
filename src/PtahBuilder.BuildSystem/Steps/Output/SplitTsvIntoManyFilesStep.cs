@@ -25,13 +25,13 @@ public class SplitTsvIntoManyFilesStep : IStep<string>
 
             void WriteFile()
             {
-                if (!string.IsNullOrWhiteSpace(filename) && lines!.Any())
+                if (!string.IsNullOrWhiteSpace(filename) && lines.Any())
                 {
                     var file = Path.Combine(_filesConfig.DataDirectory, $"{filename}.tsv");
 
-                    File.WriteAllLines(file, lines!);
+                    File.WriteAllLines(file, lines);
 
-                    lines!.Clear();
+                    lines.Clear();
                 }
             }
 

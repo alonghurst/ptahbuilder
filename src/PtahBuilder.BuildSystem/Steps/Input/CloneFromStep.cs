@@ -27,7 +27,7 @@ public class CloneFromStep<TTarget, TSource> : IStep<TTarget>
                 return new { targetProperty = x, sourceProperty = y };
             })
             .Where(x => x?.sourceProperty != null)
-            .Select(x => x!)
+            .Select(x => x)
             .ToArray();
 
         foreach (var sourceEntity in _sourceProvider.Entities)
