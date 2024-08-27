@@ -7,17 +7,22 @@ namespace PtahBuilder.BuildSystem.Steps.Output;
 public class SplitTsvIntoManyFilesStep : IStep<string>
 {
     private readonly IFilesConfig _filesConfig;
+    private readonly string? _outputDirectory;
 
     private const string SheetPrefix = "###Sheet: ";
 
-    public SplitTsvIntoManyFilesStep(IFilesConfig filesConfig)
+    public SplitTsvIntoManyFilesStep(IFilesConfig filesConfig, string? outputDirectory = null)
     {
         _filesConfig = filesConfig;
+        _outputDirectory = outputDirectory;
     }
 
     public Task Execute(IPipelineContext<string> context, IReadOnlyCollection<Entity<string>> entities)
     {
-        foreach (var entity in entities) { 
+        var output = string.IsNullOrWhiteSpace(_outputDirectory) ? _filesConfig.DataDirectory : _outputDirectory;
+
+        foreach (var entity in entities)
+        {
             var content = entity.Value;
 
             var lines = new List<string>();
@@ -27,7 +32,7 @@ public class SplitTsvIntoManyFilesStep : IStep<string>
             {
                 if (!string.IsNullOrWhiteSpace(filename) && lines.Any())
                 {
-                    var file = Path.Combine(_filesConfig.DataDirectory, $"{filename}.tsv");
+                    var file = Path.Combine(output, $"{filename}.tsv");
 
                     File.WriteAllLines(file, lines);
 
