@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Humanizer;
+using Microsoft.Extensions.DependencyInjection;
 using PtahBuilder.BuildSystem.Config;
 using PtahBuilder.BuildSystem.Entities;
 using PtahBuilder.BuildSystem.Execution.Abstractions;
@@ -117,7 +118,7 @@ public class PipelineContext<T> : IPipelineContext<T>, IEntityProvider<T>
         {
             var file = metadata[MetadataKeys.SourceFile].ToString();
 
-            return Path.GetFileNameWithoutExtension(file)!.ToSlug();
+            return Path.GetFileNameWithoutExtension(file)!.ToSlug().Humanize();
         }
 
         foreach (var property in Config.GetIdProperties())
@@ -139,7 +140,7 @@ public class PipelineContext<T> : IPipelineContext<T>, IEntityProvider<T>
         {
             var file = metadata[MetadataKeys.SourceFile].ToString();
 
-            return Path.GetFileNameWithoutExtension(file)!;
+            return Path.GetFileNameWithoutExtension(file)!.ToSlug().Humanize();
         }
 
         throw new InvalidOperationException($"{Config.Name}: Unable to find backup Id");
