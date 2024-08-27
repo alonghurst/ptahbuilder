@@ -44,7 +44,7 @@ public class BuilderContext : IDisposable
     {
         OutputConfiguration();
 
-        var pipelines = BuildPipelines().ToArray();
+        var pipelines = BuildPipelines(_config).ToArray();
 
         var stages = Enum.GetValues<Stage>();
 
@@ -134,11 +134,11 @@ public class BuilderContext : IDisposable
         }
     }
 
-    private IEnumerable<(Type type, IPipelineContext pipeline)> BuildPipelines()
+    private IEnumerable<(Type type, IPipelineContext pipeline)> BuildPipelines(ExecutionConfig executionConfig)
     {
-        foreach (var config in _config.EntityPipelines)
+        foreach (var pipelineConfig in _config.EntityPipelines)
         {
-            var type = config.GetType();
+            var type = pipelineConfig.GetType();
 
             if (type.GenericTypeArguments.Length > 0)
             {
@@ -146,7 +146,7 @@ public class BuilderContext : IDisposable
 
                 var pipelineType = typeof(PipelineContext<>).MakeGenericType(entityType);
 
-                var pipeline = Activator.CreateInstance(pipelineType, config, _logger, _diagnostics) as IPipelineContext;
+                var pipeline = Activator.CreateInstance(pipelineType, executionConfig, pipelineConfig, _logger, _diagnostics) as IPipelineContext;
 
                 if (pipeline == null)
                 {
