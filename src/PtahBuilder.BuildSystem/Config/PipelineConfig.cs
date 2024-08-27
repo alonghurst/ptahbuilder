@@ -48,7 +48,7 @@ public class PipelineConfig<T> : PipelineConfig
     public Func<T, string> GetId { get; set; }
     public MissingIdPreference MissingIdPreference { get; set; } = MissingIdPreference.FallbackIdProperty;
     
-    public Func<string, string> GenerateId { get; set; } = x => x.ToSlug();
+    public Func<string, string>? ProcessId { get; set; }
 
     public PipelineConfig(string name) : base(name)
     {

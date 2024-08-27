@@ -20,13 +20,19 @@ public class PipelineContext<T> : IPipelineContext<T>, IEntityProvider<T>
 
     private readonly ILogger _logger;
     private readonly IDiagnostics _diagnostics;
+    private readonly ExecutionConfig _executionConfig;
 
-    public PipelineContext(PipelineConfig<T> config, ILogger logger, IDiagnostics diagnostics)
+    private readonly Func<string, string> _processId;
+
+    public PipelineContext(ExecutionConfig executionConfig, PipelineConfig<T> config, ILogger logger, IDiagnostics diagnostics)
     {
+        _executionConfig = executionConfig;
         Config = config;
 
         _logger = logger;
         _diagnostics = diagnostics;
+
+        _processId = config.ProcessId ?? _executionConfig.DefaultIdProcessor ?? (x => x.ToSlug());
     }
 
     public Entity<T> AddEntity(T entity, Dictionary<string, object>? metadata)
@@ -118,7 +124,7 @@ public class PipelineContext<T> : IPipelineContext<T>, IEntityProvider<T>
         {
             var file = metadata[MetadataKeys.SourceFile].ToString();
 
-            return Path.GetFileNameWithoutExtension(file)!.ToSlug().Humanize();
+            return _processId(Path.GetFileNameWithoutExtension(file)!);
         }
 
         foreach (var property in Config.GetIdProperties())
@@ -127,7 +133,7 @@ public class PipelineContext<T> : IPipelineContext<T>, IEntityProvider<T>
 
             if (!string.IsNullOrWhiteSpace(value))
             {
-                value = Config.GenerateId(value);
+                value = _processId(value);
 
                 if (!string.IsNullOrWhiteSpace(value))
                 {
@@ -140,7 +146,7 @@ public class PipelineContext<T> : IPipelineContext<T>, IEntityProvider<T>
         {
             var file = metadata[MetadataKeys.SourceFile].ToString();
 
-            return Path.GetFileNameWithoutExtension(file)!.ToSlug().Humanize();
+            return _processId(Path.GetFileNameWithoutExtension(file)!);
         }
 
         throw new InvalidOperationException($"{Config.Name}: Unable to find backup Id");

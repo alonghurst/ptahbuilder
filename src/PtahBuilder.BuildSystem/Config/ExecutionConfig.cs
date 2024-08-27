@@ -1,4 +1,5 @@
-﻿using PtahBuilder.BuildSystem.Execution;
+﻿using System.Net.NetworkInformation;
+using PtahBuilder.BuildSystem.Execution;
 
 namespace PtahBuilder.BuildSystem.Config;
 
@@ -14,7 +15,7 @@ public class ExecutionConfig
     public bool DeleteOutputDirectory { get; set; } = true;
     public bool WriteValidationToTextFile { get; set; } = true;
 
-    public Func<string, string>? DefaultIdGenerator { get; set; }
+    public Func<string, string>? DefaultIdProcessor { get; set; }
     public MissingIdPreference? MissingIdPreference { get; set; }
 
     public List<PipelineConfig> EntityPipelines { get; } = new();
@@ -38,9 +39,9 @@ public class ExecutionConfig
     {
         var pipeline = new PipelineConfig<T>(name);
 
-        if (DefaultIdGenerator != null)
+        if (DefaultIdProcessor != null && pipeline.ProcessId == null)
         {
-            pipeline.GenerateId = DefaultIdGenerator;
+            pipeline.ProcessId = DefaultIdProcessor;
         }
 
         if (MissingIdPreference.HasValue)
