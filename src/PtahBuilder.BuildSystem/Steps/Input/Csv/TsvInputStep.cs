@@ -13,7 +13,7 @@ public class TsvInputStep<T> : CsvInputStep<T> where T : class
 
     private static CsvReadOptions FixOptions(CsvReadOptions? options)
     {
-        options = options ?? new CsvReadOptions();
+        options ??= new();
 
         options.ColumnSeparator = "\t";
 
