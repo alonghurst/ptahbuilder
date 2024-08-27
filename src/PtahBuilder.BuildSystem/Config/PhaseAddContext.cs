@@ -4,18 +4,18 @@ public class PhaseAddContext
 {
     public PhaseAddContext(ExecutionConfig executionConfig)
     {
-        _executionConfig = executionConfig;
+        ExecutionConfig = executionConfig;
     }
 
     public List<PipelineConfig> EntityPipelines { get; } = new();
 
-    private readonly ExecutionConfig _executionConfig;
+    public ExecutionConfig ExecutionConfig { get; }
 
     public PhaseAddContext AddPipeline<T>(Action<PipelineConfig<T>> configure, string? name = null)
     {
         name = string.IsNullOrWhiteSpace(name) ? $"{typeof(T).Name}_Pipeline" : name;
 
-        var pipeline = _executionConfig.CreatePipelineConfig<T>(name);
+        var pipeline = ExecutionConfig.CreatePipelineConfig<T>(name);
             
         configure(pipeline);
 

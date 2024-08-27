@@ -9,6 +9,8 @@ public class CsvReadOptions
 {
     public bool SkipFirstLine { get; set; } = true;
     public string ColumnSeparator { get; set; } = ",";
+
+    public string[]? EmptyCellMarkers { get; set; }
 }
 
 public abstract class CsvReadStep<T> : IStep<T> where T : class
@@ -35,6 +37,8 @@ public abstract class CsvReadStep<T> : IStep<T> where T : class
         var lines = await File.ReadAllLinesAsync(file);
         var hasSkipped = false;
 
+        ProcessHeaderLine(lines[0].Split(_options.ColumnSeparator, StringSplitOptions.TrimEntries));
+
         foreach (var line in lines)
         {
             if (_options.SkipFirstLine && !hasSkipped)
@@ -50,6 +54,17 @@ public abstract class CsvReadStep<T> : IStep<T> where T : class
 
             var columns = line.Split(_options.ColumnSeparator, StringSplitOptions.TrimEntries);
 
+            if (_options.EmptyCellMarkers != null)
+            {
+                for (int i = 0; i < columns.Length; i++)
+                {
+                    if (_options.EmptyCellMarkers.Contains(columns[i]))
+                    {
+                        columns[i] = string.Empty;
+                    }
+                }
+            }
+
             if (columns.All(string.IsNullOrWhiteSpace))
             {
                 continue;
@@ -58,7 +73,13 @@ public abstract class CsvReadStep<T> : IStep<T> where T : class
             RowReadFromFile(context, new(file, line, columns));
         }
     }
+
     protected abstract void RowReadFromFile(IPipelineContext<T> context, ReadRow readRow);
+    
+    protected virtual void ProcessHeaderLine(string[] line)
+    {
+
+    }
 
     public record ReadRow(string Filename, string Row, string[] Columns);
 }
