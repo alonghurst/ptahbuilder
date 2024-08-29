@@ -1,5 +1,4 @@
-﻿using System.Net.NetworkInformation;
-using PtahBuilder.BuildSystem.Execution;
+﻿using PtahBuilder.BuildSystem.Execution;
 
 namespace PtahBuilder.BuildSystem.Config;
 

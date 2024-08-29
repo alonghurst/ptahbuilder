@@ -1,7 +1,6 @@
 ﻿using System.Reflection;
 using PtahBuilder.BuildSystem.Entities;
 using PtahBuilder.BuildSystem.Execution.Abstractions;
-using PtahBuilder.Util.Extensions;
 
 namespace PtahBuilder.BuildSystem.Config;
 
