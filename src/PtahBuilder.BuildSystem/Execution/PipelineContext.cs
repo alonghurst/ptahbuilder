@@ -40,6 +40,8 @@ public class PipelineContext<T> : IPipelineContext<T>, IEntityProvider<T>
 
         var id = Config.GetId(entity);
 
+        id = _processId(id);
+
         if (string.IsNullOrWhiteSpace(id))
         {
             var newId = FindBackupId(entity, metadata);
