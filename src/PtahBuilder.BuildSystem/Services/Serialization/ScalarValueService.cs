@@ -43,7 +43,7 @@ public class ScalarValueService : IScalarValueService
         value = type.LazyConvertForValue(value, LazyTimeSpan);
         value = type.LazyConvertEnumForProperty(value);
 
-        if (type.IsArray && type.HasElementType)
+        if (type != typeof(string) && type.IsArray && type.HasElementType)
         {
             var elementType = type.GetElementType();
 
@@ -52,6 +52,24 @@ public class ScalarValueService : IScalarValueService
             {
                 value = Array.CreateInstance(elementType ?? throw new InvalidOperationException(), 0);
                 return value;
+            }
+
+            if (elementType != typeof(string) && value is string toSplit && toSplit.Contains(',') && elementType != null)
+            {
+                var splits = toSplit.Split(',', StringSplitOptions.RemoveEmptyEntries);
+
+                var rawData = splits.Select(x => (dynamic?)ConvertScalarValue(elementType, x))
+                    .Select(x => Convert.ChangeType(x, elementType))
+                    .ToArray();
+
+                var valueData = Array.CreateInstance(elementType ?? throw new InvalidOperationException(), rawData.Length);
+
+                for (int i = 0; i < rawData.Length; i++)
+                {
+                    ((dynamic)valueData)[i] = rawData[i];
+                }
+
+                return valueData;
             }
 
             // If the target property is an array but a scalar value was passed then simple wrap the result in array
