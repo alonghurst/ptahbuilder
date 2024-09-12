@@ -49,7 +49,7 @@ public class DynamicMappingService : IDynamicMappingService
     {
         var property = GetProperty(entity, propertyName);
         var value = _scalarValueService.ConvertScalarValue(property.PropertyType, rawValue);
-
+        
         property.SetValue(entity, value);
     }
 
