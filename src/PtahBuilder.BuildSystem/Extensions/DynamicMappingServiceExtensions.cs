@@ -15,7 +15,7 @@ public static class DynamicMappingServiceExtensions
         }
     }
 
-    public static void MapSeparatedPropertiesToEntity<T>(this IDynamicMappingService service, T entity, string propertyList, char pairSeparator = ',', char valueSeparator = ':') where T : class
+    public static void MapSeparatedPropertiesToEntity<T>(this IDynamicMappingService service, T entity, string propertyList, char pairSeparator = ';', char valueSeparator = ':') where T : class
     {
         var propertyValues = propertyList.Split(pairSeparator, StringSplitOptions.RemoveEmptyEntries);
 
