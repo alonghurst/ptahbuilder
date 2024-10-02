@@ -12,7 +12,7 @@ namespace PtahBuilder.BuildSystem;
 
 public class BuilderFactory
 {
-    private readonly Dictionary<Type, Func<object, object>> _customValueParsers = new();
+    private readonly Dictionary<Type, Func<object, object?>> _customValueParsers = new();
 
     private readonly List<JsonConverter> _jsonConverters = new();
 
@@ -53,7 +53,7 @@ public class BuilderFactory
         return this;
     }
 
-    public BuilderFactory AddCustomValueParser(Type type, Func<object, object> customValueParser)
+    public BuilderFactory AddCustomValueParser(Type type, Func<object, object?> customValueParser)
     {
         _customValueParsers.Add(type, customValueParser);
 
