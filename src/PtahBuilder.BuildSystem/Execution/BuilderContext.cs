@@ -1,4 +1,6 @@
 ﻿using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using PtahBuilder.BuildSystem.Config;
@@ -162,11 +164,13 @@ public class BuilderContext : IDisposable
     {
         var stages = Enum.GetValues<Stage>();
 
-        var json = _serviceProvider.GetRequiredService<IJsonService>();
         var files = _serviceProvider.GetRequiredService<IFilesConfig>();
 
         _logger.Info($"Files:");
-        _logger.Info(json.Serialize(files));
+        _logger.Info(JsonSerializer.Serialize(files, new JsonSerializerOptions()
+        {
+            WriteIndented = true
+        }));
 
         foreach (var entityPipeline in _config.EntityPipelines)
         {
