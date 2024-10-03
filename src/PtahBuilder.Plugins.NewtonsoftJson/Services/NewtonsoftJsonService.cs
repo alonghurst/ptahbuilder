@@ -8,14 +8,9 @@ public class NewtonsoftJsonService : IJsonService
 {
     public JsonSerializerSettings Settings { get; }
 
-    public NewtonsoftJsonService(NewtonsoftJsonConverterConfig config)
+    public NewtonsoftJsonService(NewtonsoftJsonConverterConfig config, JsonSerializerSettings settings)
     {
-        Settings = new()
-        {
-            Formatting = Formatting.Indented,
-            NullValueHandling = NullValueHandling.Ignore,
-            DefaultValueHandling = DefaultValueHandling.Ignore
-        };
+        Settings = settings;
 
         foreach (var converter in config.Converters)
         {
