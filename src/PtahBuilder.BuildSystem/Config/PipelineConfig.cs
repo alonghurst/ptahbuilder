@@ -44,9 +44,9 @@ public class PipelineConfig<T> : PipelineConfig
 
     public string[] IdProperties { get; set; } = Array.Empty<string>();
 
-    public Func<T, string> GetId { get; set; }
+    public Func<T, Dictionary<string, object>, string> GetId { get; set; }
     public MissingIdPreference MissingIdPreference { get; set; } = MissingIdPreference.FallbackIdProperty;
-    
+
     public Func<string, string>? ProcessId { get; set; }
 
     public PipelineConfig(string name) : base(name)
@@ -54,14 +54,14 @@ public class PipelineConfig<T> : PipelineConfig
         GetId = CreateDefaultGetId();
     }
 
-    private Func<T, string> CreateDefaultGetId()
+    private Func<T, Dictionary<string, object>, string> CreateDefaultGetId()
     {
         foreach (var property in GetIdProperties())
         {
-            return x => property.GetValue(x)?.ToString() ?? string.Empty;
+            return (x, _) => property.GetValue(x)?.ToString() ?? string.Empty;
         }
 
-        return _ => $"{DefaultIdPrefix}_{Guid.NewGuid().ToString()}";
+        return (_, _) => $"{DefaultIdPrefix}_{Guid.NewGuid().ToString()}";
     }
 
     private const string DefaultIdPrefix = $"DFID_";

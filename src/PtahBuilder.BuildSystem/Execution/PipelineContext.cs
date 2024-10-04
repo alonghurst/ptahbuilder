@@ -38,7 +38,7 @@ public class PipelineContext<T> : IPipelineContext<T>, IEntityProvider<T>
     {
         metadata ??= new();
 
-        var id = Config.GetId(entity);
+        var id = Config.GetId(entity, metadata);
 
         id = _processId(id);
 
@@ -47,7 +47,7 @@ public class PipelineContext<T> : IPipelineContext<T>, IEntityProvider<T>
             var newId = FindBackupId(entity, metadata);
 
             Config.SetId(entity, newId);
-            id = Config.GetId(entity);
+            id = Config.GetId(entity, metadata);
         }
 
         return AddEntityWithId(entity, id, metadata);

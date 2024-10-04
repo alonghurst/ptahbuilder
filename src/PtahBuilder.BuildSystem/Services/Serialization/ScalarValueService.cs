@@ -54,22 +54,28 @@ public class ScalarValueService : IScalarValueService
                 return value;
             }
 
-            if (elementType != typeof(string) && value is string toSplit && toSplit.Contains(',') && elementType != null)
+            if (elementType != typeof(string) && elementType != null)
             {
-                var splits = toSplit.Split(',', StringSplitOptions.RemoveEmptyEntries);
+                // Primitive elements are split by commas whereas non-primitives use commas to divide property assignment and semicolons to separate elements
+                var splitBy = elementType.IsPrimitive ? ',' : ';';
 
-                var rawData = splits.Select(x => (dynamic?)ConvertScalarValue(elementType, x))
-                    .Select(x => Convert.ChangeType(x, elementType))
-                    .ToArray();
-
-                var valueData = Array.CreateInstance(elementType ?? throw new InvalidOperationException(), rawData.Length);
-
-                for (int i = 0; i < rawData.Length; i++)
+                if (value is string toSplit && toSplit.Contains(splitBy))
                 {
-                    ((dynamic)valueData)[i] = rawData[i];
-                }
+                    var splits = toSplit.Split(splitBy, StringSplitOptions.RemoveEmptyEntries);
 
-                return valueData;
+                    var rawData = splits.Select(x => (dynamic?)ConvertScalarValue(elementType, x))
+                        .Select(x => Convert.ChangeType(x, elementType))
+                        .ToArray();
+
+                    var valueData = Array.CreateInstance(elementType ?? throw new InvalidOperationException(), rawData.Length);
+
+                    for (int i = 0; i < rawData.Length; i++)
+                    {
+                        ((dynamic)valueData)[i] = rawData[i];
+                    }
+
+                    return valueData;
+                }
             }
 
             // If the target property is an array but a scalar value was passed then simple wrap the result in array
