@@ -39,8 +39,12 @@ public abstract class CsvReadStep<T> : IStep<T> where T : class
 
         ProcessHeaderLine(lines[0].Split(_options.ColumnSeparator, StringSplitOptions.TrimEntries));
 
+        var rowNumber = -1;
+
         foreach (var line in lines)
         {
+            rowNumber++;
+
             if (_options.SkipFirstLine && !hasSkipped)
             {
                 hasSkipped = true;
@@ -70,16 +74,16 @@ public abstract class CsvReadStep<T> : IStep<T> where T : class
                 continue;
             }
 
-            RowReadFromFile(context, new(file, line, columns));
+            RowReadFromFile(context, new(rowNumber, file, line, columns));
         }
     }
 
     protected abstract void RowReadFromFile(IPipelineContext<T> context, ReadRow readRow);
-    
+
     protected virtual void ProcessHeaderLine(string[] line)
     {
 
     }
 
-    public record ReadRow(string Filename, string Row, string[] Columns);
+    public record ReadRow(int RowNumber, string Filename, string Row, string[] Columns);
 }
