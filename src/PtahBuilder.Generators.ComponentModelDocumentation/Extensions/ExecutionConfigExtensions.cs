@@ -26,7 +26,7 @@ public static class ExecutionConfigExtensions
             phase.AddPipeline<TypeToDocument>(p =>
             {
                 p.DuplicateIdBehaviour = DuplicateIdBehaviour.ReturnExistingEntity;
-                p.GetId = t => t.Type.GetTypeName();
+                p.GetId = (t, _) => t.Type.GetTypeName();
 
                 p.AddInputStep<InsertEntitiesStep<TypeToDocument>>(types);
                 p.AddInputStep<FindAdditionalTypesToDocumentStep>();
@@ -34,7 +34,7 @@ public static class ExecutionConfigExtensions
 
             phase.AddPipeline<TypeDocumentation>(p =>
             {
-                p.GetId = t => t.Type.Name;
+                p.GetId = (t, _) => t.Type.Name;
 
                 p.AddProcessStep<TypeToDocumentationStep>();
             });
