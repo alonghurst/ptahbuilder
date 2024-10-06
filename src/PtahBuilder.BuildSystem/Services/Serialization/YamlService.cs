@@ -98,7 +98,7 @@ public class YamlService : IYamlService
                 var elementType = property.PropertyType.GetElementType()!;
 
                 dynamic values = GetSequenceValuesForArray(elementType, sequenceNode, settings)
-                    .Select(e => Convert.ChangeType(e, elementType))
+                    //.Select(e => Convert.ChangeType(e, elementType))
                     .ToArray();
 
                 var array = ValuesToArray(elementType, values);
@@ -177,8 +177,6 @@ public class YamlService : IYamlService
 
         return array;
     }
-
-
 
     private IEnumerable<dynamic?> GetSequenceValuesForArray(Type type, YamlSequenceNode sequenceNode, YamlDeserializationPropertySettings? settings)
     {
