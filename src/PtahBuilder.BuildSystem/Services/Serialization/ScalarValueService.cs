@@ -62,9 +62,9 @@ public class ScalarValueService : IScalarValueService
                 if (value is string toSplit && toSplit.Contains(splitBy))
                 {
                     var splits = toSplit.Split(splitBy, StringSplitOptions.RemoveEmptyEntries);
-
+                    
                     var rawData = splits.Select(x => (dynamic?)ConvertScalarValue(elementType, x))
-                        .Select(x => Convert.ChangeType(x, elementType))
+                        //.Select(x => Convert.ChangeType(x, elementType))
                         .ToArray();
 
                     var valueData = Array.CreateInstance(elementType ?? throw new InvalidOperationException(), rawData.Length);
