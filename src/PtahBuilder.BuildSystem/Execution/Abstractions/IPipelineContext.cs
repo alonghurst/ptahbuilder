@@ -13,11 +13,13 @@ public interface IPipelineContext
 
 public interface IPipelineContext<T> : IPipelineContext
 {
+    Func<string, string> ProcessId { get; }
+
     /// <summary>
     /// Adds an entity to the context. An Id is automatically determined or generated depending on the configuration
     /// </summary>
     Entity<T> AddEntity(T entity, Dictionary<string, object>? metadata = null);
-    
+
     Entity<T> AddEntityWithId(T entity, string id, Dictionary<string, object>? metadata = null);
 
     void AddValidationError(Entity<T> entity, IStep<T> step, string error);

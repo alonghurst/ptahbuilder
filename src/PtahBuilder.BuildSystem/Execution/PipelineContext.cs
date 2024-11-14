@@ -21,7 +21,7 @@ public class PipelineContext<T> : IPipelineContext<T>, IEntityProvider<T>
     private readonly IDiagnostics _diagnostics;
     private readonly ExecutionConfig _executionConfig;
 
-    private readonly Func<string, string> _processId;
+    public Func<string, string> ProcessId { get; }
 
     public PipelineContext(ExecutionConfig executionConfig, PipelineConfig<T> config, ILogger logger, IDiagnostics diagnostics)
     {
@@ -31,7 +31,7 @@ public class PipelineContext<T> : IPipelineContext<T>, IEntityProvider<T>
         _logger = logger;
         _diagnostics = diagnostics;
 
-        _processId = config.ProcessId ?? _executionConfig.DefaultIdProcessor ?? (x => x.ToSlug());
+        ProcessId = config.ProcessId ?? _executionConfig.DefaultIdProcessor ?? (x => x.ToSlug());
     }
 
     public Entity<T> AddEntity(T entity, Dictionary<string, object>? metadata)
@@ -40,7 +40,7 @@ public class PipelineContext<T> : IPipelineContext<T>, IEntityProvider<T>
 
         var id = Config.GetId(entity, metadata);
 
-        id = _processId(id);
+        id = ProcessId(id);
 
         if (string.IsNullOrWhiteSpace(id))
         {
@@ -125,7 +125,7 @@ public class PipelineContext<T> : IPipelineContext<T>, IEntityProvider<T>
         {
             var file = metadata[MetadataKeys.SourceFile].ToString();
 
-            return _processId(Path.GetFileNameWithoutExtension(file)!);
+            return ProcessId(Path.GetFileNameWithoutExtension(file)!);
         }
 
         foreach (var property in Config.GetIdProperties())
@@ -134,7 +134,7 @@ public class PipelineContext<T> : IPipelineContext<T>, IEntityProvider<T>
 
             if (!string.IsNullOrWhiteSpace(value))
             {
-                value = _processId(value);
+                value = ProcessId(value);
 
                 if (!string.IsNullOrWhiteSpace(value))
                 {
@@ -147,7 +147,7 @@ public class PipelineContext<T> : IPipelineContext<T>, IEntityProvider<T>
         {
             var file = metadata[MetadataKeys.SourceFile].ToString();
 
-            return _processId(Path.GetFileNameWithoutExtension(file)!);
+            return ProcessId(Path.GetFileNameWithoutExtension(file)!);
         }
 
         throw new InvalidOperationException($"{Config.Name}: Unable to find backup Id");
