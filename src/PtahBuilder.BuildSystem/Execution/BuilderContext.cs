@@ -71,6 +71,15 @@ public class BuilderContext : IDisposable
                 {
                     _logger.Warning($"Unable to assign {pipeline.GetType().GetTypeName()} to {providerType.GetTypeName()}");
                 }
+
+                var contextType = typeof(IPipelineContext<>).MakeGenericType(type);
+
+                if (pipeline.GetType().IsAssignableTo(contextType))
+                {
+                    var descriptor = new ServiceDescriptor(contextType, pipeline);
+
+                    _services.Replace(descriptor);
+                }
             }
 
             await using var serviceProvider = _services.BuildServiceProvider();
