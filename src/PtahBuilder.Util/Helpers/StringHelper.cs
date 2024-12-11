@@ -18,4 +18,14 @@ public static class StringHelper
 
         return result;
     }
+
+    public static string WithPrefix(this string str, char prefix)
+    {
+        if (str[0] != prefix)
+        {
+            return $"{prefix}{str}";
+        }
+
+        return str;
+    }
 }
