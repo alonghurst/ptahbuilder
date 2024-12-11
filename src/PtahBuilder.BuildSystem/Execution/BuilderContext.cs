@@ -174,7 +174,7 @@ public class BuilderContext : IDisposable
         var files = _serviceProvider.GetRequiredService<IFilesConfig>();
 
         _logger.Info($"Files:");
-        _logger.Info(JsonSerializer.Serialize(files, new JsonSerializerOptions()
+        _logger.Info(JsonSerializer.Serialize(files, new JsonSerializerOptions
         {
             WriteIndented = true
         }));
