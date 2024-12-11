@@ -27,7 +27,7 @@ public static class NewtonsoftJsonBuilderExtensions
         return builderFactory.UseNewtonsoftJson(settings, converters.ToArray());
     }
 
-    public static BuilderFactory UseNewtonsoftJson(this BuilderFactory builderFactory,  params JsonConverter[] converters)
+    public static BuilderFactory UseNewtonsoftJson(this BuilderFactory builderFactory, params JsonConverter[] converters)
     {
         var settings = new JsonSerializerSettings()
         {

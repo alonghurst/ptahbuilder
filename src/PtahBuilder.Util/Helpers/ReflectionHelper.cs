@@ -65,7 +65,7 @@ public static class ReflectionHelper
 
     public static IEnumerable<Type> GetLoadedTypesThatAreAssignableTo(Type type, bool instantiableOnly = true, string? assemblyFilter = null)
     {
-        return GetAllLoadedTypes(assemblyFilter).Where(t => type.IsAssignableFrom(t) && (!instantiableOnly || !t.IsAbstract && !t.IsInterface));
+        return GetAllLoadedTypes(assemblyFilter).Where(t => type.IsAssignableFrom(t) && (!instantiableOnly || (!t.IsAbstract && !t.IsInterface && !t.ContainsGenericParameters)));
     }
 
     public static IEnumerable<Type> GetLoadedTypesThatImplementInterfaceWithGenericArgumentsOfType(Type interfaceType, string? namespaceFilter, params Type[] genericTypes)
