@@ -174,7 +174,7 @@ public class PipelineContext<T> : IPipelineContext<T>, IEntityProvider<T>
 
              try
              {
-                 await instance.Execute(this, Entities.Values);
+                 await instance.Execute(this, Entities.Values.ToArray());
              }
              catch
              {

@@ -33,6 +33,20 @@ public class Metadata
         Values[key] = value;
     }
 
+    public bool IsBoolSet(string key) => TryGetBool(key, out var b) && b;
+
+    public bool TryGetBool(string key, out bool b)
+    {
+        if (TryGetValue(key, out var o))
+        {
+            b = Convert.ToBoolean(o);
+            return true;
+        }
+
+        b = false;
+        return false;
+    }
+
     public bool TryGetValue(string key, out object? o) => Values.TryGetValue(key, out o);
 
     public bool TryGetString(string key, out string s)
