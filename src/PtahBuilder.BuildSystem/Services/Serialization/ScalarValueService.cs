@@ -57,7 +57,7 @@ public class ScalarValueService : IScalarValueService
             if (elementType != typeof(string) && elementType != null)
             {
                 // Primitive elements are split by commas whereas non-primitives use commas to divide property assignment and semicolons to separate elements
-                var splitBy = elementType.IsPrimitive ? ',' : ';';
+                var splitBy = elementType.IsPrimitive || elementType.IsEnum ? ',' : ';';
 
                 if (value is string toSplit && toSplit.Contains(splitBy))
                 {
