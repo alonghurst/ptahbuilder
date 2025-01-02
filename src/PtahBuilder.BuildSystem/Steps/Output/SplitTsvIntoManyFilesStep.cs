@@ -8,13 +8,15 @@ public class SplitTsvIntoManyFilesStep : IStep<string>
 {
     private readonly IFilesConfig _filesConfig;
     private readonly string? _outputDirectory;
+    private readonly Dictionary<string, string> _prefixLookup;
 
     private const string SheetPrefix = "###Sheet: ";
 
-    public SplitTsvIntoManyFilesStep(IFilesConfig filesConfig, string? outputDirectory = null)
+    public SplitTsvIntoManyFilesStep(IFilesConfig filesConfig, string? outputDirectory = null, Dictionary<string, string>? prefixLookup = null)
     {
         _filesConfig = filesConfig;
         _outputDirectory = outputDirectory;
+        _prefixLookup= prefixLookup ?? new Dictionary<string, string>();
     }
 
     public Task Execute(IPipelineContext<string> context, IReadOnlyCollection<Entity<string>> entities)
@@ -23,6 +25,13 @@ public class SplitTsvIntoManyFilesStep : IStep<string>
 
         foreach (var entity in entities)
         {
+            _prefixLookup.TryGetValue(entity.Id, out var prefix);
+
+            if (!string.IsNullOrWhiteSpace(prefix))
+            {
+                prefix = $"{prefix} -";
+            }
+
             var content = entity.Value;
 
             var lines = new List<string>();
@@ -32,7 +41,7 @@ public class SplitTsvIntoManyFilesStep : IStep<string>
             {
                 if (!string.IsNullOrWhiteSpace(filename) && lines.Any())
                 {
-                    var file = Path.Combine(output, $"{filename}.tsv");
+                    var file = Path.Combine(output, $"{prefix}{filename}.tsv");
 
                     File.WriteAllLines(file, lines);
 
