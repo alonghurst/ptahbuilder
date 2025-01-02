@@ -29,7 +29,7 @@ public class SplitTsvIntoManyFilesStep : IStep<string>
 
             if (!string.IsNullOrWhiteSpace(prefix))
             {
-                prefix = $"{prefix} -";
+                prefix = $"{prefix} - ";
             }
 
             var content = entity.Value;
