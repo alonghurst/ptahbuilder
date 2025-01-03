@@ -7,7 +7,6 @@ using PtahBuilder.BuildSystem.Services.Serialization;
 using PtahBuilder.Plugins.NewtonsoftJson.Config.Internal;
 using PtahBuilder.Plugins.NewtonsoftJson.Services;
 using PtahBuilder.Util.Helpers;
-using YamlDotNet.Serialization;
 
 namespace PtahBuilder.Plugins.NewtonsoftJson;
 

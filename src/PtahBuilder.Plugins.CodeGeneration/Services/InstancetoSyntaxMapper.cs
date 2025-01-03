@@ -1,21 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Reflection;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using PtahBuilder.BuildSystem.Services;
 using PtahBuilder.Plugins.CodeGeneration.Syntax;
 using PtahBuilder.Util.Extensions.Reflection;
-using PtahBuilder.Util.Helpers;
 using PtahBuilder.Util.Services.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
 using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace PtahBuilder.Plugins.CodeGeneration.Services
 {
