@@ -10,6 +10,7 @@ using PtahBuilder.Util.Helpers;
 
 namespace PtahBuilder.BuildSystem;
 
+// Root class that builds it all
 public class BuilderFactory
 {
     private readonly Dictionary<Type, Func<object, object?>> _customValueParsers = new();
