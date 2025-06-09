@@ -8,13 +8,13 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\PtahBuilder.Util\PtahBuilder.Util.csproj" />
-	</ItemGroup>
-
-	<ItemGroup>
 		<PackageReference Include="Humanizer.Core" Version="2.14.1" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0" />
 		<PackageReference Include="YamlDotNet" Version="12.3.1" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\PtahBuilder.Util\PtahBuilder.Util.csproj" />
 	</ItemGroup>
 
 </Project>

@@ -94,13 +94,13 @@ public class PipelineConfig<T> : PipelineConfig
         }
     }
 
-    public void SetId(T entity, string id)
+    public void SetId(T entity, string id, bool force = false)
     {
         foreach (var propertyInfo in GetIdProperties())
         {
             var current = propertyInfo.GetValue(entity)?.ToString();
 
-            if (string.IsNullOrWhiteSpace(current) || current.StartsWith(DefaultIdPrefix))
+            if (string.IsNullOrWhiteSpace(current) || current.StartsWith(DefaultIdPrefix) || force)
             {
                 propertyInfo.SetValue(entity, id);
             }
