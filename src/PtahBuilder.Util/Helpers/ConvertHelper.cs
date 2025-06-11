@@ -1,4 +1,6 @@
-﻿namespace PtahBuilder.Util.Helpers;
+﻿using System.Globalization;
+
+namespace PtahBuilder.Util.Helpers;
 
 public static class ConvertHelper
 {
@@ -48,5 +50,18 @@ public static class ConvertHelper
             return d;
         }
         return false;
+    }
+
+    public static DateTime StringToDateTime(object? input)
+    {
+        if (input is string s)
+        {
+            string[] formats = { "yyyy-MM-dd", "dd/MM/yyyy" };
+            if (DateTime.TryParseExact(s.Trim(), formats, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime dt))
+            {
+                return dt;
+            }
+        }
+        return default;
     }
 }
