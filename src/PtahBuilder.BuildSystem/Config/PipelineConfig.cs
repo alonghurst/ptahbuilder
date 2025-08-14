@@ -80,7 +80,6 @@ public class PipelineConfig<T> : PipelineConfig
             yield return $"{typeof(T).Name}Id";
             yield return "Id";
             yield return "TypeName";
-            yield return "Name";
         }
 
         foreach (var propertyName in PropertyNames())
