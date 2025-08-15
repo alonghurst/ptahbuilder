@@ -66,7 +66,7 @@ public class PipelineConfig<T> : PipelineConfig
 
     private const string DefaultIdPrefix = $"DFID_";
 
-    internal IEnumerable<PropertyInfo> GetIdProperties()
+    internal IEnumerable<PropertyInfo> GetIdProperties(bool toUseAsSourceForUnknownId = true)
     {
         var properties = typeof(T).GetProperties();
 
@@ -80,6 +80,11 @@ public class PipelineConfig<T> : PipelineConfig
             yield return $"{typeof(T).Name}Id";
             yield return "Id";
             yield return "TypeName";
+
+            if (toUseAsSourceForUnknownId)
+            {
+                yield return "Name";
+            }
         }
 
         foreach (var propertyName in PropertyNames())
@@ -95,7 +100,7 @@ public class PipelineConfig<T> : PipelineConfig
 
     public void SetId(T entity, string id, bool force = false)
     {
-        foreach (var propertyInfo in GetIdProperties())
+        foreach (var propertyInfo in GetIdProperties(false))
         {
             var current = propertyInfo.GetValue(entity)?.ToString();
 
