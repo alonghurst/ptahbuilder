@@ -4,7 +4,7 @@ using PtahBuilder.Util.Extensions;
 
 namespace PtahBuilder.BuildSystem.Steps.Output.SimpleText;
 
-public class SimpleTextOutputStep:IStep<SimpleTextOutput>
+public class SimpleTextOutputStep : IStep<SimpleTextOutput>
 {
     public Task Execute(IPipelineContext<SimpleTextOutput> context, IReadOnlyCollection<Entity<SimpleTextOutput>> entities)
     {
