@@ -5,7 +5,7 @@ using PtahBuilder.Util.Extensions;
 
 namespace PtahBuilder.BuildSystem.Steps.Input.SimpleText;
 
-public class SimpleTextInputStep:IStep<SimpleTextInput>
+public class SimpleTextInputStep : IStep<SimpleTextInput>
 {
     private readonly IFilesConfig _filesConfig;
     private readonly SimpleTextInputConfig _config;
@@ -20,7 +20,7 @@ public class SimpleTextInputStep:IStep<SimpleTextInput>
     {
         public string RelativeDirectory { get; set; } = string.Empty;
         public string[] FileTypes { get; set; } = Array.Empty<string>();
-        public Func<SimpleTextInput,bool>? ShouldBeExcluded { get; set; }
+        public Func<SimpleTextInput, bool>? ShouldBeExcluded { get; set; }
     }
 
     public Task Execute(IPipelineContext<SimpleTextInput> context, IReadOnlyCollection<Entity<SimpleTextInput>> entities)
