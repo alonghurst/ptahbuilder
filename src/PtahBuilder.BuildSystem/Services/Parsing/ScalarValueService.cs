@@ -37,6 +37,43 @@ public class ScalarValueService : IScalarValueService
             return result!;
         }
 
+        // Handle Dictionary<TKey, TValue> types parsed from strings
+        if (type.IsDictionaryType())
+        {
+            var keyType = type.GetGenericArguments()[0];
+            var valueType = type.GetGenericArguments()[1];
+
+            if (value is string dictText)
+            {
+                dictText = dictText.Trim();
+
+                var dictionary = (System.Collections.IDictionary?)Activator.CreateInstance(type);
+                if (string.IsNullOrWhiteSpace(dictText))
+                {
+                    return dictionary;
+                }
+
+                // Expect KVPs separated by ',' and key/value separated by '|'
+                var pairs = dictText.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+
+                foreach (var pair in pairs)
+                {
+                    var kv = pair.Split('|', 2, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+                    if (kv.Length != 2)
+                    {
+                        throw new InvalidOperationException($"Unable to split \"{pair}\" into key|value for dictionary parsing");
+                    }
+
+                    var keyObj = ConvertScalarValue(keyType, kv[0]);
+                    var valueObj = ConvertScalarValue(valueType, kv[1]);
+
+                    dictionary!.Add(keyObj!, valueObj);
+                }
+
+                return dictionary;
+            }
+        }
+
         value = type.LazyConvertForValue(value, ConvertHelper.StringToDateTime);
         value = type.LazyConvertForValue(value, ConvertHelper.StringToBoolean);
         value = type.LazyConvertForValue(value, ConvertHelper.StringToInt);
