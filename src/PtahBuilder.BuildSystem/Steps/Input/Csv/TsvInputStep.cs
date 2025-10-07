@@ -1,5 +1,5 @@
 ﻿using PtahBuilder.BuildSystem.Config;
-using PtahBuilder.BuildSystem.Services.Serialization;
+using PtahBuilder.BuildSystem.Services.Mapping;
 using PtahBuilder.Util.Services.Logging;
 
 namespace PtahBuilder.BuildSystem.Steps.Input.Csv;

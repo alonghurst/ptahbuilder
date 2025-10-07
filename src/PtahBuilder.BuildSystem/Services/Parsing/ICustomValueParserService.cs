@@ -1,4 +1,4 @@
-﻿namespace PtahBuilder.BuildSystem.Services;
+﻿namespace PtahBuilder.BuildSystem.Services.Parsing;
 
 public interface ICustomValueParserService
 {

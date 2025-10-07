@@ -1,4 +1,4 @@
-﻿namespace PtahBuilder.BuildSystem.Services.Serialization;
+﻿namespace PtahBuilder.BuildSystem.Services.Mapping;
 
 public interface IScalarValueService
 {

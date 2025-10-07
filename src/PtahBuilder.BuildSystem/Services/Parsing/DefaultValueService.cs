@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Reflection;
 
-namespace PtahBuilder.BuildSystem.Services;
+namespace PtahBuilder.BuildSystem.Services.Parsing;
 
 public class DefaultValueService : IDefaultValueService
 {
