@@ -38,6 +38,14 @@ public static class StringExtensions
             .ToArray();
     }
 
+    public static HashSet<string> SplitAndFlatten(this HashSet<string> array, string separator = ",")
+    {
+        return array.SelectMany(x => x.Split(separator, StringSplitOptions.RemoveEmptyEntries))
+            .Select(x => x.Trim())
+            .Where(x => !string.IsNullOrWhiteSpace(x))
+            .ToHashSet();
+    }
+
     public static string ToSlug(this string text)
     {
         text = text.ToLower().Replace(" ", "-");
