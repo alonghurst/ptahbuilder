@@ -1,4 +1,4 @@
-﻿using PtahBuilder.BuildSystem.Services.Serialization;
+﻿using PtahBuilder.BuildSystem.Services.Mapping;
 
 namespace PtahBuilder.BuildSystem.Extensions;
 

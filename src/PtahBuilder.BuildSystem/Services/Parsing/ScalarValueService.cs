@@ -1,7 +1,8 @@
-﻿using PtahBuilder.Util.Extensions.Reflection;
+﻿using PtahBuilder.BuildSystem.Services.Parsing;
+using PtahBuilder.Util.Extensions.Reflection;
 using PtahBuilder.Util.Helpers;
 
-namespace PtahBuilder.BuildSystem.Services.Serialization;
+namespace PtahBuilder.BuildSystem.Services.Mapping;
 
 public class ScalarValueService : IScalarValueService
 {
@@ -85,6 +86,44 @@ public class ScalarValueService : IScalarValueService
             ((dynamic)arrValue)[0] = (dynamic?)ConvertScalarValue(elementType, value);
 
             value = arrValue;
+        }
+
+        // Handle HashSet<T> types
+        if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(HashSet<>))
+        {
+            var elementType = type.GetGenericArguments()[0];
+
+            // If value is empty string then return empty HashSet
+            if (value is string str && string.IsNullOrWhiteSpace(str))
+            {
+                var emptyHashSet = Activator.CreateInstance(type);
+                return emptyHashSet;
+            }
+
+            if (value is string toSplit && toSplit.Contains(','))
+            {
+                var splits = toSplit.Split(',', StringSplitOptions.RemoveEmptyEntries);
+                
+                var convertedValues = splits.Select(x => ConvertScalarValue(elementType, x.Trim())).ToArray();
+                
+                var hashSet = Activator.CreateInstance(type);
+                var addMethod = type.GetMethod("Add");
+                
+                foreach (var convertedValue in convertedValues)
+                {
+                    addMethod?.Invoke(hashSet, new[] { convertedValue });
+                }
+
+                return hashSet;
+            }
+
+            // If the target property is a HashSet but a scalar value was passed then create HashSet with single element
+            var singleHashSet = Activator.CreateInstance(type);
+            var singleAddMethod = type.GetMethod("Add");
+            var convertedSingleValue = ConvertScalarValue(elementType, value);
+            singleAddMethod?.Invoke(singleHashSet, new[] { convertedSingleValue });
+
+            return singleHashSet;
         }
 
         if (value is string text)

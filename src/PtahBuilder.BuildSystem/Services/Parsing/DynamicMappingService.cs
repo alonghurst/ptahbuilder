@@ -1,7 +1,7 @@
 ﻿using System.Reflection;
 using PtahBuilder.Util.Extensions.Reflection;
 
-namespace PtahBuilder.BuildSystem.Services.Serialization;
+namespace PtahBuilder.BuildSystem.Services.Mapping;
 
 public class DynamicMappingService : IDynamicMappingService
 {

@@ -1,6 +1,6 @@
 ﻿using PtahBuilder.BuildSystem.Config.Internal;
 
-namespace PtahBuilder.BuildSystem.Services;
+namespace PtahBuilder.BuildSystem.Services.Parsing;
 
 public class CustomValueParserService : ICustomValueParserService
 {

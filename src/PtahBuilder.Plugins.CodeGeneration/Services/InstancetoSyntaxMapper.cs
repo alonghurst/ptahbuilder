@@ -1,10 +1,10 @@
 ﻿using System.Reflection;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using PtahBuilder.BuildSystem.Services;
 using PtahBuilder.Plugins.CodeGeneration.Syntax;
 using PtahBuilder.Util.Extensions.Reflection;
 using PtahBuilder.Util.Services.Logging;
 using Microsoft.CodeAnalysis.CSharp;
+using PtahBuilder.BuildSystem.Services.Parsing;
 
 namespace PtahBuilder.Plugins.CodeGeneration.Services
 {
