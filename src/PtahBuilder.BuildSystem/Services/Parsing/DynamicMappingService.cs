@@ -49,7 +49,7 @@ public class DynamicMappingService : IDynamicMappingService
     {
         var property = GetProperty(entity, propertyName);
         var value = _scalarValueService.ConvertScalarValue(property.PropertyType, rawValue);
-        
+
         property.SetValue(entity, value);
     }
 
@@ -61,7 +61,7 @@ public class DynamicMappingService : IDynamicMappingService
 
         if (!_entityProperties.ContainsKey(entityType))
         {
-            _entityProperties.Add(entityType, entityType.GetProperties().ToDictionary(x => x.Name, x => x));
+            _entityProperties.Add(entityType, entityType.GetProperties(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public).ToDictionary(x => x.Name, x => x));
         }
 
         if (_entityProperties[entityType].TryGetValue(propertyName, out var property))
