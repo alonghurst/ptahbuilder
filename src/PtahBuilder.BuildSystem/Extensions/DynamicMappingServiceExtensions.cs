@@ -17,7 +17,7 @@ public static class DynamicMappingServiceExtensions
 
     public static void MapSeparatedPropertiesToEntity<T>(this IDynamicMappingService service, T entity, string propertyList, char pairSeparator = ';', char valueSeparator = ':') where T : class
     {
-        var propertyValues = propertyList.Split(pairSeparator, StringSplitOptions.RemoveEmptyEntries);
+        var propertyValues = propertyList.Split(pairSeparator, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
 
         if (!string.IsNullOrWhiteSpace(propertyList) && propertyValues.Length == 0)
         {
@@ -26,7 +26,7 @@ public static class DynamicMappingServiceExtensions
 
         foreach (var property in propertyValues)
         {
-            var split = property.Split(valueSeparator, StringSplitOptions.RemoveEmptyEntries);
+            var split = property.Split(valueSeparator, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
 
             if (split.Length != 2)
             {
