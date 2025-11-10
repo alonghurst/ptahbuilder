@@ -58,7 +58,7 @@ public class PipelineConfig<T> : PipelineConfig
     {
         foreach (var property in GetIdProperties())
         {
-            return (x, _) => property.GetValue(x)?.ToString() ?? string.Empty;
+            return (x, _) => property.GetValue(x)?.ToString()?.Replace("'", String.Empty) ?? string.Empty;
         }
 
         return (_, _) => $"{DefaultIdPrefix}_{Guid.NewGuid().ToString()}";
