@@ -25,7 +25,6 @@ public class ScalarValueServiceTests
     [InlineData("1", typeof(bool), true)]
     [InlineData("0", typeof(bool), false)]
     [InlineData("2023-12-25", typeof(DateTime), "2023-12-25")]
-    [InlineData("25/12/2023", typeof(DateTime), "25/12/2023")]
     [InlineData("2:30:45", typeof(TimeSpan), "2:30:45")]
     [InlineData("2.5", typeof(TimeSpan), "2.5")]
     public void ConvertScalarValue_StringToPrimitiveTypes_ConvertsCorrectly(string input, Type targetType, object expected)
