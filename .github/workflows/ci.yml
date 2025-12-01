@@ -25,9 +25,9 @@ jobs:
       - name: Calculate package version
         id: version
         run: |
-          DATE=$(date -u +%Y.%m.%d)
+          DATE=$(date -u +%Y%m%d)
           BUILD_NUMBER=$(git rev-list --count HEAD)
-          PACKAGE_VERSION="${DATE}.${BUILD_NUMBER}"
+          PACKAGE_VERSION="${DATE}.${BUILD_NUMBER}.0"
           echo "package_version=$PACKAGE_VERSION" >> $GITHUB_OUTPUT
 
       - name: Restore dependencies
