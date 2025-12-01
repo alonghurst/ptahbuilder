@@ -34,7 +34,7 @@ jobs:
         run: dotnet restore
 
       - name: Build
-        run: dotnet build --configuration Release /p:Version=${{ steps.version.outputs.package_version }} /p:AssemblyVersion=${{ steps.version.outputs.package_version }} --no-restore
+        run: dotnet build --configuration Release --no-restore
 
       - name: Test
         run: dotnet test --configuration Release --no-build --verbosity normal
