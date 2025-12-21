@@ -12,16 +12,16 @@ namespace PtahBuilder.Plugins.NewtonsoftJson;
 
 public static class NewtonsoftJsonBuilderExtensions
 {
-    public static BuilderFactory UseNewtonsoftJson(this BuilderFactory builderFactory, Assembly jsonConvertersAssembly)
+    public static BuilderFactory UseNewtonsoftJson(this BuilderFactory builderFactory, params Assembly[] jsonConvertersAssemblies)
     {
-        var converters = GetConvertersFromAssembly(jsonConvertersAssembly);
+        var converters = GetConvertersFromAssemblies(jsonConvertersAssemblies);
 
         return builderFactory.UseNewtonsoftJson(converters.ToArray());
     }
 
-    public static BuilderFactory UseNewtonsoftJson(this BuilderFactory builderFactory, Assembly jsonConvertersAssembly, JsonSerializerSettings settings)
+    public static BuilderFactory UseNewtonsoftJson(this BuilderFactory builderFactory, JsonSerializerSettings settings, params Assembly[] jsonConvertersAssemblies)
     {
-        var converters = GetConvertersFromAssembly(jsonConvertersAssembly);
+        var converters = GetConvertersFromAssemblies(jsonConvertersAssemblies);
 
         return builderFactory.UseNewtonsoftJson(settings, converters.ToArray());
     }
@@ -66,17 +66,20 @@ public static class NewtonsoftJsonBuilderExtensions
         return builderFactory;
     }
 
-    private static List<JsonConverter> GetConvertersFromAssembly(Assembly jsonConvertersAssembly)
+    private static List<JsonConverter> GetConvertersFromAssemblies(params Assembly[] jsonConvertersAssemblies)
     {
-        var types = ReflectionHelper.GetLoadedTypesThatAreAssignableTo(typeof(JsonConverter), assemblyFilter: jsonConvertersAssembly.FullName!);
-
         var converters = new List<JsonConverter>();
 
-        foreach (var type in types)
+        foreach (var assembly in jsonConvertersAssemblies)
         {
-            if (Activator.CreateInstance(type) is JsonConverter instance)
+            var types = ReflectionHelper.GetLoadedTypesThatAreAssignableTo(typeof(JsonConverter), assemblyFilter: assembly.FullName!);
+
+            foreach (var type in types)
             {
-                converters.Add(instance);
+                if (Activator.CreateInstance(type) is JsonConverter instance)
+                {
+                    converters.Add(instance);
+                }
             }
         }
 
