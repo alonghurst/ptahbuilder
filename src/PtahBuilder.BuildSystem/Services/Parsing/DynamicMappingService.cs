@@ -50,6 +50,25 @@ public class DynamicMappingService : IDynamicMappingService
         var property = GetProperty(entity, propertyName);
         var value = _scalarValueService.ConvertScalarValue(property.PropertyType, rawValue);
 
+        // If the property is a DictionaryType and the existing value is not null, merge the new dictionary into the existing one
+        if (property.PropertyType.IsDictionaryType())
+        {
+            var existingValue = property.GetValue(entity);
+            if (existingValue != null && value is System.Collections.IDictionary newDictionary)
+            {
+                var existingDictionary = (System.Collections.IDictionary)existingValue;
+                
+                // Merge new dictionary entries into existing dictionary
+                foreach (System.Collections.DictionaryEntry entry in newDictionary)
+                {
+                    existingDictionary[entry.Key] = entry.Value;
+                }
+                
+                // No need to set the property since we modified the existing dictionary in place
+                return;
+            }
+        }
+
         property.SetValue(entity, value);
     }
 
