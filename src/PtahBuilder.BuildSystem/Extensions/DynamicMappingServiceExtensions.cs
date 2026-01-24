@@ -1,4 +1,5 @@
-﻿using PtahBuilder.BuildSystem.Services.Mapping;
+using PtahBuilder.BuildSystem.Services.Mapping;
+using PtahBuilder.BuildSystem.Steps.Input.Csv;
 
 namespace PtahBuilder.BuildSystem.Extensions;
 
@@ -34,6 +35,17 @@ public static class DynamicMappingServiceExtensions
             }
 
             service.Map(entity, split[0], split[1]);
+        }
+    }
+
+    public static void MapSeparatedPropertiesToEntityFromColumn<TRow, TEntity>(this IDynamicMappingService service, TEntity entity, CsvReadStep<TRow>.ReadRow readRow, string column, char pairSeparator = ';', char valueSeparator = ':')
+        where TRow : class
+        where TEntity : class
+    {
+        var columnValue = readRow.Columns[column.ToColumn()];
+        if (!string.IsNullOrWhiteSpace(columnValue))
+        {
+            service.MapSeparatedPropertiesToEntity(entity, columnValue, pairSeparator, valueSeparator);
         }
     }
 }
