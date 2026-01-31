@@ -1,10 +1,11 @@
-﻿using System.Text;
+using System.Text;
 using System.Text.Json;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using PtahBuilder.BuildSystem.Config;
 using PtahBuilder.BuildSystem.Entities;
 using PtahBuilder.BuildSystem.Execution.Abstractions;
+using PtahBuilder.BuildSystem.Services.Reporting;
 using PtahBuilder.Util.Extensions;
 using PtahBuilder.Util.Extensions.Reflection;
 using PtahBuilder.Util.Services;
@@ -19,6 +20,7 @@ public class BuilderContext : IDisposable
     private readonly ILogger _logger;
     private readonly IDiagnostics _diagnostics;
     private readonly ServiceProvider _serviceProvider;
+    private readonly IReportingService _reportingService;
 
     public BuilderContext(IServiceCollection services, ExecutionConfig config)
     {
@@ -28,6 +30,10 @@ public class BuilderContext : IDisposable
         _serviceProvider = _services.BuildServiceProvider();
         _logger = _serviceProvider.GetRequiredService<ILogger>();
         _diagnostics = _serviceProvider.GetRequiredService<IDiagnostics>();
+
+        var filesConfig = _serviceProvider.GetRequiredService<IFilesConfig>();
+        _reportingService = new ReportingService(filesConfig);
+        _services.Replace(ServiceDescriptor.Singleton<IReportingService>(_reportingService));
 
         if (config.DeleteOutputDirectory)
         {
@@ -141,6 +147,8 @@ public class BuilderContext : IDisposable
 
             _logger.Success("Execution completed with no validation errors.");
         }
+
+        await _reportingService.WriteAllReportsAsync();
     }
 
     private IEnumerable<(Type type, IPipelineContext pipeline)> BuildPipelines(ExecutionConfig executionConfig)
