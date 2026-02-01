@@ -1,4 +1,4 @@
-﻿namespace PtahBuilder.Util.Helpers;
+namespace PtahBuilder.Util.Helpers;
 
 public static class PathHelper
 {
@@ -12,11 +12,19 @@ public static class PathHelper
         }
 
         var path = string.IsNullOrWhiteSpace(root) ? ".." : root;
+        path = Path.GetFullPath(path);
 
         while (Directory.GetDirectories(path).All(x => !x.EndsWith(lookingForDirectory)))
         {
-            path = Path.GetFullPath(Path.Combine(path, "../"));
+            var parent = Path.GetFullPath(Path.Combine(path, ".."));
 
+            if (string.Equals(path, parent, StringComparison.OrdinalIgnoreCase))
+            {
+                throw new InvalidOperationException(
+                    $"Reached filesystem root without finding a directory ending with '{lookingForDirectory}'.");
+            }
+
+            path = parent;
             Console.WriteLine($"Trying {path}");
         }
 
