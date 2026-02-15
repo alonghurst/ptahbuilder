@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection;
 using PtahBuilder.BuildSystem.Config;
 using PtahBuilder.BuildSystem.Entities;
 using PtahBuilder.BuildSystem.Execution.Abstractions;
@@ -169,24 +169,23 @@ public class PipelineContext<T> : IPipelineContext<T>, IEntityProvider<T>
         }
     }
 
-    private async Task ExecuteStep(ServiceProvider serviceProvider, StepConfig stepConfig)
+    private async Task ExecuteStep(ServiceProvider serviceProvider, IStepConfig<T> stepConfig)
     {
-        var message = $"{Config.Name}: Processing {stepConfig.StepType.GetTypeName()} ({Entities.Count} entities)";
+        var instance = stepConfig.CreateStep(serviceProvider);
+        var message = $"{Config.Name}: Processing {instance.GetType().GetTypeName()} ({Entities.Count} entities)";
 
         await _diagnostics.Time(message, async () =>
-         {
-             var instance = (IStep<T>)ActivatorUtilities.CreateInstance(serviceProvider, stepConfig.StepType, stepConfig.Arguments);
-
-             try
-             {
-                 await instance.Execute(this, Entities.Values.ToArray());
-             }
-             catch
-             {
-                 _logger.Error(message);
-                 throw;
-             }
-         });
+        {
+            try
+            {
+                await instance.Execute(this, Entities.Values.ToArray());
+            }
+            catch
+            {
+                _logger.Error(message);
+                throw;
+            }
+        });
     }
 
 
