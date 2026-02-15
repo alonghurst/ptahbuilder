@@ -177,8 +177,6 @@ public class BuilderContext : IDisposable
 
     private void OutputConfiguration()
     {
-        var stages = Enum.GetValues<Stage>();
-
         var files = _serviceProvider.GetRequiredService<IFilesConfig>();
 
         _logger.Info($"Files:");
@@ -190,17 +188,6 @@ public class BuilderContext : IDisposable
         foreach (var entityPipeline in _config.EntityPipelines)
         {
             _logger.Info($"Phase {entityPipeline.Phase}: {entityPipeline.Name}: {entityPipeline.GetType().GetTypeName()}");
-
-            foreach (var stage in stages)
-            {
-                if (entityPipeline.Stages.TryGetValue(stage, out var steps) && steps.Any())
-                {
-                    foreach (var step in steps)
-                    {
-                        _logger.Info($"\t{stage}: {step.StepType.GetTypeName()}");
-                    }
-                }
-            }
         }
     }
 
