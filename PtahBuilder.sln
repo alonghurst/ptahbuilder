@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.1.32319.34
+# Visual Studio Version 18
+VisualStudioVersion = 18.2.11415.280 d18.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionItems", "SolutionItems", "{53E65C67-FDCE-4B36-9C06-D860686F7A7F}"
 	ProjectSection(SolutionItems) = preProject
@@ -30,6 +30,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PtahBuilder.Plugins.NewtonsoftJson", "src\PtahBuilder.Plugins.NewtonsoftJson\PtahBuilder.Plugins.NewtonsoftJson.csproj", "{606011A9-49E3-497A-A2D2-42D8A61969D8}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PtahBuilder.Plugins.Imaging", "src\PtahBuilder.Plugins.Imaging\PtahBuilder.Plugins.Imaging.csproj", "{9D7A5714-6DC7-4861-BF2D-5142FD055E48}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PtahBuilder.Plugins.Unity", "src\PtahBuilder.Plugins.Unity\PtahBuilder.Plugins.Unity.csproj", "{6A218539-5677-4BBB-A4DE-82A7BBA748BF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -73,6 +75,10 @@ Global
 		{9D7A5714-6DC7-4861-BF2D-5142FD055E48}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9D7A5714-6DC7-4861-BF2D-5142FD055E48}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9D7A5714-6DC7-4861-BF2D-5142FD055E48}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6A218539-5677-4BBB-A4DE-82A7BBA748BF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6A218539-5677-4BBB-A4DE-82A7BBA748BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6A218539-5677-4BBB-A4DE-82A7BBA748BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6A218539-5677-4BBB-A4DE-82A7BBA748BF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -87,6 +93,7 @@ Global
 		{565C493C-152C-448A-AE72-17A16AF882B1} = {C1EE98F3-ADB1-4F40-A3D9-9B9EE0D23F53}
 		{606011A9-49E3-497A-A2D2-42D8A61969D8} = {C1EE98F3-ADB1-4F40-A3D9-9B9EE0D23F53}
 		{9D7A5714-6DC7-4861-BF2D-5142FD055E48} = {C1EE98F3-ADB1-4F40-A3D9-9B9EE0D23F53}
+		{6A218539-5677-4BBB-A4DE-82A7BBA748BF} = {C1EE98F3-ADB1-4F40-A3D9-9B9EE0D23F53}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {BDC82931-BAE5-4F2B-8064-D1697C570B37}
