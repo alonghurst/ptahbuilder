@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+using System.Reflection;
+using Microsoft.Extensions.DependencyInjection;
 using PtahBuilder.BuildSystem.Entities;
 using PtahBuilder.BuildSystem.Execution.Abstractions;
 
@@ -10,16 +11,9 @@ public abstract class PipelineConfig
 
     public string Name { get; }
 
-    public Dictionary<Stage, List<StepConfig>> Stages { get; } = new();
-
     public PipelineConfig(string name)
     {
         Name = name;
-
-        foreach (var stage in Enum.GetValues<Stage>())
-        {
-            Stages.Add(stage, new());
-        }
     }
 
     public PipelineConfig Configure(Action<PipelineConfig> configure)
@@ -28,18 +22,12 @@ public abstract class PipelineConfig
 
         return this;
     }
-
-
-    public PipelineConfig AddStep(Stage stage, Type stageType, params object[] args)
-    {
-        Stages[stage].Add(new(stageType, args));
-
-        return this;
-    }
 }
 
 public class PipelineConfig<T> : PipelineConfig
 {
+    public Dictionary<Stage, List<IStepConfig<T>>> Stages { get; } = new();
+
     public DuplicateIdBehaviour DuplicateIdBehaviour { get; set; } = DuplicateIdBehaviour.Throw;
 
     public string[] IdProperties { get; set; } = Array.Empty<string>();
@@ -52,6 +40,18 @@ public class PipelineConfig<T> : PipelineConfig
     public PipelineConfig(string name) : base(name)
     {
         GetId = CreateDefaultGetId();
+
+        foreach (var stage in Enum.GetValues<Stage>())
+        {
+            Stages.Add(stage, new());
+        }
+    }
+
+    protected PipelineConfig AddStepConfig(Stage stage, IStepConfig<T> config)
+    {
+        Stages[stage].Add(config);
+
+        return this;
     }
 
     private Func<T, Dictionary<string, object>, string> CreateDefaultGetId()
@@ -113,7 +113,7 @@ public class PipelineConfig<T> : PipelineConfig
 
     public PipelineConfig AddStep<TS>(Stage stage, params object[] args) where TS : IStep<T>
     {
-        base.AddStep(stage, typeof(TS), args);
+        AddStepConfig(stage, new ActivatedStepConfig<T>(typeof(TS), args));
 
         return this;
     }
@@ -135,6 +135,34 @@ public class PipelineConfig<T> : PipelineConfig
     public PipelineConfig AddProcessStep<TS>(params object[] args) where TS : IStep<T>
     {
         AddStep<TS>(Stage.Process, args);
+
+        return this;
+    }
+
+    public PipelineConfig AddStep(Stage stage, Func<ServiceProvider, IStep<T>> factory)
+    {
+        AddStepConfig(stage, new FactoryStepConfig<T>(factory));
+
+        return this;
+    }
+
+    public PipelineConfig AddInputStep(Func<ServiceProvider, IStep<T>> factory)
+    {
+        AddStep(Stage.Input, factory);
+
+        return this;
+    }
+
+    public PipelineConfig AddOutputStep(Func<ServiceProvider, IStep<T>> factory)
+    {
+        AddStep(Stage.Output, factory);
+
+        return this;
+    }
+
+    public PipelineConfig AddProcessStep(Func<ServiceProvider, IStep<T>> factory)
+    {
+        AddStep(Stage.Process, factory);
 
         return this;
     }
