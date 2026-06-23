@@ -4,6 +4,7 @@ using PtahBuilder.Util.Extensions.Reflection;
 using YamlDotNet.RepresentationModel;
 using YamlDotNet.Serialization;
 using PtahBuilder.BuildSystem.Services.Mapping;
+using PtahBuilder.Util.Helpers;
 
 namespace PtahBuilder.BuildSystem.Services.Serialization;
 
