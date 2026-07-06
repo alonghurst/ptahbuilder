@@ -206,7 +206,53 @@ public class YamlService : IYamlService
 
                 yield return _scalarValueService.ConvertScalarValue(type, value);
             }
+            else if (node is YamlSequenceNode nestedSequence)
+            {
+                yield return GetTypedValueFromYamlNode(type, nestedSequence, settings);
+            }
         }
+    }
+
+    private object? GetTypedValueFromYamlNode(Type targetType, YamlNode yamlNode, YamlDeserializationPropertySettings? settings)
+    {
+        if (yamlNode is YamlScalarNode scalar)
+        {
+            var scalarValue = GetValueFromScalarNode(scalar, settings);
+
+            return _scalarValueService.ConvertScalarValue(targetType, scalarValue);
+        }
+
+        if (yamlNode is YamlMappingNode mapping)
+        {
+            var entity = Activator.CreateInstance(targetType)!;
+
+            SetValuesFromYamlMapping(mapping, targetType, entity, null);
+
+            return entity;
+        }
+
+        if (yamlNode is YamlSequenceNode sequence)
+        {
+            if (targetType.IsArray)
+            {
+                var elementType = targetType.GetElementType()!;
+
+                dynamic values = GetSequenceValuesForArray(elementType, sequence, settings).ToArray();
+
+                return ValuesToArray(elementType, values);
+            }
+
+            if (targetType.IsDictionaryType())
+            {
+                var kvpType = targetType.GetDictionaryKeyValuePairType();
+
+                return CreateDictionaryFromSequenceNode(targetType, kvpType, sequence, settings);
+            }
+
+            throw new InvalidOperationException($"Unable to parse yaml sequence for type \"{targetType}\"");
+        }
+
+        throw new InvalidOperationException($"Unable to parse yaml \"{yamlNode}\" for type \"{targetType}\"");
     }
 
     private IEnumerable<dynamic?> GetSequenceValuesForDictionary(Type type, YamlSequenceNode sequenceNode, YamlDeserializationPropertySettings? settings)
@@ -239,23 +285,7 @@ public class YamlService : IYamlService
                     var keyValue = _scalarValueService.ConvertScalarValue(type.GetGenericArguments()[0], scalarKeyValue);
                     object? valueValue;
 
-                    if (value is YamlScalarNode scalar)
-                    {
-                        var scalarValueValue = GetValueFromScalarNode(scalar, settings);
-
-                        valueValue = _scalarValueService.ConvertScalarValue(type.GetGenericArguments()[1], scalarValueValue);
-                    }
-                    else if (value is YamlMappingNode mapping)
-                    {
-                        var entity = Activator.CreateInstance(type.GetGenericArguments()[1])!;
-
-                        SetValuesFromYamlMapping(mapping, type.GetGenericArguments()[1], entity, null);
-                        valueValue = entity;
-                    }
-                    else
-                    {
-                        throw new InvalidOperationException();
-                    }
+                    valueValue = GetTypedValueFromYamlNode(type.GetGenericArguments()[1], value, settings);
 
                     yield return Activator.CreateInstance(type, keyValue, valueValue);
                 }
