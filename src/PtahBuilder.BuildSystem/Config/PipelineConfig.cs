@@ -1,4 +1,5 @@
 using System.Reflection;
+using Humanizer;
 using Microsoft.Extensions.DependencyInjection;
 using PtahBuilder.BuildSystem.Entities;
 using PtahBuilder.BuildSystem.Execution.Abstractions;
@@ -108,6 +109,13 @@ public class PipelineConfig<T> : PipelineConfig
             {
                 propertyInfo.SetValue(entity, id);
             }
+        }
+
+        var nameProperty = typeof(T).GetProperties().FirstOrDefault(x => x.Name == "Name");
+
+        if (nameProperty != null && string.IsNullOrWhiteSpace(nameProperty.GetValue(entity)?.ToString()))
+        {
+            nameProperty.SetValue(entity, id.Humanize(LetterCasing.Title));
         }
     }
 
