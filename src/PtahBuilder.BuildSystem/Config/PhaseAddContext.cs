@@ -13,13 +13,7 @@ public class PhaseAddContext
 
     public PhaseAddContext AddPipeline<T>(Action<PipelineConfig<T>> configure, string? name = null)
     {
-        name = string.IsNullOrWhiteSpace(name) ? $"{typeof(T).Name}_Pipeline" : name;
-
-        var pipeline = ExecutionConfig.CreatePipelineConfig<T>(name);
-            
-        configure(pipeline);
-
-        EntityPipelines.Add(pipeline);
+        EntityPipelines.Add(ExecutionConfig.CreateConfiguredPipeline(configure, name));
 
         return this;
     }
