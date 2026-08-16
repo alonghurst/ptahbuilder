@@ -11,6 +11,8 @@ public abstract class PipelineConfig
 
     public string Name { get; }
 
+    public abstract Type EntityType { get; }
+
     public PipelineConfig(string name)
     {
         Name = name;
@@ -26,6 +28,8 @@ public abstract class PipelineConfig
 
 public class PipelineConfig<T> : PipelineConfig
 {
+    public override Type EntityType => typeof(T);
+
     public Dictionary<Stage, List<IStepConfig<T>>> Stages { get; } = new();
 
     public DuplicateIdBehaviour DuplicateIdBehaviour { get; set; } = DuplicateIdBehaviour.Throw;
@@ -47,7 +51,7 @@ public class PipelineConfig<T> : PipelineConfig
         }
     }
 
-    protected PipelineConfig AddStepConfig(Stage stage, IStepConfig<T> config)
+    internal PipelineConfig AddStepConfig(Stage stage, IStepConfig<T> config)
     {
         Stages[stage].Add(config);
 

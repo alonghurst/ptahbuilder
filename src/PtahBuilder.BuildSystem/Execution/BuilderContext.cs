@@ -155,23 +155,18 @@ public class BuilderContext : IDisposable
     {
         foreach (var pipelineConfig in _config.EntityPipelines)
         {
-            var type = pipelineConfig.GetType();
+            var entityType = pipelineConfig.EntityType;
 
-            if (type.GenericTypeArguments.Length > 0)
+            var pipelineType = typeof(PipelineContext<>).MakeGenericType(entityType);
+
+            var pipeline = Activator.CreateInstance(pipelineType, executionConfig, pipelineConfig, _logger, _diagnostics) as IPipelineContext;
+
+            if (pipeline == null)
             {
-                var entityType = type.GetGenericArguments()[0];
-
-                var pipelineType = typeof(PipelineContext<>).MakeGenericType(entityType);
-
-                var pipeline = Activator.CreateInstance(pipelineType, executionConfig, pipelineConfig, _logger, _diagnostics) as IPipelineContext;
-
-                if (pipeline == null)
-                {
-                    throw new InvalidOperationException($"Unable to instantiate pipeline for {entityType.GetTypeName()}");
-                }
-
-                yield return (entityType, pipeline);
+                throw new InvalidOperationException($"Unable to instantiate pipeline for {entityType.GetTypeName()}");
             }
+
+            yield return (entityType, pipeline);
         }
     }
 

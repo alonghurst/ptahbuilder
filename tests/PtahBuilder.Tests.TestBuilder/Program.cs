@@ -30,6 +30,13 @@ await new BuilderFactory()
     .AddComponentModelDocumentation()
     .ConfigureExecution(x =>
     {
+        x.AddDefaultPipelineInjector<TypeData>(p =>
+        {
+
+            p.AddProcessStep<FixPunctuationStep<TypeData>>(nameof(TypeData.Name));
+
+        }, except: new[] { typeof(Recipe) });
+
         x.AddPipeline<Fruit>(p =>
         {
             p.AddInputStep<JsonInputStep<Fruit>>();
