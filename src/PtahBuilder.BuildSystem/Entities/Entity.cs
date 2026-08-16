@@ -10,12 +10,13 @@ public class Entity<T>
 
     public Metadata Metadata { get; }
 
-    public Validation Validation { get; } = new();
+    public Validation Validation { get; }
 
-    public Entity(string id, T value, Metadata metadata)
+    public Entity(string id, T value, Metadata metadata, Validation? validation = null)
     {
         Id = id;
         Value = value;
         Metadata = metadata;
+        Validation = validation ?? new();
     }
 }
