@@ -28,7 +28,7 @@ public class HumanizePropertyStep<T> : IStep<T>
 
             if (val != null && val is string strVal)
             {
-                property.SetValue(entity.Value, strVal.Humanize());
+                property.SetValue(entity.Value, strVal.Humanize(LetterCasing.Title));
             }
         }
 
