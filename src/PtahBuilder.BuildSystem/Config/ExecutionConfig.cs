@@ -19,19 +19,44 @@ public class ExecutionConfig
 
     public List<PipelineConfig> EntityPipelines { get; } = new();
 
+    public List<IDefaultPipelineInjector> DefaultPipelineInjectors { get; } = new();
+
     public Action<BuilderContext>? PreExecution { get; set; }
 
+    public ExecutionConfig AddDefaultPipelineInjector<T>(Action<PipelineConfig<T>> configure, Type[]? except = null)
+    {
+        var injector = new DefaultPipelineInjector<T>(configure, except);
+        DefaultPipelineInjectors.Add(injector);
+
+        foreach (var pipeline in EntityPipelines)
+        {
+            injector.Apply(pipeline);
+        }
+
+        return this;
+    }
+
     public ExecutionConfig AddPipeline<T>(Action<PipelineConfig<T>> configure, string? name = null)
+    {
+        EntityPipelines.Add(CreateConfiguredPipeline(configure, name));
+
+        return this;
+    }
+
+    internal PipelineConfig<T> CreateConfiguredPipeline<T>(Action<PipelineConfig<T>> configure, string? name = null)
     {
         name = string.IsNullOrWhiteSpace(name) ? $"{typeof(T).Name}_Pipeline" : name;
 
         var pipeline = CreatePipelineConfig<T>(name);
 
+        foreach (var injector in DefaultPipelineInjectors)
+        {
+            injector.Apply(pipeline);
+        }
+
         configure(pipeline);
 
-        EntityPipelines.Add(pipeline);
-
-        return this;
+        return pipeline;
     }
 
     public PipelineConfig<T> CreatePipelineConfig<T>(string name)
