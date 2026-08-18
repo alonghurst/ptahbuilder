@@ -170,16 +170,19 @@ internal sealed class AdaptedPipelineContext<TDerived, TBase> : IPipelineContext
     public Entity<TBase> AddEntityWithId(TBase entity, string id, Dictionary<string, object>? metadata = null) =>
         Wrap(_inner.AddEntityWithId(Cast(entity), id, metadata));
 
-    public void AddValidationError(Entity<TBase> entity, IStep<TBase> step, string error)
+    public void AddValidationError(Entity<TBase> entity, string source, string error)
     {
         if (_inner.TryGetEntity(entity.Id, out var original))
         {
-            original.Validation.Errors.Add(new ValidationError(step.GetType().GetTypeName(), error));
+            _inner.AddValidationError(original, source, error);
+            return;
         }
+
+        _inner.AddPipelineValidationError(source, $"{entity.Id}: {error}");
     }
 
-    public void AddPipelineValidationError(IStep<TBase> step, string error) =>
-        _inner.AddPipelineValidationError(new PipelineValidationStepShim(), error);
+    public void AddPipelineValidationError(string source, string error) =>
+        _inner.AddPipelineValidationError(source, error);
 
     public void RemoveEntity(Entity<TBase> entity)
     {
@@ -215,10 +218,4 @@ internal sealed class AdaptedPipelineContext<TDerived, TBase> : IPipelineContext
 
     private static Entity<TBase> Wrap(Entity<TDerived> entity) =>
         new(entity.Id, entity.Value, entity.Metadata, entity.Validation);
-
-    private sealed class PipelineValidationStepShim : IStep<TDerived>
-    {
-        public Task Execute(IPipelineContext<TDerived> context, IReadOnlyCollection<Entity<TDerived>> entities) =>
-            Task.CompletedTask;
-    }
 }
