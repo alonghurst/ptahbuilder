@@ -15,7 +15,9 @@ public class PipelineContext<T> : IPipelineContext<T>, IEntityProvider<T>
     public PipelineConfig<T> Config { get; }
     public Dictionary<string, Entity<T>> Entities { get; } = new();
 
-    private readonly List<ValidationError> _validationErrors = new();
+    public const string PipelineValidationId = "(pipeline)";
+
+    private readonly List<(string id, ValidationError error)> _validationErrors = new();
 
     private readonly ILogger _logger;
     private readonly IDiagnostics _diagnostics;
@@ -87,22 +89,23 @@ public class PipelineContext<T> : IPipelineContext<T>, IEntityProvider<T>
         return val;
     }
 
-    public void AddValidationError(Entity<T> entity, IStep<T> step, string error)
+    public void AddValidationError(Entity<T> entity, string source, string error)
     {
-        var name = step.GetType().GetTypeName();
+        var validationError = new ValidationError(source, error);
 
-        _logger.Warning($"{entity.Id}: Validation Error - {name}: {error}");
+        _logger.Warning($"{entity.Id}: Validation Error - {source}: {error}");
 
-        entity.Validation.Errors.Add(new(name, error));
+        entity.Validation.Errors.Add(validationError);
+        _validationErrors.Add((entity.Id, validationError));
     }
 
-    public void AddPipelineValidationError(IStep<T> step, string error)
+    public void AddPipelineValidationError(string source, string error)
     {
-        var name = step.GetType().GetTypeName();
+        var validationError = new ValidationError(source, error);
 
-        _logger.Warning($"Validation Error - {name}: {error}");
+        _logger.Warning($"Validation Error - {source}: {error}");
 
-        _validationErrors.Add(new(name, error));
+        _validationErrors.Add((PipelineValidationId, validationError));
     }
 
     public void RemoveEntity(Entity<T> entity)
@@ -189,21 +192,11 @@ public class PipelineContext<T> : IPipelineContext<T>, IEntityProvider<T>
     }
 
 
-    public IEnumerable<(Type, string, ValidationError[])> ValidationErrors()
+    public IEnumerable<(Type type, string id, ValidationError[] errors)> ValidationErrors()
     {
-        if (_validationErrors.Any())
+        foreach (var group in _validationErrors.GroupBy(x => x.id))
         {
-            var name = this.GetType().GetTypeName();
-
-            yield return (typeof(T), name, _validationErrors.ToArray());
-        }
-
-        foreach (var entity in Entities.Values)
-        {
-            if (!entity.Validation.IsValid)
-            {
-                yield return (typeof(T), entity.Id, entity.Validation.Errors.ToArray());
-            }
+            yield return (typeof(T), group.Key, group.Select(x => x.error).ToArray());
         }
     }
 }

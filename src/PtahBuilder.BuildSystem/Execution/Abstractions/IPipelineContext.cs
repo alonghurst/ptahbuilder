@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using PtahBuilder.BuildSystem.Entities;
+using PtahBuilder.Util.Extensions.Reflection;
 
 namespace PtahBuilder.BuildSystem.Execution.Abstractions;
 
@@ -22,8 +23,14 @@ public interface IPipelineContext<T> : IPipelineContext
 
     Entity<T> AddEntityWithId(T entity, string id, Dictionary<string, object>? metadata = null);
 
-    void AddValidationError(Entity<T> entity, IStep<T> step, string error);
-    void AddPipelineValidationError(IStep<T> step, string error);
+    void AddValidationError(Entity<T> entity, string source, string error);
+    void AddPipelineValidationError(string source, string error);
+
+    void AddValidationError(Entity<T> entity, IStep<T> step, string error) =>
+        AddValidationError(entity, step.GetType().GetTypeName(), error);
+
+    void AddPipelineValidationError(IStep<T> step, string error) =>
+        AddPipelineValidationError(step.GetType().GetTypeName(), error);
 
     void RemoveEntity(Entity<T> entity);
     Entity<T> GetEntity(string id);
