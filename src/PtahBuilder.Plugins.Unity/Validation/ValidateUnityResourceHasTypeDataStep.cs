@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using PtahBuilder.BuildSystem.Entities;
 using PtahBuilder.BuildSystem.Execution.Abstractions;
 using PtahBuilder.Plugins.Unity.Config;
-using PtahBuilder.Util.Services.Logging;
 
 namespace PtahBuilder.Plugins.Unity.Validation;
 
@@ -18,7 +17,6 @@ namespace PtahBuilder.Plugins.Unity.Validation;
 /// </summary>
 public sealed class ValidateUnityResourceHasTypeDataStep<TPrimary> : IStep<TPrimary>
 {
-    private readonly ILogger _logger;
     private readonly UnityConfig _unity;
     private readonly string _contentSubdirectory;
     private readonly string _extension;
@@ -26,14 +24,12 @@ public sealed class ValidateUnityResourceHasTypeDataStep<TPrimary> : IStep<TPrim
     private readonly string[] _ignorePrefixes;
 
     public ValidateUnityResourceHasTypeDataStep(
-        ILogger logger,
         UnityConfig unity,
         string contentSubdirectory,
         string extension,
         string[]? ignoreIds = null,
         string[]? ignorePrefixes = null)
     {
-        _logger = logger;
         _unity = unity;
         _contentSubdirectory = contentSubdirectory;
         _extension = extension;
@@ -49,51 +45,17 @@ public sealed class ValidateUnityResourceHasTypeDataStep<TPrimary> : IStep<TPrim
             .Select(e => e.Id)
             .ToHashSet(StringComparer.OrdinalIgnoreCase);
 
-        ReportMissingUnityContent(typeDataIds);
+        UnityResourceHasTypeDataValidation.ReportMissing(
+            context,
+            this,
+            _unity,
+            _contentSubdirectory,
+            _extension,
+            typeDataIds,
+            _ignoreIds,
+            _ignorePrefixes);
+
         return Task.CompletedTask;
-    }
-
-    private void ReportMissingUnityContent(ISet<string> typeDataIds)
-    {
-        var basePath = Path.Combine(_unity.Resources, _contentSubdirectory);
-        if (!Directory.Exists(basePath))
-        {
-            _logger.Warning(
-                $"Unity content validation: directory '{basePath}' does not exist (subdirectory '{_contentSubdirectory}').");
-            return;
-        }
-
-        // `ValidateUnityResourceStep` supports two file layouts:
-        // - {Resources}/{subdirectory}/{id}.{extension}
-        // - {Resources}/{subdirectory}/{id}/{id}.{extension}
-        // Enumerating all files under {subdirectory} lets us validate both without duplicating logic.
-        var pattern = $"*.{_extension}";
-        var unityIds = Directory.EnumerateFiles(basePath, pattern, SearchOption.AllDirectories)
-            .Select(file => Path.GetFileNameWithoutExtension(file))
-            .Where(id => id is { Length: > 0 })
-            .Select(id => id!)
-            .Distinct(StringComparer.OrdinalIgnoreCase)
-            .ToArray();
-
-        var ignoreIdSet = new HashSet<string>(_ignoreIds, StringComparer.OrdinalIgnoreCase);
-
-        var missing = unityIds
-            .Where(id =>
-                !ignoreIdSet.Contains(id) &&
-                !_ignorePrefixes.Any(prefix => id.StartsWith(prefix, StringComparison.OrdinalIgnoreCase)) &&
-                !typeDataIds.Contains(id))
-            .ToArray();
-
-        if (missing.Length == 0)
-        {
-            return;
-        }
-
-        var sample = string.Join(", ", missing.Take(25));
-        var suffix = missing.Length > 25 ? $" (and {missing.Length - 25} more)" : string.Empty;
-
-        _logger.Warning(
-            $"Unity content '{_contentSubdirectory}' has {missing.Length} resource(s) without corresponding TypeData entity(s): {sample}{suffix}.");
     }
 }
 
@@ -103,7 +65,6 @@ public sealed class ValidateUnityResourceHasTypeDataStep<TPrimary> : IStep<TPrim
 /// </summary>
 public sealed class ValidateUnityResourceHasTypeDataStep<TPrimary, TSecondary> : IStep<TPrimary>
 {
-    private readonly ILogger _logger;
     private readonly UnityConfig _unity;
     private readonly IEntityProvider<TSecondary> _secondary;
     private readonly string _contentSubdirectory;
@@ -112,7 +73,6 @@ public sealed class ValidateUnityResourceHasTypeDataStep<TPrimary, TSecondary> :
     private readonly string[] _ignorePrefixes;
 
     public ValidateUnityResourceHasTypeDataStep(
-        ILogger logger,
         UnityConfig unity,
         IEntityProvider<TSecondary> secondary,
         string contentSubdirectory,
@@ -120,7 +80,6 @@ public sealed class ValidateUnityResourceHasTypeDataStep<TPrimary, TSecondary> :
         string[]? ignoreIds = null,
         string[]? ignorePrefixes = null)
     {
-        _logger = logger;
         _unity = unity;
         _secondary = secondary;
         _contentSubdirectory = contentSubdirectory;
@@ -137,21 +96,47 @@ public sealed class ValidateUnityResourceHasTypeDataStep<TPrimary, TSecondary> :
             .Select(e => e.Id)
             .Concat(_secondary.Entities.Values.Select(x => x.Id))
             .ToHashSet(StringComparer.OrdinalIgnoreCase);
-        ReportMissingUnityContent(typeDataIds);
+
+        UnityResourceHasTypeDataValidation.ReportMissing(
+            context,
+            this,
+            _unity,
+            _contentSubdirectory,
+            _extension,
+            typeDataIds,
+            _ignoreIds,
+            _ignorePrefixes);
+
         return Task.CompletedTask;
     }
+}
 
-    private void ReportMissingUnityContent(ISet<string> typeDataIds)
+internal static class UnityResourceHasTypeDataValidation
+{
+    public static void ReportMissing<T>(
+        IPipelineContext<T> context,
+        IStep<T> step,
+        UnityConfig unity,
+        string contentSubdirectory,
+        string extension,
+        ISet<string> typeDataIds,
+        IReadOnlyCollection<string> ignoreIds,
+        IReadOnlyCollection<string> ignorePrefixes)
     {
-        var basePath = Path.Combine(_unity.Resources, _contentSubdirectory);
+        var basePath = Path.Combine(unity.Resources, contentSubdirectory);
         if (!Directory.Exists(basePath))
         {
-            _logger.Warning(
-                $"Unity content validation: directory '{basePath}' does not exist (subdirectory '{_contentSubdirectory}').");
+            context.AddPipelineValidationError(
+                step,
+                $"Unity content validation: directory '{basePath}' does not exist (subdirectory '{contentSubdirectory}').");
             return;
         }
 
-        var pattern = $"*.{_extension}";
+        // `ValidateUnityResourceStep` supports two file layouts:
+        // - {Resources}/{subdirectory}/{id}.{extension}
+        // - {Resources}/{subdirectory}/{id}/{id}.{extension}
+        // Enumerating all files under {subdirectory} lets us validate both without duplicating logic.
+        var pattern = $"*.{extension}";
         var unityIds = Directory.EnumerateFiles(basePath, pattern, SearchOption.AllDirectories)
             .Select(file => Path.GetFileNameWithoutExtension(file))
             .Where(id => id is { Length: > 0 })
@@ -159,25 +144,19 @@ public sealed class ValidateUnityResourceHasTypeDataStep<TPrimary, TSecondary> :
             .Distinct(StringComparer.OrdinalIgnoreCase)
             .ToArray();
 
-        var ignoreIdSet = new HashSet<string>(_ignoreIds, StringComparer.OrdinalIgnoreCase);
+        var ignoreIdSet = new HashSet<string>(ignoreIds, StringComparer.OrdinalIgnoreCase);
 
         var missing = unityIds
             .Where(id =>
                 !ignoreIdSet.Contains(id) &&
-                !_ignorePrefixes.Any(prefix => id.StartsWith(prefix, StringComparison.OrdinalIgnoreCase)) &&
-                !typeDataIds.Contains(id))
-            .ToArray();
+                !ignorePrefixes.Any(prefix => id.StartsWith(prefix, StringComparison.OrdinalIgnoreCase)) &&
+                !typeDataIds.Contains(id));
 
-        if (missing.Length == 0)
+        foreach (var id in missing)
         {
-            return;
+            context.AddPipelineValidationError(
+                step,
+                $"Unity resource '{id}' in '{contentSubdirectory}' has no corresponding TypeData entity.");
         }
-
-        var sample = string.Join(", ", missing.Take(25));
-        var suffix = missing.Length > 25 ? $" (and {missing.Length - 25} more)" : string.Empty;
-
-        _logger.Warning(
-            $"Unity content '{_contentSubdirectory}' has {missing.Length} resource(s) without corresponding TypeData entity(s): {sample}{suffix}.");
     }
 }
-
