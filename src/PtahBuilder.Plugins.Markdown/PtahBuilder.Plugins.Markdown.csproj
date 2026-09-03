@@ -10,4 +10,8 @@
     <PackageReference Include="Grynwald.MarkdownGenerator" Version="3.0.106" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\PtahBuilder.BuildSystem\PtahBuilder.BuildSystem.csproj" />
+  </ItemGroup>
+
 </Project>
