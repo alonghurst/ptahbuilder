@@ -23,6 +23,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\..\src\PtahBuilder.BuildSystem\PtahBuilder.BuildSystem.csproj" />
+        <ProjectReference Include="..\..\src\PtahBuilder.Plugins.Markdown\PtahBuilder.Plugins.Markdown.csproj" />
         <ProjectReference Include="..\PtahBuilder.Tests.TestBuilder\PtahBuilder.Tests.TestBuilder.csproj" />
     </ItemGroup>
 
