@@ -35,6 +35,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PtahBuilder.Plugins.Unity",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PtahBuilder.Plugins.GraphViz", "src\PtahBuilder.Plugins.GraphViz\PtahBuilder.Plugins.GraphViz.csproj", "{15C701C7-53D9-4445-98F7-996547244D18}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PtahBuilder.Tests.Unity", "tests\PtahBuilder.Tests.Unity\PtahBuilder.Tests.Unity.csproj", "{1E950E99-895C-4B9E-9C32-A7EF8EA27C13}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -85,6 +87,10 @@ Global
 		{15C701C7-53D9-4445-98F7-996547244D18}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{15C701C7-53D9-4445-98F7-996547244D18}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{15C701C7-53D9-4445-98F7-996547244D18}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1E950E99-895C-4B9E-9C32-A7EF8EA27C13}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1E950E99-895C-4B9E-9C32-A7EF8EA27C13}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1E950E99-895C-4B9E-9C32-A7EF8EA27C13}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1E950E99-895C-4B9E-9C32-A7EF8EA27C13}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -101,6 +107,7 @@ Global
 		{9D7A5714-6DC7-4861-BF2D-5142FD055E48} = {C1EE98F3-ADB1-4F40-A3D9-9B9EE0D23F53}
 		{6A218539-5677-4BBB-A4DE-82A7BBA748BF} = {C1EE98F3-ADB1-4F40-A3D9-9B9EE0D23F53}
 		{15C701C7-53D9-4445-98F7-996547244D18} = {C1EE98F3-ADB1-4F40-A3D9-9B9EE0D23F53}
+		{1E950E99-895C-4B9E-9C32-A7EF8EA27C13} = {82C75FB5-D14D-4D42-B94F-0016E514A23A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {BDC82931-BAE5-4F2B-8064-D1697C570B37}
