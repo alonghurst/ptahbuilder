@@ -4,6 +4,7 @@
 		<TargetFramework>net7.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
+		<LangVersion>12</LangVersion>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -12,6 +13,10 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\PtahBuilder.BuildSystem\PtahBuilder.BuildSystem.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<InternalsVisibleTo Include="PtahBuilder.Tests.GraphViz" />
 	</ItemGroup>
 
 </Project>
