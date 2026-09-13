@@ -2,6 +2,7 @@ using Microsoft.Extensions.DependencyInjection;
 using PtahBuilder.BuildSystem;
 using PtahBuilder.BuildSystem.Config;
 using PtahBuilder.Plugins.GraphViz.Config;
+using PtahBuilder.Plugins.GraphViz.Rendering;
 
 namespace PtahBuilder.Plugins.GraphViz.Extensions;
 
@@ -25,7 +26,13 @@ public static class BuilderFactoryExtensions
         {
             configureFiles(x, graphSettings);
         });
-        builderFactory.ConfigureServices(services => services.AddSingleton(graphSettings));
+        builderFactory.ConfigureServices(services =>
+        {
+            services.AddSingleton(graphSettings);
+            services.AddSingleton<IGraphvizRenderer, RubjergGraphvizRenderer>();
+            services.AddSingleton<IGraphvizRenderer, CliGraphvizRenderer>();
+            services.AddSingleton<IGraphvizRendererResolver, GraphvizRendererResolver>();
+        });
 
         return builderFactory;
     }
