@@ -351,3 +351,6 @@ MigrationBackup/
 
 Output/*
 /.vscode/settings.json
+
+# macOS
+.DS_Store
