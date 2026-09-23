@@ -114,6 +114,12 @@ public class YamlService : IYamlService
 
                 TrySetProperty(property, entity, dictionary);
             }
+            else if (TryGetSequenceListType(property.PropertyType, out var listType, out var listElementType))
+            {
+                var values = GetSequenceValuesForArray(listElementType, sequenceNode, settings);
+
+                TrySetProperty(property, entity, CreateList(listType, listElementType, values));
+            }
             else if (sequenceNode.Count() == 1)
             {
                 SetValueFromYamlNode(entity, property, sequenceNode.First(), settings);
@@ -249,6 +255,11 @@ public class YamlService : IYamlService
                 return CreateDictionaryFromSequenceNode(targetType, kvpType, sequence, settings);
             }
 
+            if (TryGetSequenceListType(targetType, out var listType, out var listElementType))
+            {
+                return CreateList(listType, listElementType, GetSequenceValuesForArray(listElementType, sequence, settings));
+            }
+
             throw new InvalidOperationException($"Unable to parse yaml sequence for type \"{targetType}\"");
         }
 
@@ -291,6 +302,52 @@ public class YamlService : IYamlService
                 }
             }
         }
+    }
+
+    private static bool TryGetSequenceListType(Type type, out Type listType, out Type elementType)
+    {
+        listType = null!;
+        elementType = null!;
+
+        if (!type.IsGenericType)
+        {
+            return false;
+        }
+
+        var definition = type.GetGenericTypeDefinition();
+        if (definition == typeof(List<>))
+        {
+            elementType = type.GetGenericArguments()[0];
+            listType = type;
+            return true;
+        }
+
+        if (definition == typeof(IList<>)
+            || definition == typeof(ICollection<>)
+            || definition == typeof(IEnumerable<>)
+            || definition == typeof(IReadOnlyList<>)
+            || definition == typeof(IReadOnlyCollection<>))
+        {
+            elementType = type.GetGenericArguments()[0];
+            listType = typeof(List<>).MakeGenericType(elementType);
+            return true;
+        }
+
+        return false;
+    }
+
+    private static object CreateList(Type listType, Type elementType, IEnumerable<dynamic?> values)
+    {
+        var list = Activator.CreateInstance(listType)!;
+        var add = listType.GetMethod("Add", new[] { elementType })
+            ?? throw new InvalidOperationException($"Unable to find Add method for \"{listType}\".");
+
+        foreach (var value in values)
+        {
+            add.Invoke(list, new[] { value });
+        }
+
+        return list;
     }
 
     private string? GetValueFromScalarNode(YamlScalarNode node, YamlDeserializationPropertySettings? settings)

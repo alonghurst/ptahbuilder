@@ -23,6 +23,23 @@ public class YamlServiceTests
         public string[][] Items { get; set; } = Array.Empty<string[]>();
     }
 
+    private sealed class ClassWithStringList
+    {
+        public List<string> Items { get; set; } = new();
+    }
+
+    private sealed class ClassWithNestedObjectList
+    {
+        public List<NamedEntry> Entries { get; set; } = new();
+    }
+
+    private sealed class NamedEntry
+    {
+        public string Id { get; set; } = string.Empty;
+
+        public List<string> Tags { get; set; } = new();
+    }
+
     private static YamlService CreateService()
     {
         var scalar = new ScalarValueService(new MockCustomValueParserService());
@@ -79,6 +96,56 @@ public class YamlServiceTests
         Assert.Equal(2, result.Items.Length);
         Assert.Equal(new[] { "apple", "cherry" }, result.Items[0]);
         Assert.Equal(new[] { "banana" }, result.Items[1]);
+    }
+
+    [Fact]
+    public void Deserialize_ListProperty_ParsesSequence()
+    {
+        var yaml = """
+            Items:
+              - apple
+              - cherry
+            """;
+
+        var result = CreateService().Deserialize<ClassWithStringList>(yaml);
+
+        Assert.Equal(new[] { "apple", "cherry" }, result.Items);
+    }
+
+    [Fact]
+    public void Deserialize_SingleItemList_ParsesAsList()
+    {
+        var yaml = """
+            Items:
+              - apple
+            """;
+
+        var result = CreateService().Deserialize<ClassWithStringList>(yaml);
+
+        Assert.Equal(new[] { "apple" }, result.Items);
+    }
+
+    [Fact]
+    public void Deserialize_NestedObjectList_ParsesChildLists()
+    {
+        var yaml = """
+            Entries:
+              - Id: Return
+                Tags:
+                  - gold
+                  - bone
+              - Id: Favour
+                Tags:
+                  - clue
+            """;
+
+        var result = CreateService().Deserialize<ClassWithNestedObjectList>(yaml);
+
+        Assert.Equal(2, result.Entries.Count);
+        Assert.Equal("Return", result.Entries[0].Id);
+        Assert.Equal(new[] { "gold", "bone" }, result.Entries[0].Tags);
+        Assert.Equal("Favour", result.Entries[1].Id);
+        Assert.Equal(new[] { "clue" }, result.Entries[1].Tags);
     }
 
     private sealed class NullLogger : ILogger
