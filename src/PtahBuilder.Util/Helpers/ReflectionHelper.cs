@@ -5,7 +5,9 @@ namespace PtahBuilder.Util.Helpers;
 
 public static class ReflectionHelper
 {
-    private static List<Type>? _allLoadedTypes = null;
+    private static readonly object LoadedTypesGate = new();
+    private static List<Type>? _allLoadedTypes;
+    private static int _cachedAssemblyCount;
 
     public static IReadOnlyCollection<T> GetEnumValues<T>()
     {
@@ -21,36 +23,61 @@ public static class ReflectionHelper
 
     public static IEnumerable<Type> GetAllLoadedTypes(string? assemblyFilter = null)
     {
-        if (_allLoadedTypes == null)
-        {
-            _allLoadedTypes = new();
+        var types = SnapshotLoadedTypes();
 
-            var assemblies = GetLoadedAssemblies();
+        if (assemblyFilter != null)
+        {
+            return types.Where(x => !string.IsNullOrWhiteSpace(x.Assembly.FullName) && x.Assembly.FullName.StartsWith(assemblyFilter));
+        }
+
+        return types.ToArray();
+    }
+
+    private static List<Type> SnapshotLoadedTypes()
+    {
+        var assemblies = AppDomain.CurrentDomain.GetAssemblies();
+        var snapshot = Volatile.Read(ref _allLoadedTypes);
+        if (snapshot != null && Volatile.Read(ref _cachedAssemblyCount) == assemblies.Length)
+        {
+            return snapshot;
+        }
+
+        lock (LoadedTypesGate)
+        {
+            assemblies = AppDomain.CurrentDomain.GetAssemblies();
+            if (_allLoadedTypes != null && _cachedAssemblyCount == assemblies.Length)
+            {
+                return _allLoadedTypes;
+            }
+
+            var loaded = new List<Type>();
 
             foreach (var assembly in assemblies)
             {
                 try
                 {
-                    var types = assembly.GetTypes();
-
-                    foreach (var type in types)
+                    loaded.AddRange(assembly.GetTypes());
+                }
+                catch (ReflectionTypeLoadException exception)
+                {
+                    foreach (var type in exception.Types)
                     {
-                        _allLoadedTypes.Add(type);
+                        if (type != null)
+                        {
+                            loaded.Add(type);
+                        }
                     }
                 }
                 catch
                 {
-                    // ignored
+                    // Dynamic assemblies can refuse GetTypes.
                 }
             }
-        }
 
-        if (assemblyFilter != null)
-        {
-            return _allLoadedTypes.Where(x => !string.IsNullOrWhiteSpace(x.Assembly.FullName) && x.Assembly.FullName.StartsWith(assemblyFilter));
+            _cachedAssemblyCount = assemblies.Length;
+            Volatile.Write(ref _allLoadedTypes, loaded);
+            return loaded;
         }
-
-        return _allLoadedTypes.ToArray();
     }
 
     public static IEnumerable<Type> GetLoadedTypesWithAttribute<T>(string? namespaceFilter = null) where T : Attribute
