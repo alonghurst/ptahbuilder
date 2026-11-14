@@ -14,9 +14,11 @@ public class FileLogger : ILogger, IDisposable
         {
             Directory.CreateDirectory(logDir);
         }
-        var fileName = Path.Combine(logDir, $"log_{DateTime.Now:yyyy-M-d-HH-mm-ss}.txt");
-
-        _file = new(fileName);
+        var fileName = Path.Combine(logDir, $"log_{DateTime.Now:yyyy-M-d-HH-mm-ss-fff}_{Guid.NewGuid():N}.txt");
+        _file = new StreamWriter(fileName)
+        {
+            AutoFlush = true
+        };
     }
 
     private void CloseFile()
@@ -40,8 +42,14 @@ public class FileLogger : ILogger, IDisposable
     private void WriteLine(string message)
     {
         _semaphoreSlim.Wait();
-        _file?.WriteLine(message);
-        _semaphoreSlim.Release();
+        try
+        {
+            _file?.WriteLine(message);
+        }
+        finally
+        {
+            _semaphoreSlim.Release();
+        }
     }
 
     public void Warning(string message)

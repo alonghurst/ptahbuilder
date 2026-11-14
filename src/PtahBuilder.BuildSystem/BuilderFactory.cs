@@ -7,6 +7,7 @@ using PtahBuilder.BuildSystem.Execution;
 using PtahBuilder.BuildSystem.Extensions;
 using PtahBuilder.Util.Extensions;
 using PtahBuilder.Util.Helpers;
+using PtahBuilder.Util.Services.Logging;
 
 namespace PtahBuilder.BuildSystem;
 
@@ -91,12 +92,13 @@ public class BuilderFactory
     {
         var writtenAfterUtc = DateTime.UtcNow;
         var services = BuildServices();
-        var config = BuildExecutionConfig();
-
-        var context = new BuilderContext(services, config);
+        BuilderContext? context = null;
 
         try
         {
+            var config = BuildExecutionConfig();
+            context = new BuilderContext(services, config);
+
             if (config.PreExecution != null)
             {
                 config.PreExecution(context);
@@ -111,7 +113,15 @@ public class BuilderFactory
         }
         finally
         {
-            context.Dispose();
+            context?.Dispose();
+
+            foreach (var descriptor in services)
+            {
+                if (descriptor.ImplementationInstance is RootLogger logger)
+                {
+                    logger.Dispose();
+                }
+            }
         }
     }
 
