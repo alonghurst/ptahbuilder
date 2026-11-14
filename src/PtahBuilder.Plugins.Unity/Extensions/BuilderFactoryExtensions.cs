@@ -1,6 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using PtahBuilder.BuildSystem;
 using PtahBuilder.BuildSystem.Config;
+using PtahBuilder.Plugins.Unity;
 using PtahBuilder.Plugins.Unity.Config;
 
 namespace PtahBuilder.Plugins.Unity.Extensions;
@@ -12,6 +13,7 @@ public static class BuilderFactoryExtensions
 {
     /// <summary>
     /// Configures Unity project paths and registers <see cref="UnityConfig"/> in the builder's dependency injection pipeline.
+    /// Generated JSON is replaced in place so Unity .meta files keep their guids.
     /// </summary>
     /// <param name="builderFactory">The builder factory.</param>
     /// <param name="rootPath">Root path (e.g. repository root). Used to derive default project directory when not overridden.</param>
@@ -41,6 +43,7 @@ public static class BuilderFactoryExtensions
 
         builderFactory.ConfigureFiles(x => x.Configure(rootPath, relativeOutputDirectory: relativeOutputDirectory));
         builderFactory.ConfigureServices(services => services.AddSingleton(unityConfig));
+        KeepUnityOutputMetadata(builderFactory);
 
         return builderFactory;
     }
@@ -48,6 +51,7 @@ public static class BuilderFactoryExtensions
     /// <summary>
     /// Configures Unity project paths, registers <see cref="UnityConfig"/> in the builder's dependency injection pipeline,
     /// and runs the given <paramref name="configureFiles"/> action so file config can be set in the same call.
+    /// Generated JSON is replaced in place so Unity .meta files keep their guids.
     /// </summary>
     /// <param name="builderFactory">The builder factory.</param>
     /// <param name="rootPath">Root path (e.g. repository root). Used to derive default project directory when not overridden.</param>
@@ -82,7 +86,18 @@ public static class BuilderFactoryExtensions
             configureFiles(x, unityConfig);
         });
         builderFactory.ConfigureServices(services => services.AddSingleton(unityConfig));
+        KeepUnityOutputMetadata(builderFactory);
 
         return builderFactory;
+    }
+
+    /// <summary>
+    /// JSON the run did not write is removed, along with <c>.meta</c> files whose assets are gone.
+    /// Rewritten JSON keeps its <c>.meta</c> guid. The output directory itself is left in place.
+    /// </summary>
+    private static void KeepUnityOutputMetadata(BuilderFactory builderFactory)
+    {
+        builderFactory.AfterSuccessfulRun((config, writtenAfterUtc) =>
+            UnityGeneratedOutput.RemoveStale(config.Files.OutputDirectory, writtenAfterUtc));
     }
 }

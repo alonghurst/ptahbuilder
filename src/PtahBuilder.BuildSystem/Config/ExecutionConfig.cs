@@ -11,7 +11,7 @@ public class ExecutionConfig
 
     public FilesConfig Files { get; }
 
-    public bool DeleteOutputDirectory { get; set; } = true;
+    public bool DeleteOutputDirectory { get; set; }
     public bool WriteValidationToTextFile { get; set; } = true;
 
     public Func<string, string>? DefaultIdProcessor { get; set; }

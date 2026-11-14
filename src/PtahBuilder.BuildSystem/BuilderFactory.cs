@@ -18,6 +18,7 @@ public class BuilderFactory
     private readonly List<JsonConverter> _jsonConverters = new();
 
     private List<Action<IServiceCollection>> _configureServices = new();
+    private readonly List<Action<ExecutionConfig, DateTime>> _afterSuccessfulRun = new();
     private Action<ExecutionConfig>? _configureExecutionConfig;
 
     private readonly FilesConfig _filesConfig = new();
@@ -75,8 +76,20 @@ public class BuilderFactory
         return this;
     }
 
+    /// <summary>
+    /// Invoked after a successful run. <paramref name="after"/> receives the UTC time captured
+    /// at the start of <see cref="Run"/>, before output files are written.
+    /// </summary>
+    public BuilderFactory AfterSuccessfulRun(Action<ExecutionConfig, DateTime> after)
+    {
+        _afterSuccessfulRun.Add(after);
+
+        return this;
+    }
+
     public async Task Run()
     {
+        var writtenAfterUtc = DateTime.UtcNow;
         var services = BuildServices();
         var config = BuildExecutionConfig();
 
@@ -90,6 +103,11 @@ public class BuilderFactory
             }
 
             await context.Run();
+
+            foreach (var after in _afterSuccessfulRun)
+            {
+                after(config, writtenAfterUtc);
+            }
         }
         finally
         {
