@@ -21,11 +21,6 @@ public class UnityConfig
     public string Resources => Path.Combine(Assets, "Resources");
 
     /// <summary>
-    /// Path to the Unity project's BuildData folder (Assets/BuildData).
-    /// </summary>
-    public string BuildData => Path.Combine(Assets, "BuildData");
-
-    /// <summary>
     /// Returns the path to a subdirectory under Resources.
     /// </summary>
     /// <param name="subdirectories">Path segments under Resources (e.g. "Text", "Ink" => Resources/Text/Ink).</param>

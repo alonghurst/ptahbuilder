@@ -22,26 +22,9 @@ public static class BuilderFactoryExtensions
     /// <exception cref="InvalidOperationException">Thrown when the resolved Unity project directory does not exist.</exception>
     public static BuilderFactory UseUnity(this BuilderFactory builderFactory, string rootPath, UnityConfig? config = null)
     {
-        var projectDirectory = string.IsNullOrWhiteSpace(config?.ProjectDirectory)
-            ? Path.Combine(rootPath, Path.GetFileName(rootPath.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar)) + ".Unity")
-            : config.ProjectDirectory;
+        var unityConfig = CreateUnityConfig(rootPath, config);
 
-        var unityConfig = new UnityConfig
-        {
-            ProjectDirectory = Path.GetFullPath(projectDirectory)
-        };
-
-        if (!Directory.Exists(unityConfig.ProjectDirectory))
-        {
-            throw new InvalidOperationException(
-                $"Unity project directory does not exist: {unityConfig.ProjectDirectory}. " +
-                "Ensure the path is correct or create the Unity project before running the builder.");
-        }
-
-        var projectDirName = Path.GetFileName(unityConfig.ProjectDirectory.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar));
-        var relativeOutputDirectory = Path.Combine(projectDirName, "Assets", "Resources", "Data");
-
-        builderFactory.ConfigureFiles(x => x.Configure(rootPath, relativeOutputDirectory: relativeOutputDirectory));
+        builderFactory.ConfigureFiles(x => x.Configure(rootPath, relativeOutputDirectory: RelativeOutputDirectory(unityConfig)));
         builderFactory.ConfigureServices(services => services.AddSingleton(unityConfig));
         KeepUnityOutputMetadata(builderFactory);
 
@@ -61,6 +44,21 @@ public static class BuilderFactoryExtensions
     /// <exception cref="InvalidOperationException">Thrown when the resolved Unity project directory does not exist.</exception>
     public static BuilderFactory UseUnity(this BuilderFactory builderFactory, string rootPath, Action<IFilesConfig, UnityConfig> configureFiles, UnityConfig? config = null)
     {
+        var unityConfig = CreateUnityConfig(rootPath, config);
+
+        builderFactory.ConfigureFiles(x =>
+        {
+            x.Configure(rootPath, relativeOutputDirectory: RelativeOutputDirectory(unityConfig));
+            configureFiles(x, unityConfig);
+        });
+        builderFactory.ConfigureServices(services => services.AddSingleton(unityConfig));
+        KeepUnityOutputMetadata(builderFactory);
+
+        return builderFactory;
+    }
+
+    private static UnityConfig CreateUnityConfig(string rootPath, UnityConfig? config)
+    {
         var projectDirectory = string.IsNullOrWhiteSpace(config?.ProjectDirectory)
             ? Path.Combine(rootPath, Path.GetFileName(rootPath.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar)) + ".Unity")
             : config.ProjectDirectory;
@@ -77,18 +75,13 @@ public static class BuilderFactoryExtensions
                 "Ensure the path is correct or create the Unity project before running the builder.");
         }
 
+        return unityConfig;
+    }
+
+    private static string RelativeOutputDirectory(UnityConfig unityConfig)
+    {
         var projectDirName = Path.GetFileName(unityConfig.ProjectDirectory.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar));
-        var relativeOutputDirectory = Path.Combine(projectDirName, "Assets", "Resources", "Data");
-
-        builderFactory.ConfigureFiles(x =>
-        {
-            x.Configure(rootPath, relativeOutputDirectory: relativeOutputDirectory);
-            configureFiles(x, unityConfig);
-        });
-        builderFactory.ConfigureServices(services => services.AddSingleton(unityConfig));
-        KeepUnityOutputMetadata(builderFactory);
-
-        return builderFactory;
+        return Path.Combine(projectDirName, "Assets", "Resources", "Data");
     }
 
     /// <summary>
